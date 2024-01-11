@@ -19,10 +19,6 @@ coverage
 /cypress/videos/
 /cypress/screenshots/
 
-# Supabase
-/supabase
-/supabase/*
-
 # Editor directories and files
 .vscode
 .vscode/*
