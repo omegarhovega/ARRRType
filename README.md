@@ -1,4 +1,4 @@
-# ArrrType
+# ARRRType
 
 ARRRType is an open source typing game made by pirates for pirates <img src="https://github.com/omegarhovega/ARRRType/blob/main/public/parrot_p.png?raw=true" alt="parrot" width="15"/>. 
 

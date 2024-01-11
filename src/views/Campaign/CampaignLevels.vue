@@ -1,3 +1,8 @@
+<!--
+CampaignLevels
+- Component displaying levels with opponent mugshots and level info
+-->
+
 <template>
   <div :class="{ 'level-square': true, locked: !isUnlocked }">
     <router-link
@@ -99,13 +104,13 @@ export default defineComponent({
 .level-square {
   display: flex;
   flex-direction: column;
-  align-items: center; /* Aligns items horizontally in the middle */
-  justify-content: center; /* Aligns items vertically in the middle */
+  align-items: center;
+  justify-content: center;
   text-align: center;
   margin: 20px;
   cursor: pointer;
   position: relative;
-  border-bottom: 2px solid #2d4053; /* Cohesive look with the info box */
+  border-bottom: 2px solid #2d4053;
 }
 
 .info-box {
@@ -114,34 +119,33 @@ export default defineComponent({
   border-radius: 5px;
   padding: 5px;
   color: white;
-  font-size: 0.6rem; /* Smaller font size for the info */
+  font-size: 0.6rem;
 }
 
 .info-row {
-  margin: 0px 0; /* Spacing between rows */
+  margin: 0px 0;
   display: flex;
-  align-items: center; /* Keeps items vertically centered */
-  justify-content: center; /* Centers items horizontally within the container */
+  align-items: center;
+  justify-content: center;
 }
 
 .info-icon {
-  height: 10px; /* Align height with font size */
-  width: auto; /* Maintain aspect ratio */
+  height: 10px;
+  width: auto;
   margin-right: 5px;
-  display: block; /* Ensures the image is treated as a block-level element inside flex */
-  object-fit: contain; /* Ensures the image is scaled correctly within the height */
+  display: block;
+  object-fit: contain;
 }
 
 .level-square img,
 .level-square p {
-  /* Centering the content */
   align-self: center;
 }
 
 .locked {
   opacity: 0.5;
   pointer-events: none; /* Disable clicking */
-  cursor: default; /* Change cursor to default for locked levels */
+  cursor: default;
 }
 
 .level-square img:not(.info-icon) {

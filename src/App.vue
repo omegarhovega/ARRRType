@@ -6,7 +6,6 @@
         <TrainSubMenu />
       </template>
       <template v-if="currentRoute.path === '/CampaignMain'">
-        <CampaignSubMenu />
       </template>
       <!-- Content container with padding-top to push it below the menu -->
       <router-view :key="$route.fullPath"></router-view>
@@ -24,7 +23,6 @@ import { useRoute } from "vue-router";
 import Menu from "./components/MainMenu.vue";
 import Footer from "./components/Footer.vue";
 import TrainSubMenu from "./views/Train/TrainSubMenu.vue";
-import CampaignSubMenu from "./views/Campaign/CampaignSubMenu.vue";
 
 export default defineComponent({
   name: "App",
@@ -32,7 +30,6 @@ export default defineComponent({
     Menu,
     Footer,
     TrainSubMenu,
-    CampaignSubMenu,
   },
   setup() {
     const store = useStore();

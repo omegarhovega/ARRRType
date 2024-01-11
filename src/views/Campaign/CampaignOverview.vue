@@ -1,8 +1,6 @@
 <!--
 CampaignOverview
-Using Composition API
-- Main Campaign page, starts on CampaignLevels overview
-- Includes level overview and campaign games
+- Component includes overview of available levels against computer opponent (playable if unlocked by user)
 -->
 <template>
 
@@ -61,15 +59,8 @@ export default defineComponent({
 });
 </script>
 
-
-
-
-<!-- CSS STYLING -->
 <style scoped>
 .level-selection {
   position: relative;
-}
-.message {
-  align-self: center;
 }
 </style>

@@ -1,5 +1,9 @@
-<template>
+<!--
+CampaignLevelSelector
+- Integrates level selector component
+-->
 
+<template>
   <div class="container">
     <div
       v-if="!userSession"
@@ -37,12 +41,7 @@ export default defineComponent({
     const userSession = computed(() => store.userSession);
     const levels = Array.from({ length: LEVELS }, (_, index) => index + 1);
     const lastUnlockedLevel = computed(() => store.lastUnlockedLevel);
-    console.log(
-      "last unlocked level in campaignlevelselector:",
-      lastUnlockedLevel.value
-    );
 
-    // Update this method to set selectedLevel directly in the store
     const selectLevel = (levelNumber: number) => {
       store.setSelectedLevel(levelNumber);
     };
@@ -52,12 +51,8 @@ export default defineComponent({
     };
 
     onMounted(async () => {
-      // important to have correct levels for logged in users
+      // Fetch correct last unlocked level for user
       await store.fetchLastUnlockedLevel();
-      console.log(
-        "last unlocked level in campaignlevelselector:",
-        lastUnlockedLevel.value
-      );
     });
 
     return {
@@ -75,22 +70,22 @@ export default defineComponent({
 .container {
   display: flex;
   flex-direction: column;
-  justify-content: center; /* Centers the inner container horizontally */
-  align-items: center; /* Centers the inner container vertically */
+  justify-content: center;
+  align-items: center;
   min-height: calc(
     100vh - var(--menu-height)
   ); /* Full height minus the menu height */
 }
 .level-squares-container {
   display: flex;
-  justify-content: center; /* Centers the inner container horizontally */
-  align-items: center; /* Centers the inner container vertically */
+  justify-content: center;
+  align-items: center;
 }
 
 .level-squares {
   display: flex;
-  flex-wrap: wrap; /* Allows level squares to wrap onto the next line */
-  justify-content: center; /* Centers items horizontally within the inner container */
-  gap: 10px; /* You can set a gap between the items for spacing */
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
 }
 </style>

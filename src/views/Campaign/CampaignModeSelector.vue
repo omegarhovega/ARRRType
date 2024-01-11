@@ -1,3 +1,8 @@
+<!--
+CampaignModeSelector
+- Allows player to choose between campaign against computer or other human players
+-->
+
 <template>
   <div class="training-mode-selector">
     <div class="mode-boxes-container">
@@ -33,7 +38,7 @@
         class="training-mode-box"
         @click="navigate('OnlineLobby')"
       >
-        <div class="shortcut-key">H</div> <!-- Shortcut Key -->
+        <div class="shortcut-key">H</div>
         <img
           src="/PlayervPlayer.png"
           alt="Mistakes"
@@ -53,13 +58,6 @@
             &nbsp;
           </div>
         </div>
-        <!-- Online Players Overlay -->
-        <div
-          class="online-players-overlay"
-          v-if="showWaitingPlayersCount"
-        >
-          <span>Online: {{ waitingPlayersCount }}</span>
-        </div>
       </div>
     </div>
   </div>
@@ -73,7 +71,6 @@ import {
   onBeforeUnmount,
   ref,
 } from "vue";
-import type { Ref } from "vue";
 import { useStore } from "../../stores/store";
 import { useRouter } from "vue-router";
 
@@ -85,10 +82,8 @@ export default defineComponent({
     // Pinia store
     const store = useStore();
     const userSession = computed(() => store.userSession);
-    const waitingPlayersCount: Ref<number> = ref(0);
-    let subscription: any | null = null; // Initialize to null
-    const showWaitingPlayersCount: Ref<boolean> = ref(false);
 
+    // keyboard navigation shortcuts
     const handleKeyPress = (event: KeyboardEvent) => {
       if (event.ctrlKey || event.metaKey || event.altKey || event.shiftKey) {
         return;
@@ -107,23 +102,15 @@ export default defineComponent({
 
     onMounted(async () => {
       window.addEventListener("keydown", handleKeyPress);
-
-      // Delay fetching the initial count *NOTE* need different way to fetch players currently in lobby channel
-      setTimeout(async () => {}, 300); // 1 second delay
     });
 
     onBeforeUnmount(() => {
       window.removeEventListener("keydown", handleKeyPress);
-      if (subscription) {
-        subscription.unsubscribe();
-      }
     });
 
     return {
       userSession,
       navigate,
-      waitingPlayersCount,
-      showWaitingPlayersCount,
     };
   },
 });
@@ -135,15 +122,13 @@ export default defineComponent({
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  min-height: calc(
-    100vh - var(--menu-height)
-  ); /* Adjusted to the height of main menu, min height used so content is not pushed behing main menu on vertical resize */
+  min-height: calc(100vh - var(--menu-height));
 }
 
 .mode-boxes-container {
   display: flex;
-  justify-content: center; /* Aligns items in the center of the container */
-  flex-wrap: nowrap; /* Prevents wrapping by default */
+  justify-content: center;
+  flex-wrap: nowrap;
   width: 100%;
 }
 
@@ -157,23 +142,23 @@ export default defineComponent({
   position: relative;
   text-align: center;
   cursor: pointer;
-  width: 25%; /* Example percentage width - adjust as needed */
-  max-width: 300px; /* Control the maximum size */
+  width: 25%;
+  max-width: 300px;
   padding: 10px;
 }
 
 .training-mode-box p {
-  white-space: normal; /* Allow wrapping */
-  word-wrap: break-word; /* Break words as needed */
-  text-align: center; /* Center-align text */
-  margin: 0 auto; /* Auto margins for centering */
+  white-space: normal;
+  word-wrap: break-word;
+  text-align: center;
+  margin: 0 auto;
 }
 
 .mode-image {
   /* Allows dynamic resizing to a certain point when screen width reduced */
-  max-width: 300px; /* Maximum width is 100% of the container */
-  width: 100%; /* Width is 100% of the container */
-  height: auto; /* Height will scale automatically */
+  max-width: 300px;
+  width: 100%;
+  height: auto;
   border-radius: 12px;
 }
 
@@ -210,14 +195,14 @@ export default defineComponent({
   align-items: center;
 }
 .bold-text {
-  margin-top: 5px; /* Optional, for a bit of spacing */
+  margin-top: 5px;
   font-weight: bold;
 }
 .option-description {
-  font-size: 12px; /* You can adjust this size */
+  font-size: 12px;
   text-align: center;
-  margin-top: 5px; /* Optional, for a bit of spacing */
-  max-width: 300px; /* Same as the width of the image */
+  margin-top: 5px;
+  max-width: 300px;
   margin-left: auto;
   margin-right: auto;
   word-wrap: break-word;
@@ -225,10 +210,10 @@ export default defineComponent({
 
 .winnings-description {
   font-size: 12px;
-  padding-top: 5px; /* Top padding for the whole box */
-  padding-bottom: 5px; /* Bottom padding for the whole box */
+  padding-top: 5px;
+  padding-bottom: 5px;
   max-width: 300px;
-  margin-top: 10px; /* Negative margin to shift the box upwards */
+  margin-top: 10px;
   margin-left: auto;
   margin-right: auto;
   word-wrap: break-word;

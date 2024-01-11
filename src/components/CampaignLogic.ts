@@ -1,13 +1,13 @@
 import { computed, ref } from "vue";
 import type { Ref } from 'vue';
 import { supabase } from "../supabase";
-import { useStore } from "../stores/store"; // Import the useStore function from the Pinia store
-import { WINNINGS } from './GameConstants';
+import { useStore } from "../stores/store";
+import { MAX_ROUNDS, WINNINGS } from './GameConstants';
 
-// values for game logic, *NOTE* also reset in vue files logic
-export const maxRounds = ref(3);
+// maximum number of games for level vs. computer
+export const maxRounds = ref(MAX_ROUNDS);
 
-// Logic for changing result message content depening on level/single game outcome  ------------------------------------------------
+// Logic for changing result message content depening on level/game outcome  ------------------------------------------------
 // Directly called in DOM
 export function getResultMessageCampaign(
     wpm: Ref<number>,
@@ -15,9 +15,6 @@ export function getResultMessageCampaign(
     opponentWpmLevel: Ref<number>
 ) {
     const store = useStore();
-    console.log("Calling getResultMessageCampaign");
-    console.log("User WPM: ", wpm.value);
-    console.log("Opponent WPM: ", opponentWpmLevel.value);
     return computed(() => {
         if (levelFinished.value) {
             if (
@@ -41,7 +38,7 @@ export function getResultMessageCampaign(
     });
 }
 
-// Logic for detecting whether level/single game has ended and handling level win ------------------------------------------------
+// Logic for detecting whether level/game has ended and handling level win ------------------------------------------------
 // In case of level win by user and level played being the current highest unlocked, increment coins and unlock next level, reset necessary variables
 
 export const handleGameProgress = async (
@@ -54,14 +51,7 @@ export const handleGameProgress = async (
     storeLastUnlockedLevel: Ref<number>,
     levels: any[],
 ) => {
-    // Determine if the game is over (level finished)
     const store = useStore();
-    console.log("Calling handleGameProgress");
-    console.log("Level Finished: ", levelFinished.value);
-    console.log("Player Lives:", store.playerLives);
-    console.log("Opponent Lives:", store.opponentLives);
-    console.log("Current Round:", store.currentRound);
-    console.log("Max Rounds:", maxRounds.value);
 
     if (
         store.playerLives === 0 ||
@@ -83,7 +73,6 @@ export const handleGameProgress = async (
             );
         }
     } else {
-        console.log("Level has not yet ended.");
         showResultsOverlay.value = true;
         gameJustEnded.value = true;
     }
@@ -93,12 +82,7 @@ export const handleLevelWin = async (
     selectedLevel: number,
     levels: any[],
 ) => {
-    console.log("Calling handleLevelWin");
     const store = useStore();
-    console.log("User won the Level.");
-    console.log("userSession:", store.userSession);
-    console.log("userCoins:", store.userCoins);
-    console.log("store:", store);
     const userId = store.userSession ? store.userSession.user.id : null;
     const newCoins = store.userCoins + WINNINGS[selectedLevel];
     const nextLevel = selectedLevel + 1;
@@ -112,13 +96,6 @@ export const handleLevelWin = async (
             store.setLastUnlockedLevel(nextLevel);
         }
 
-        console.log(
-            "Updating coins for user ID:",
-            userId,
-            "New coins:",
-            newCoins
-        );
-
         const { data, error } = await supabase
             .from("profiles")
             .update({ coins: newCoins })
@@ -130,39 +107,31 @@ export const handleLevelWin = async (
             console.log("Coins updated successfully:", data);
             // Re-fetch user coins from the store
             await store.fetchUserCoins();
-            store.reloadMainMenu(); // Trigger the reload of main_menu
+            store.reloadMainMenu(); // Trigger the reload of main_menu to see the updated coins number
         }
 
         // Unlock the next level if there is one and user won
         if (selectedLevel < levels.length - 1) {
             console.log("Unlocking next level:", nextLevel);
-            console.log(
-                "Before commit, last unlocked level:",
-                store.lastUnlockedLevel
-            );
             store.setLastUnlockedLevel(nextLevel);
-            console.log(
-                "After commit, last unlocked level:",
-                store.lastUnlockedLevel
-            );
         }
     }
     // Logic for guests
     else {
         // Update coins in the store *NOTE* disappear after refresh
         store.setUserCoins(newCoins);
+        console.log("Coins updated successfully:", newCoins);
 
         // Update the last unlocked level in the store if there is a next one
         if (selectedLevel < levels.length) {
             store.setLastUnlockedLevel(nextLevel);
-            console.log("Setting last unlocked level to ", nextLevel, " if there is one.")
+            console.log("Unlocking next level:", nextLevel)
         }
     }
 };
 
 
 export async function updateUnlockedLevel(userId: string, newLevel: number): Promise<boolean> {
-    console.log("Calling updateUnlockedLevel")
     const { data, error } = await supabase
         .from("profiles")
         .update({ last_unlocked_level: newLevel })
@@ -177,11 +146,6 @@ export async function updateUnlockedLevel(userId: string, newLevel: number): Pro
 
 export function updateLivesAfterRound(wpm: number, opponentWpmLevel: Ref<number>) {
     const store = useStore();
-    console.log("Calling updateLivesAfterRound")
-    console.log("User WPM", wpm);
-    console.log("Opponent WPM.", opponentWpmLevel.value);  // Assuming opponentWPM is accessible from this scope
-    console.log("Player lives before update", store.playerLives);
-    console.log("Opponent lives before update", store.opponentLives);
 
     if (wpm > opponentWpmLevel.value) {
         store.opponentLives -= 1;
@@ -192,20 +156,18 @@ export function updateLivesAfterRound(wpm: number, opponentWpmLevel: Ref<number>
         store.playerLives -= 1;
         store.opponentLives -= 1;
     }
-    console.log("Player lives after update", store.playerLives);
-    console.log("Opponent lives after update", store.opponentLives);
+    console.log("Player lives after round", store.playerLives);
+    console.log("Opponent lives after round", store.opponentLives);
 }
 
 // Logic for resetting variables for new round-------------------------------------------------------------------
-// *NOTE* other functions such as resetChevron directly called in vue files, check alignment and correct reset
+// *NOTE* sequence of reset commands important
 
 export const resetGameStateForNewRound = (
 ) => {
-    console.log("Calling resetGameStateForNewRound");
     const store = useStore();
-    console.log("Resetting game state for new round. Previous round:", store.currentRound);
     store.currentRound += 1;
-    store.resetKeystrokes(); // *NOTE* check if correctly placed
+    store.resetKeystrokes();
     store.resetCorrectKeystrokes();
 };
 
@@ -219,7 +181,6 @@ export const handleNextRound = async (
     resetOpponentProgress: Function,
     resetStats: Function,
 ) => {
-    console.log("Calling handleNextRound");
     resetGameStateForNewRound();
     showResultsOverlay.value = false;
     resetGameState();
@@ -227,6 +188,5 @@ export const handleNextRound = async (
     resetOpponentProgress();
     resetStats();
     await fetchText();
-    console.log("handleNextRound started");
 };
 

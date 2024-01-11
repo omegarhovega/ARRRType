@@ -1,16 +1,9 @@
 <!--
 CampaignGame
-Using Composition API
-- Logic for playing levels in the campaign and progressing through campaign
-- Registers coin wins and which levels are (un)locked
-Using Vue Composition API *NOTE* Group code appropriately and see if Composition API makes sense everywhere (should be used only for longer more complex components)
-
-Bugs:
-- Levels are not saved correctly: When logged in they should be saved to database and when locked out just from local storage (resets when deleting cache or logging in)
-- Opponent once randomly started after first 4 or 5 characters, could not reproduce (might be related to opponent progress logic - should always start at 0)
+- Logic for playing levels in the campaign
+- Registers coin wins, rank improvements and which levels are (un)locked
+- Using Vue Composition API
 -->
-
-<!-- *********** HTML **************** -->
 
 <template>
   <!-- for mobile keyboard -->
@@ -56,7 +49,6 @@ Bugs:
         :opponents="opponentsData"
         :loading="loading"
       />
-      <!-- Countdown -->
       <div
         v-if="!loading"
         class="w-2/3 mx-auto line-wrapper"
@@ -100,7 +92,7 @@ Bugs:
         <div class="locked-container">
           <p>Level is not unlocked yet</p>
           <button @click="goBackToCampaign">
-            <div class="shortcut-key">B</div> <!-- Moved inside the button -->
+            <div class="shortcut-key">B</div>
             Go Back
           </button>
         </div>
@@ -128,9 +120,6 @@ Bugs:
   </div>
 </template>
 
-
-<!-- *********** JAVA SCRIPT **************** -->
-
 <script lang="ts">
 import {
   defineComponent,
@@ -144,9 +133,9 @@ import {
 import type { Ref, ComponentPublicInstance } from "vue";
 import { useStore } from "../../stores/store";
 import { useOpponentLogic } from "../../components/OpponentLogic";
-import { useTypingTextHandler } from "../../components/TypingTextHandler"; // Import the typing text handler
+import { useTypingTextHandler } from "../../components/TypingTextHandler";
 import { useCountdownLogic } from "../../components/CountdownLogic";
-import { useGameStateManagement } from "../../components/GameStateManagement"; // Import the game state management logic
+import { useGameStateManagement } from "../../components/GameStateManagement";
 import { useUtilities } from "../../components/Utilities";
 import {
   getResultMessageCampaign,
@@ -188,26 +177,15 @@ export default defineComponent({
     // Variables
     // Fetch selectedLevel from route params
     const selectedLevelFromRoute = Number(route.params.levelNumber); // deduces level number from address/route
-    const selectedLevel = computed(() => store.selectedLevel); // <-- Add this line
+    const selectedLevel = computed(() => store.selectedLevel);
     const levels = computed(() => store.levels);
     const levelFinished = ref(false);
-
     const actualSelectedLevel = computed(() => {
       return selectedLevelFromRoute || store.selectedLevel || 0; // fallback to 0 if all else fails
     });
 
-    const mugshotImagePath = computed(() => {
-      console.log("Selected Level,", actualSelectedLevel.value);
-      const level = actualSelectedLevel.value || 0; // Fetch the selected level from the store
-      if (level >= 1 && level <= 15) {
-        return `/avatars/Head${level}.png`; // Construct the image path based on the level
-      }
-      return "/avatar.png"; // A default image if the level is out of range
-    });
-
     // check if mobile device
     const hiddenInput = ref<HTMLElement | null>(null);
-
     function isMobileDevice() {
       const userAgent = navigator.userAgent;
       return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
@@ -215,12 +193,10 @@ export default defineComponent({
       );
     }
 
-    // logic for handling player inputs, determine correct and incorrect inputs, statistics, scrolling for longer texts (TypingTextHandler)
+    // Refs
     const scrollContainer = ref<HTMLElement | null>(null);
     const gameJustEnded = ref(false);
     const showResultsOverlay = ref(false);
-
-    // Refs
     const chevronTop: Ref<number> = ref(0);
     const chevronLeft: Ref<number> = ref(0);
     const charSpans: Ref<(Element | ComponentPublicInstance)[]> = ref([]); // span elements for each character in the DOM to establish pixel position
@@ -280,18 +256,21 @@ export default defineComponent({
       ];
     });
 
+    const mugshotImagePath = computed(() => {
+      const level = actualSelectedLevel.value || 0;
+      if (level >= 1 && level <= 15) {
+        return `/avatars/Head${level}.png`; // Construct the image path based on the level
+      }
+      return "/avatar.png"; // A default image if the level is out of range
+    });
+
     // Function to generate a random taunt text
     const generateRandomTaunt = () => {
       const randomIndex = Math.floor(Math.random() * PIRATE_TAUNTS.length);
       return PIRATE_TAUNTS[randomIndex];
     };
-
-    // In your Vue component setup
     const showTaunt = ref(true);
     const randomTaunt = ref(generateRandomTaunt());
-
-    // Function to update the random taunt text
-    // Function to update the random taunt text
     const updateRandomTaunt = () => {
       // Generate random taunt regardless of game state
       randomTaunt.value = generateRandomTaunt();
@@ -301,7 +280,7 @@ export default defineComponent({
         showTaunt.value = true;
 
         // Set a timer to clear the taunt text after 5 seconds
-        setTimeout(clearTaunt, 5000); // 5000 milliseconds (5 seconds)
+        setTimeout(clearTaunt, 5000);
       }
     };
 
@@ -319,12 +298,11 @@ export default defineComponent({
     };
 
     const isLevelLocked = computed(() => {
-      const lastUnlockedLevel = store.lastUnlockedLevel; // Assuming this value is stored in your Pinia store
+      const lastUnlockedLevel = store.lastUnlockedLevel;
       return actualSelectedLevel.value > lastUnlockedLevel;
     });
 
     const goBackToCampaign = () => {
-      console.log("Calling goBackToCampaign");
       router.push("/Campaign");
     };
 
@@ -337,12 +315,12 @@ export default defineComponent({
       saveTotalTimePlayed,
     } = useUtilities();
 
-    // variable to establish current character at current index (*NOTE* could be centralised)
+    // variable to establish current character at current index
     const currentChar = computed(() =>
       fetchedText.value.charAt(store.currentIndex)
     );
 
-    // formatting for overlay boxes at end of rounds (*NOTE* could be centralised)
+    // formatting for overlay boxes at end of rounds
     const containerStyle = computed(() => ({
       filter: showResultsOverlay.value ? "blur(5px)" : "none",
     }));
@@ -353,8 +331,8 @@ export default defineComponent({
     // ----------------------
     // 1. Load Necessary Data
     // ----------------------
-    // load text from database
-    const { fetchedText, chars, fetchText } = useTextManagement("text"); //pulls texts only for campaign
+    // load text from database ("text" mode for campaign)
+    const { fetchedText, chars, fetchText } = useTextManagement("text");
 
     // ------------------
     // 2. Start Countdown
@@ -372,14 +350,13 @@ export default defineComponent({
       startOpponentProgress();
       startWpmTracking();
       startIndexTracking();
-      window.removeEventListener("keydown", handleKeyDown); // Remove previous keydown listener if any
+      window.removeEventListener("keydown", handleKeyDown); // Remove previous stale keydown listener if any
       window.addEventListener("keydown", handleKeyDown); // Add new keydown listener
     });
 
     //--------------
     // 3. Start Game
     // -------------
-    // *NOTE* add startGameLogic() function to group relevant functions
     const gameStateManagement = useGameStateManagement();
 
     const {
@@ -409,7 +386,7 @@ export default defineComponent({
       await gameProgress(); // handleGameProgress at end of level
     });
 
-    // handle inputs
+    // handle user inputs
     const {
       accuracy,
       totalOccurrences,
@@ -464,12 +441,10 @@ export default defineComponent({
     // A) Stop Game Logic
     // B) Save Statistics
     // C) Reset All Relevant Game Variables
-    // *NOTE* removed watcher for endTime and handle gameEnd through flow alone
 
     function handleGameEnd() {
-      console.log("Calling handleGameEnd");
       // triggers overlay above
-      endGame(removeKeyDownListener); // *NOTE* sequence important since some functions check of there is an endTime which is set here
+      endGame(removeKeyDownListener); // *NOTE* sequence important since some functions check if there is an endTime which is set here
       stopGameActivities(
         stopOpponentProgress,
         stopWpmTracking,
@@ -488,26 +463,11 @@ export default defineComponent({
         saveStats
       );
       saveTotalTimePlayed();
-      console.log(
-        "Time and Levels played Campaign Game",
-        store.totalTimePlayed,
-        store.numberOfGamesPlayed
-      );
     }
 
     // reset key values when initiating new round and handle end of level
     const gameProgress = async () => {
-      console.log(
-        "Before updating lives:",
-        livesPlayer.value,
-        livesOpponent.value
-      );
       updateLivesAfterRound(wpm.value, opponentWpmLevel);
-      console.log(
-        "After updating lives:",
-        livesPlayer.value,
-        livesOpponent.value
-      );
       await handleGameProgress(
         maxRounds,
         levelFinished,
@@ -518,16 +478,10 @@ export default defineComponent({
         ref(store.lastUnlockedLevel),
         levels.value
       );
-      console.log(
-        "Store state before updating lives:",
-        JSON.stringify(store.$state)
-      );
     };
 
     // Clickable "next round" button in result overlay at round end, resetting key values
-    // *NOTE* needs to be the same as end round logic when pressing enter (should combine?)
     const handleNextRoundClick = () => {
-      console.log("handleNextRoundClick Triggered");
       resetChevronPosition(chevronTop, chevronLeft);
       handleNextRound(
         resetGameStateForNewRound,
@@ -543,24 +497,17 @@ export default defineComponent({
       updateCharSpans();
     };
 
-    console.log("Selected Level (outside method):", selectedLevel);
-
-    // handling player inputs within results overlay to allow hitting enter for continuing (*NOTE* could be centralised)
     // handling player inputs within results overlay to allow hitting enter for continuing
     const handleKeyPress = (event: KeyboardEvent) => {
-      console.log("Calling handleKeyPress overlay");
-
-      // Check if 'B' is pressed and level is locked
+      // Check if 'B' is pressed and level is locked to go back
       if (event.key === "b" && isLevelLocked.value) {
         goBackToCampaign();
         return;
       }
 
-      // Existing logic for 'Enter' key
       if (event.key !== "Enter") {
         return;
       }
-      console.log("Enter key pressed");
 
       if (showResultsOverlay.value) {
         if (levelFinished.value) {
@@ -583,11 +530,7 @@ export default defineComponent({
 
     // Clickable "back to overview" button in results overlay at level end, resetting key values (incl. lives)
     const backToOverview = () => {
-      console.log("backToOverview Triggered");
-      console.log("Level Finished:", levelFinished.value);
-      console.log("Show Results Overlay:", showResultsOverlay.value);
       resetGameStateForNewRound();
-      //emit("returnToOverview");
       router.push("/Campaign");
     };
 
@@ -597,18 +540,17 @@ export default defineComponent({
       if (isMobileDevice() && hiddenInput.value) {
         hiddenInput.value.focus();
       }
-      console.log("Component Mounted");
+      // initially fetch last unlocked level for player
       await store.fetchLastUnlockedLevel();
+      // add event listener for keyboard inputs
       window.addEventListener("keyup", handleKeyPress);
+      // Check if the level is not locked and if unlocked, start game (prevents players navigating to later level without having ulocked it)
       if (!isLevelLocked.value) {
-        // Check if the level is not locked
         // Existing logic for game initialization
         window.addEventListener("keydown", detectCapsLock);
         window.addEventListener("keyup", detectCapsLock);
         fetchText(store.numberOfWords); // Fetch the initial text
         countdownStart(); // Start the initial countdown
-        console.log("Selected level on mount:", selectedLevel.value);
-        console.log("Actual selected level on mount:", actualSelectedLevel);
       }
       // Update the taunt text initially
       updateRandomTaunt();
@@ -635,27 +577,22 @@ export default defineComponent({
 
     onUnmounted(() => {
       // Clean up event listeners
-      console.log("Component Unmounted");
       stopGameActivities(
         stopOpponentProgress,
         stopWpmTracking,
         stopIndexTracking,
         stopCountdown
       );
-      // *NOTE* check if stats reset affects displaying the last round stats since userStats is cleared (should grab from local storage)
       resetGameActivities(
         resetOpponentProgress,
         resetGameState, // from GameStateManagement
-        resetStats // from UserStatistics, *NOTE* prevent from removing local storage data that needs to be kept *NOTE* check slow words
+        resetStats // from UserStatistics
       );
       resetHasMistake();
       // reset values for campaign separately
       store.playerLives = 2;
       store.opponentLives = 2;
       store.currentRound = 1;
-      console.log("Current on unmount playerLives:", store.playerLives);
-      console.log("Currenton on unmount playerLives:", store.opponentLives);
-      console.log("Current on unmount round:", store.currentRound);
       // Remove keydown event listeners
       removeKeyDownListener();
       window.removeEventListener("keyup", handleKeyPress);
@@ -727,9 +664,6 @@ export default defineComponent({
 });
 </script>
 
-
-<!-- *********** CSS **************** -->
-
 <style scoped>
 #container {
   display: flex;
@@ -777,15 +711,8 @@ export default defineComponent({
   padding: 5px;
 }
 
-.image-container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding-bottom: 10px;
-}
-
 #speed-text {
-  white-space: normal; /* pre-wrap not used */
+  white-space: normal;
   text-align: justify;
   overflow-wrap: break-word;
   height: 90px;
@@ -813,7 +740,7 @@ export default defineComponent({
 }
 
 #speed-text span {
-  border-left: solid 1px transparent; /* Add a transparent right border to all characters */
+  border-left: solid 1px transparent; /* Add a transparent right border to all characters where chevron has space */
   color: #d5ddd7;
   position: relative;
   font-weight: 400;
@@ -821,47 +748,12 @@ export default defineComponent({
   line-height: 30px;
 }
 
-#speed-text span.correct {
-  color: #d5ddd7;
-  opacity: 0.4;
-}
-
-#speed-text span.incorrect {
-  color: red;
-  border-bottom: 2px solid red;
-  opacity: 0.25;
-}
-
-#speed-text span.incorrectSpace {
-  border-bottom: 2px solid red;
-  opacity: 0.25;
-}
-
-#capslock-overlay {
-  position: absolute;
-  left: 0; /* Align to the left */
-  bottom: 100%; /* Position above the typing test box */
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 1001;
-  width: 100%; /* Optional: Set the width to match the typing test box */
-}
-
-#capslock-overlay .message {
-  background-color: #2d4053;
-  padding: 10px;
-  border-radius: 5px;
-  font-size: 1rem;
-  font-weight: bold;
-}
-
 .chevron {
   position: absolute;
   top: 1px;
   left: 0px;
   height: 28px;
-  width: 2px; /* Change this to make the line thicker or thinner */
+  width: 2px;
   background-color: #e69500;
   z-index: 1000; /* Ensure it's above the text but below other overlays */
   transition: top 0.1s ease, left 0.1s ease;
@@ -873,21 +765,21 @@ export default defineComponent({
 
 .locked {
   display: flex;
-  justify-content: center; /* Centers items horizontally */
-  align-items: center; /* Centers items vertically */
+  justify-content: center;
+  align-items: center;
   min-height: calc(
     100vh - var(--menu-height)
   ); /* Full height minus the menu height */
-  flex-wrap: wrap; /* Allows items to wrap if needed */
-  gap: 10px; /* You can set a gap between the items */
+  flex-wrap: wrap;
+  gap: 10px;
 }
 
 .locked-container {
   display: flex;
   flex-direction: column;
   justify-content: center; /* Centers items horizontally in the mode-boxes-container */
-  flex-wrap: wrap; /* Allows items to wrap within the mode-boxes-container */
-  gap: 10px; /* You can set a gap between the items */
+  flex-wrap: wrap;
+  gap: 10px;
   height: 100px;
   position: relative;
   text-align: center;
@@ -896,15 +788,6 @@ export default defineComponent({
 
 .locked-container button {
   position: relative;
-}
-
-.training-mode-box {
-  position: relative;
-  text-align: center;
-  cursor: pointer;
-  width: 25%; /* Example percentage width - adjust as needed */
-  max-width: 300px; /* Control the maximum size */
-  padding: 10px;
 }
 
 .shortcut-key {
@@ -941,61 +824,44 @@ export default defineComponent({
   pointer-events: none;
 }
 
-/* Style the speech container */
 .opponent-wrapper {
   display: flex;
-  align-items: center; /* Center items vertically */
+  align-items: center;
   position: relative; /* Set position to relative for absolute positioning of speech container */
 }
 
 .speech-container {
-  position: absolute; /* Position the speech container absolutely */
-  top: 0; /* Align it to the top of the opponent image */
-  left: 100px; /* Adjust this value as needed to control the distance from the image */
+  position: absolute;
+  top: 0;
+  left: 100px;
 }
 
-/* Style the speech bubble */
-.speech-bubble {
-  background-color: #ffffff;
-  border: 2px solid #000000;
-  border-radius: 10px;
-  padding: 10px;
-  top: 5px;
-  max-width: 200px;
-  text-align: center;
-  font-size: 14px;
-  position: relative; /* Add relative positioning for child elements */
-  margin-left: 10px; /* Add margin to separate from the image */
-}
-
-/* Style the speech text */
 .speech-text {
   font-family: "Arial", sans-serif;
   color: #000000;
   line-height: 1.2;
 }
 
-/* Style the speech triangle */
 .speech-triangle {
   position: absolute;
-  top: 50%; /* Position it in the middle vertically */
-  left: -8px; /* Position it to the right of the speech bubble */
+  top: 50%;
+  left: -8px;
   width: 0;
   height: 0;
   border-left: 10px solid transparent;
   border-right: 10px solid transparent;
   border-top: 10px solid #ffffff;
-  transform: translateY(-50%); /* Center it vertically */
+  transform: translateY(-50%);
 }
 
 .pixelated-bubble {
-  background-color: #ffffff; /* Set the background color of the bubble */
-  border: 2px solid #000000; /* Set the border color and thickness */
-  border-radius: 10px; /* Adjust the border radius for a rounded appearance */
-  padding: 10px; /* Adjust the padding as needed */
+  background-color: #ffffff;
+  border: 2px solid #000000;
+  border-radius: 10px;
+  padding: 10px;
   min-width: 200px;
   max-width: 300px;
   text-align: center;
-  font-size: 14px; /* Adjust the font size as needed */
+  font-size: 14px;
 }
 </style>

@@ -64,7 +64,10 @@ export const DEFAULT_COUNTDOWN_VALUE = 3;
 // maximum number of players in an online PvP game
 export const MAX_PLAYERS = 3;
 
+// maximum rounds in a game vs. a computer opponent in campaign mode  (default: best of 3)
+export const MAX_ROUNDS = 3;
 
+// Taunts for campaign games vs. computer opponent
 export const PIRATE_TAUNTS: string[] = [
     "Ye type like a drunken sailor who's lost his sea legs!",
     "I've seen better typing from a parrot with a quill in its beak!",
