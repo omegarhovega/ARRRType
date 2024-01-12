@@ -17,7 +17,7 @@
       >Contact Us</a>
       <span class="divider">|</span>
       <a
-        href="#"
+        href="https://github.com/omegarhovega/ARRRType"
         target="_blank"
         rel="noopener noreferrer"
         class="footer-link"
