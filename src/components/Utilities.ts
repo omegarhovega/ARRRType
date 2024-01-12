@@ -464,5 +464,6 @@ export function useUtilities() {
         resetChevronPosition,
         useTimeDifference,
         saveTotalTimePlayed,
+        fetchDataFromDB,
     };
 }

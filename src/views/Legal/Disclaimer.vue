@@ -14,18 +14,18 @@
 
 <style scoped>
 .disclaimer {
-  flex-direction: column; /* This will stack children vertically */
+  flex-direction: column;
   min-height: calc(
     100vh - var(--menu-height)
   ); /* Full height minus the menu height */
   padding-bottom: var(
     --footer-height
-  ); /* Add padding bottom equal to your footer's height */
+  ); /* padding bottom equal to your footer's height */
   overflow-y: auto;
 }
 
 h1,
 p {
-  width: 100%; /* Ensures they take full width of the container, pushing them each to a new line */
+  width: 100%;
 }
 </style>

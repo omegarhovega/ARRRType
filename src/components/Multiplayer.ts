@@ -4,6 +4,7 @@ import { supabase } from "../supabase";
 import { useStore } from "../stores/store";
 import { DEFAULT_COUNTDOWN_VALUE } from './GameConstants';
 
+// multiplayer text management draws text id from games table in supabase to synchronize for all players
 export function useMultiplayerTextManagement() {
     const store = useStore();
     const fetchedText = ref<string>("");
@@ -72,7 +73,6 @@ export function useMultiplayerGameStateManagement(): MultiplayerGameStateManagem
 
     // Function to start the game
     function startGame() {
-        console.log("Calling startGame")
         store.isGameStarted = true;
         store.startTime = new Date();
         store.typingAllowed = true;
@@ -80,17 +80,14 @@ export function useMultiplayerGameStateManagement(): MultiplayerGameStateManagem
 
     // Function to end the game
     function endGame(onFinish: () => void) {
-        console.log("Calling endGame")
         store.isGameFinished = true;
         store.endTime = new Date();
-        onFinish(); // Call the provided function to finish the game (e.g., remove the keydown event listener)
+        onFinish();
     }
 
     // Function to reset the game
     function resetGameState() {
         const store = useStore();
-        console.log("Calling resetGame")
-        //store.userStats = []; *NOTE* moved to resetStats, check if correctly cleared
         store.isGameStarted = false;
         store.isGameFinished = false;
         store.startTime = null;
@@ -100,23 +97,9 @@ export function useMultiplayerGameStateManagement(): MultiplayerGameStateManagem
         store.startTyping = false;
         store.typed = {};
         store.typedIndices = [];
-        store.isCapsLockOn = false; // *NOTE* chose to reset, is turned on again at beginning of a round if CapsLock is still on.
+        store.isCapsLockOn = false;
         store.errors = [];
         store.typingAllowed = false;
-
-        console.log("in resetGame isGameStarted:", store.isGameStarted)
-        console.log("in resetGame isGameFinished:", store.isGameFinished)
-        console.log("in resetGame resetting userStats:", store.userStats)
-        console.log("in resetGame currentIndex", store.currentIndex);
-        console.log("in resetGame endTime", store.endTime);
-        console.log("in resetGame loading", store.loading);
-        console.log("in resetGame startTime", store.startTime);
-        console.log("in resetGame startTyping", store.startTyping);
-        console.log("in resetGame typed", store.typed);
-        console.log("in resetGame typedIndices", store.typedIndices);
-        console.log("in resetGame isCapsLockOn", store.isCapsLockOn);
-        console.log("in resetGame errors", store.errors);
-        console.log("in resetGame typingAllowed", store.typingAllowed);
     }
 
     function stopGameActivities(stopWpmTracking: Function, stopIndexTracking: Function, stopCountdown: Function) {
@@ -129,9 +112,8 @@ export function useMultiplayerGameStateManagement(): MultiplayerGameStateManagem
     }
 
     function resetGameActivities(resetGameState: Function, resetStats: Function) {
-        console.log("Calling resetGameStateManagement")
         resetGameState(); // from GameStateManagement
-        resetStats(); // from UserStatistics, *NOTE* prevent from removing local storage data that needs to be kept
+        resetStats(); // from UserStatistics
     }
 
     return {
@@ -159,7 +141,6 @@ export function useMultiplayerCountdownLogic(onCountdownEnd: () => void, startTi
     const countdownInterval = ref<number | null>(null);
 
     function stopCountdown() {
-        console.log("Calling stopCountdown")
         if (countdownInterval.value !== null) {
             clearInterval(countdownInterval.value);
             countdownInterval.value = null;
@@ -169,7 +150,6 @@ export function useMultiplayerCountdownLogic(onCountdownEnd: () => void, startTi
     }
 
     function countdownStart() {
-        console.log("Calling countdownStart");
         if (countdownInterval.value !== null) {
             clearInterval(countdownInterval.value);
         }
@@ -178,7 +158,7 @@ export function useMultiplayerCountdownLogic(onCountdownEnd: () => void, startTi
         countdownFinished.value = false;
         showCountdown.value = true;
 
-        // Calculate the delay until the startTime
+        // Calculate the delay until the startTime to allow players with different loading times to have same start time
         let delay = 0;
         if (startTime) {
             const startDateTime = new Date(startTime).getTime();
@@ -229,13 +209,6 @@ export const handlePvPLevelWin = async () => {
     // Logic for logged-in users
     if (userId) {
 
-        console.log(
-            "Updating coins for user ID:",
-            userId,
-            "New coins:",
-            newCoins
-        );
-
         const { data, error } = await supabase
             .from("profiles")
             .update({ coins: newCoins })
@@ -244,7 +217,6 @@ export const handlePvPLevelWin = async () => {
         if (error) {
             console.error("Error updating coins:", error);
         } else {
-            console.log("Coins updated successfully:", data);
             // Re-fetch user coins from the store
             await store.fetchUserCoins();
             store.reloadMainMenu(); // Trigger the reload of main_menu
@@ -252,7 +224,7 @@ export const handlePvPLevelWin = async () => {
     }
     // Logic for guests
     else {
-        // Update coins in the store *NOTE* disappear after refresh
+        // Update coins in the store
         store.setUserCoins(newCoins);
     }
 };

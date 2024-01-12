@@ -28,7 +28,7 @@
           class="footer-image"
         />GitHub
       </a>
-      <span class="divider">| v0.8b</span>
+      <span class="divider">| v0.9b</span>
     </div>
   </footer>
 </template>

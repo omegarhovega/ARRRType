@@ -1,6 +1,6 @@
-import { reactive, ref, onMounted, onUnmounted } from "vue";
+import { reactive, ref } from "vue";
 import type { Ref, ComputedRef } from "vue";
-import { supabase } from "../supabase"; // Adjust the path as needed
+import { supabase } from "../supabase";
 
 interface PayloadType {
     playerId: string;
@@ -17,7 +17,6 @@ export function useMultiplayerRealtime(
     countdownStart: () => void,
     roundTripLatency: Ref<number>,
 ) {
-    console.log("Initializing useMultiplayerRealtime");
     const channel = supabase.channel(`game_${gameId.value}`);
     console.log(`Channel initialized for game: ${gameId.value}`);
 
@@ -29,6 +28,8 @@ export function useMultiplayerRealtime(
     const players = ref([]);
     const isChannelSubscribed = ref(false);
 
+    // Heartbeat logic
+    // Supabase game table needs RLS permission to UPDATE for the heartbeat to function
     const heartbeatchannel = supabase.channel(`game-heartbeat-${gameId.value}`)
         .on("postgres_changes", {
             event: "UPDATE",
@@ -61,6 +62,8 @@ export function useMultiplayerRealtime(
     const callInsertHeartbeat = async (gameId: any, userId: any) => {
         const timestampBeforeRpc = Date.now(); // Record the timestamp before RPC call
 
+        console.log("calling insert Heartbeat rpc")
+
         const { data, error } = await supabase.rpc("update_heartbeat", {
             game_id: gameId,
             user_id: userId,
@@ -81,13 +84,13 @@ export function useMultiplayerRealtime(
         if (gameId.value == null) {
             return;
         } else {
-            console.log("calling insert Hearbeat with", gameId.value, playerID);
+            console.log("calling insert Heartbeat with", gameId.value, playerID);
             callInsertHeartbeat(gameId.value, playerID);
         }
     };
 
 
-    // Function to broadcast current progress
+    // Function to broadcast current progress for users which allows different progress bars to be updated
     async function broadcastProgress(newProgress: number, oldProgress: number) {
         console.log(`Attempting to broadcast progress. Channel subscribed: ${isChannelSubscribed.value}, New Progress: ${newProgress}, Old Progress: ${oldProgress}`);
         if (isChannelSubscribed.value && newProgress !== oldProgress) {
@@ -112,7 +115,7 @@ export function useMultiplayerRealtime(
         }
     }
 
-    // Function to update game finish time
+    // Function to update game finish time to determine winner
     async function updateGameFinishTime() {
         const currentTime = new Date().toISOString();
 
@@ -205,7 +208,7 @@ export function useMultiplayerRealtime(
         console.log("Multiplayer game setup complete.");
     }
 
-
+    // heartbeat channel setup
     function setupChannelSubscriptions() {
         heartbeatchannel.subscribe();
         // Send a heartbeat message every 5 seconds
@@ -219,21 +222,14 @@ export function useMultiplayerRealtime(
         isChannelSubscribed.value = true;
     }
 
+
     function handleCurrentProgressUpdate(payload: any) {
-        console.log("Received nested payload: ", payload.payload);
         const typedPayload = payload.payload as PayloadType;
         const receiveTimestamp = Date.now();
         const latency = receiveTimestamp - payload.timestamp;
-        console.log("Opponent latency is approximately", latency, "ms");
         if (payload.payload && payload.payload.playerId !== playerID) {
-            console.log(
-                "Received opponent's current progress: ",
-                payload.payload.progress
-            );
-            opponentProgresses[typedPayload.playerId] = typedPayload.progress;
-
             // update opponent progress in local state
-            console.log("Current opponentProgresses:", opponentProgresses);
+            opponentProgresses[typedPayload.playerId] = typedPayload.progress;
         }
         const echoTimestamp = Date.now();
         channel.send({
@@ -248,22 +244,15 @@ export function useMultiplayerRealtime(
         const receiveTimestamp = Date.now();
         const originalTimestamp = payload.originalTimestamp;
         roundTripLatency.value = receiveTimestamp - originalTimestamp;
-
-        console.log(
-            "Round-trip latency is approximately",
-            roundTripLatency,
-            "ms"
-        );
     }
 
     function handleFinishedEvent(payload: any) {
-        // Mark the opponent as finished and get his WPM
+        // Mark the opponent as finished for broadcast
         if (payload.playerId !== playerID) {
             console.log(
-                "Received opponent's finished status and WPM: ",
+                "Received opponent's finished status: ",
                 payload
             );
-            // Update opponent's finished status and WPM in your local state here
         }
     }
 

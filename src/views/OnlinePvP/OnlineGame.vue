@@ -1,8 +1,6 @@
 <!--
-Train
-Using Composition API
-- Allows users to train typing
-- Can set opponent (progress visible) and opponent speed via TrainSubMenu
+Online Game
+- Player vs. Player game using supabase realtime functionality
 -->
 <template>
   <!-- for mobile keyboard -->
@@ -31,15 +29,13 @@ Using Composition API
         v-if="!loading"
         class="w-2/3 mx-auto line-wrapper"
       >
-        <!-- *NOTE* careful that chevron div is positioned correctly (was here outside speed text before) could be necessary to move out of GameTextDisplay again, as sometimes jumps around since the relative measurement might be influenced by loading times of diff elements -->
-
+        <!-- Chevron -->
         <div
           class="chevron"
           :style="{ top: `${chevronTop}px`, left: `${chevronLeft}px` }"
         ></div>
-        <!-- Does it make sense to put countdown here as countdown could change scrollContainer reference? -->
 
-        <!-- *NOTE* scroll container is drawn from here, careful if other elements are added inside other than text -->
+        <!-- Scroll container -->
         <div
           id="speed-text"
           ref="scrollContainer"
@@ -122,13 +118,8 @@ import CountdownTimer from "../../components/GameItems/CountdownTimer.vue";
 import GameStats from "../../components/GameItems/GameStats.vue";
 import OverlayMessages from "../../components/GameItems/OverlayMessages.vue";
 
-interface PayloadType {
-  playerId: string;
-  progress: number;
-}
-
 export default defineComponent({
-  props: ["gameId"], // Declare gameId as a prop
+  props: ["gameId"],
   components: {
     PlayerProgress,
     OpponentProgress,
@@ -137,7 +128,7 @@ export default defineComponent({
     GameStats,
     OverlayMessages,
   },
-  setup(props) {
+  setup() {
     // -----------------------------------
     // Variables and general functionality
     // -----------------------------------
@@ -147,19 +138,16 @@ export default defineComponent({
     // Pinia store
     const store = useStore();
 
-    // Supabase channel and gameId
+    // Supabase channel and gameId, startTime, playerStatuses
     const gameId = computed(() => store.gameId);
     const playerID = store.playerID;
-    // Subscribe to the channel
-    // *NOTE* ADD for sending game state between players, send every new index progress and WPM per second
-    // Define startTime as a reactive Ref variable initialized to null
     const startTime: Ref<Date | null> = ref(null);
     const playerStatuses = ref<Record<string, boolean>>({});
 
     // Refs
     const chevronTop: Ref<number> = ref(0);
     const chevronLeft: Ref<number> = ref(0);
-    const charSpans: Ref<(Element | ComponentPublicInstance)[]> = ref([]); // span elements for each character in the DOM to establish pixel position
+    const charSpans: Ref<(Element | ComponentPublicInstance)[]> = ref([]);
     const scrollContainer = ref<HTMLElement | null>(null);
     const tooltipTimeoutId = ref<number | null>(null);
     const countdownInterval = ref<number | null>(null);
@@ -180,24 +168,25 @@ export default defineComponent({
     const typed = computed(() => store.typed);
     const typedIndices = computed(() => store.typedIndices);
     const isCapsLockOn = computed(() => store.isCapsLockOn);
-    const loading = computed(() => store.loading); // *NOTE* check if moving to this file from storage improves loading performance
+    const loading = computed(() => store.loading);
     const startTyping = computed(() => store.startTyping);
     const errors = computed(() => store.errors);
     const currentIndexWatcher = computed(() => store.currentIndex);
 
     // Computed other
-
     const opponentsData = computed(() => {
       return filteredOpponents.value.map((opponentId) => ({
         id: opponentId,
-        name: "Opponent", // Replace with actual name if available
+        name: "Opponent", // Replace with actual name
         progress: opponentProgresses[opponentId] || 0,
       }));
     });
+
     // indicate in end of game overlay when results are not saved due to accuracy being 50% or below
     const displayAccuracyWarning = computed(() => {
       return accuracy.value <= 50;
     });
+
     // blur background while results tooltip is overlayed
     const containerStyle = computed(() => ({
       filter: isFinished.value ? "blur(5px)" : "none",
@@ -205,15 +194,14 @@ export default defineComponent({
 
     // Compute currentProgress
     const currentProgress = computed(() => {
-      // Access uniqueCorrectIndices from the store
       const uniqueCorrectIndices = store.uniqueCorrectIndices;
       // Count the number of true values in uniqueCorrectIndices
       const correctCount = uniqueCorrectIndices.reduce(
         (acc, cur) => acc + (cur ? 1 : 0),
         0
       );
-      // Calculate the current progress
-      return (correctCount / uniqueCorrectIndices.length) * 100; // This will be in percentage
+      // Calculate the current progress as percentage
+      return (correctCount / uniqueCorrectIndices.length) * 100;
     });
 
     // check if mobile device
@@ -226,12 +214,12 @@ export default defineComponent({
       );
     }
 
-    // Oppenent progress bar ship position
+    // Calcularte icon position at end of oppenent progress bar
     const shipPosition: Ref<number> = ref(0);
     const progressBarWidth = progressBarRef.value?.offsetWidth || 0;
     shipPosition.value = (currentProgress.value / 100) * progressBarWidth;
 
-    // exclude 0 values from opponents
+    // Exclude 0 values from opponents
     const filteredOpponents = computed(() => {
       return opponents.value.filter(
         (opponent) => opponent !== null && opponent !== undefined
@@ -274,7 +262,7 @@ export default defineComponent({
       startGame(); // startGame method includes setting start time and allows typing
       startWpmTracking(); // used to measure Wpm per second tracking
       startIndexTracking(); // used to measure which word is currently typed
-      window.removeEventListener("keydown", handleKeyDown); // Remove previous keydown listener if any
+      window.removeEventListener("keydown", handleKeyDown); // Remove any stale previous keydown listener if any
       window.addEventListener("keydown", handleKeyDown); // Add new keydown listener
       sessionStorage.setItem("gameInProgress", "true"); // indicate that game is in progress
     }, startTime.value);
@@ -320,8 +308,7 @@ export default defineComponent({
       noEndWithoutCorrection
     );
 
-    // *NOTE* since the PvP game cannot be refreshed, there is no separate updateCharSpans function like in the Training or Computer Campaign modes
-    // if that changes include that function here too
+    // *NOTE* since the PvP game cannot be refreshed (player will exit at refresh), there is no separate updateCharSpans function like in the Training or Computer Campaign modes
     useChevronAnimation(charSpans, chevronTop, chevronLeft);
 
     // --------------------
@@ -333,7 +320,6 @@ export default defineComponent({
       wpm,
       grossWpm,
       consistencyForStat,
-      wpmPerSecond,
       resetStats,
       updateStats,
       saveStats,
@@ -349,7 +335,6 @@ export default defineComponent({
     // A) Stop Game Logic
     // B) Save Statistics
     // C) Reset All Relevant Game Variables
-    // *NOTE* removed watcher for endTime and handle gameEnd through flow alone
 
     function handleGameEnd() {
       // triggers overlay above
@@ -397,6 +382,7 @@ export default defineComponent({
       router.push({ name: "LastRoundStats" });
     }
 
+    // multiplayer logic using supabase realtime channels
     const {
       broadcastProgress,
       setupMultiplayerGame,
@@ -415,7 +401,7 @@ export default defineComponent({
       roundTripLatency
     );
 
-    // Watch for changes in current progress and broadcast them
+    // Watch for changes in user's current progress and broadcast them to other players
     let previousProgress = currentProgress.value;
 
     watch(currentProgress, (newProgress) => {
@@ -427,19 +413,18 @@ export default defineComponent({
     // Life Cycle
     //-----------
 
-    // Lifecycle hooks *NOTE* check
     onMounted(async () => {
       // CHECK WHETHER PLAYER ALLOWED TO JOIN------------------------------------
       if (!gameId.value) {
-        // Redirect to CampaignMode page
+        // In case of incorrect gameID redirect to CampaignMode page
         router.replace({ name: "CampaignMode" });
-        return; // Exit the onMounted function early
+        return;
       }
       // check if mobile device
       if (isMobileDevice() && hiddenInput.value) {
         hiddenInput.value.focus();
       }
-      // Fetch player statuses and check if player can join
+      // Fetch player statuses and check if player is active
       const { data: gameDataStatus, error: gameStatusError } = await supabase
         .from("games")
         .select("player_active")
@@ -450,7 +435,7 @@ export default defineComponent({
       } else if (
         gameDataStatus &&
         gameDataStatus[0] &&
-        gameDataStatus[0].player_active != null // Check if player_active is not null
+        gameDataStatus[0].player_active != null
       ) {
         // Directly use the player_active status from the database
         playerStatuses.value = gameDataStatus[0].player_active;
@@ -462,7 +447,8 @@ export default defineComponent({
       }
       // ------------------------------------------------------------------------
 
-      await fetchMultiplayerText(gameId.value); // Pass the gameId to fetchMultiplayerText
+      // fetch same text for all players and setup game
+      await fetchMultiplayerText(gameId.value);
       setupMultiplayerGame();
 
       chars.value = fetchedText.value.split("");
@@ -474,7 +460,6 @@ export default defineComponent({
     onBeforeUnmount(() => {
       // Clean up all game activities
       stopGameActivities(stopWpmTracking, stopIndexTracking, stopCountdown);
-      // Remove all global event listeners
       window.removeEventListener("keydown", handleKeyDown);
 
       // Ensure all game state is reset or saved
@@ -492,15 +477,6 @@ export default defineComponent({
 
       // Unsubscribe from channels
       cleanup();
-
-      console.log("Component is unmounting");
-      console.log("Current state of wpmPerSecond:", wpmPerSecond.value);
-      console.log("Current chevronTop:", chevronTop.value);
-      console.log("Current chevronLeft:", chevronLeft.value);
-      console.log("Current charSpans:", charSpans.value);
-      console.log("Current scrollContainer:", scrollContainer.value);
-      console.log("Current tooltipTimeoutId:", tooltipTimeoutId.value);
-      console.log("Current countdownInterval:", countdownInterval.value);
     });
 
     // *NOTE* check what is needed

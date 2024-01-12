@@ -1,3 +1,7 @@
+<!--
+Online Lobby
+- Component to match players and start Player vs. Player online games
+-->
 <template>
   <div class="lobby-container">
     <h1>Lobby</h1>
@@ -5,6 +9,7 @@
       <div v-if="users.length === 0">
         No users present
       </div>
+      <!-- table liating players currently waiting to start a game -->
       <table
         v-else
         class="users-table"
@@ -40,6 +45,7 @@
           </tr>
         </tbody>
       </table>
+      <!-- start game button for players that are matched -->
       <div
         v-if="users.length >= 2"
         class="start-game-container"
@@ -49,6 +55,7 @@
           <button @click="startGame">Start Game</button>
         </div>
       </div>
+      <!-- message if not enough players to start a game -->
       <div
         v-if="users.length < 2"
         class="mt-5"
@@ -67,6 +74,7 @@ import { supabase } from "../../supabase";
 import { v4 as uuidv4 } from "uuid";
 import { useRouter } from "vue-router";
 import { useStore } from "../../stores/store";
+import { useUtilities } from "../../components/Utilities";
 import { MAX_PLAYERS, RANKS } from "../../components/GameConstants";
 
 type PlayerActiveStatus = {
@@ -79,7 +87,9 @@ export default defineComponent({
     const store = useStore();
 
     const userIDs = ref<string[]>([]);
-    const myUserID = uuidv4(); // Create a unique ID for this user
+    // create a unique ID for user
+    const myUserID = uuidv4();
+    // user information for table
     const users = ref<
       Array<{
         userID: string;
@@ -94,17 +104,22 @@ export default defineComponent({
     const userStatus = ref({});
 
     const router = useRouter();
+
+    // supabase realtime channel for lobby
     let lobbyChannel: any;
+
+    // function to assist calculating random text id
+    const { fetchDataFromDB } = useUtilities();
 
     // fetch necessary data for waiting user table
     const fetchUserData = async () => {
       // Default values for guest users
       let userDetails = {
-        username: "Guest-" + Math.floor(Math.random() * 100000).toString(),
-        avatarId: 1, // Default avatar ID
-        flagId: 1, // Default flag ID
-        rank: "Guest", // Default rank
-        gamesPlayed: localStorage.getItem("gamesPlayed"), // Games played count from local storage
+        username: "Guest-" + Math.floor(Math.random() * 100000).toString(), // random name for guests
+        avatarId: 1,
+        flagId: 1,
+        rank: "Guest",
+        gamesPlayed: localStorage.getItem("gamesPlayed"), // Games played for guests count from local storage
       };
 
       // Fetch data for registered users
@@ -130,11 +145,16 @@ export default defineComponent({
             gamesPlayed: data.games_played || 0,
           };
         }
+
+        if (error) {
+          console.log("Error fetching user details,", error);
+        }
       }
 
       return userDetails;
     };
 
+    // manging user subscription to lobby channel
     const subscribeAndTrack = () => {
       lobbyChannel.subscribe(async (status: string) => {
         if (status === "SUBSCRIBED") {
@@ -147,14 +167,22 @@ export default defineComponent({
     };
 
     const createNewGame = async (players: string[]) => {
-      // Generate a random text_id based on the number of texts you have
-      // Replace this with an actual query to your 'texts' table to get the count
-      const textCount = 100; // This should be dynamically retrieved from your 'texts' table
-      const randomTextId = Math.floor(Math.random() * textCount) + 1;
+      // Generate a random text_id based on the number of texts in respective supabase table
+      const texts = await fetchDataFromDB("texts");
+      const textCount = ref(1); // default to 1
 
-      // Set the start_time a few seconds from now
+      if (texts) {
+        textCount.value = Math.floor(Math.random() * texts.length);
+      } else {
+        console.error("Error fetching text.");
+        return;
+      }
+
+      const randomTextId = Math.floor(Math.random() * textCount.value) + 1;
+
+      // Set the start_time with a delay to allow for synchronisation of start time for players
       const startTime = new Date();
-      startTime.setSeconds(startTime.getSeconds() + 5); // 5 seconds from now
+      startTime.setSeconds(startTime.getSeconds() + 5);
 
       const playerActiveStatus: PlayerActiveStatus = players.reduce(
         (status, playerID) => {
@@ -164,7 +192,7 @@ export default defineComponent({
         {} as PlayerActiveStatus
       );
 
-      // Use .select() to get the newly inserted record
+      // get the newly inserted record from games table
       const { data, error } = await supabase
         .from("games")
         .insert([
@@ -193,18 +221,13 @@ export default defineComponent({
       }
     };
 
-    // *NOTE* what happens if two players hit the Start button practically at the same time, will logic break?
+    // start game button appears when at least 2 players are matched, either player can press to start
     const startGame = async () => {
-      console.log("startGame called");
-      console.log(
-        `Users in lobby: ${users.value.map((u) => u.username).join(", ")}`
-      );
-
       if (users.value.length >= 2) {
-        // Extract just the userID from each user object to create an array of userIDs
+        // create an array of userIDs
         const playersToStart = users.value.map((u) => u.userID);
 
-        // Fill the remaining slots with other players from the lobby, up to MAX_PLAYERS
+        // Fill the remaining slots with other players from the lobby, up to MAX_PLAYERS defined in GameConstants
         for (
           let i = 0;
           i < userIDs.value.length && playersToStart.length < MAX_PLAYERS;
@@ -232,10 +255,8 @@ export default defineComponent({
             game_id: gameDetails.gameId,
           },
         });
-        console.log("Game start event sent");
 
         // Remove the players who were selected for the game from the lobby
-        // Make sure to compare the userIDs as strings, not the entire user object
         users.value = users.value.filter(
           (user) => !playersToStart.includes(user.userID)
         );
@@ -262,12 +283,12 @@ export default defineComponent({
       userStatus.value = {
         user: myUserID,
         online_at: new Date().toISOString(),
-        ...userDetails, // Spread user details into the userStatus object
+        ...userDetails,
       };
 
       console.log("User Status:", userStatus.value);
 
-      // Initialize the channel with 'presence' config
+      // Initialize supabase channel with 'presence' config
       lobbyChannel = supabase.channel("lobby", {
         config: {
           broadcast: { self: true }, // important: user can receive own messages
@@ -275,21 +296,14 @@ export default defineComponent({
         },
       });
 
-      // Presence sync event , avatarId, flagId, rank, gamesPlayed
+      // Presence sync event, avatarId, flagId, rank, gamesPlayed
       lobbyChannel
         .on("presence", { event: "sync" }, async () => {
           const presenceState = lobbyChannel.presenceState();
-          console.log("Full Presence State:", presenceState); // Inspect the structure
 
           users.value = Object.keys(presenceState).map((userID) => {
-            console.log("Individual Presence Details:", presenceState[userID]); // Inspect each user's details
             const presenceDetails =
               presenceState[userID][0]._rawValue || presenceState[userID][0];
-            console.log(
-              "presence",
-              presenceState[userID][0],
-              presenceDetails?.avatar_id
-            );
 
             // Retrieve user details or set defaults
             const userDetails = {
@@ -336,21 +350,16 @@ export default defineComponent({
           users.value = users.value.filter((user) => user.userID !== key);
         })
         .on("broadcast", { event: "game_start" }, (payload: any) => {
-          console.log("Received game_start broadcast event", payload);
           const participants = payload.payload.participants;
-          console.log("Participants in the broadcast event: ", participants);
 
           store.setGameId(payload.payload.game_id);
 
           if (participants.includes(myUserID)) {
-            console.log(`Redirecting to game for user: ${myUserID}`);
             router.push({
               name: "OnlineGame",
             });
           } else {
-            console.log(
-              `User ${myUserID} not in participants. Not redirecting.`
-            );
+            return;
           }
         });
 

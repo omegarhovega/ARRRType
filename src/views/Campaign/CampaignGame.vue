@@ -2,7 +2,6 @@
 CampaignGame
 - Logic for playing levels in the campaign
 - Registers coin wins, rank improvements and which levels are (un)locked
-- Using Vue Composition API
 -->
 
 <template>
