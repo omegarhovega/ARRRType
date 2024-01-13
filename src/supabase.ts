@@ -1,4 +1,6 @@
 import { createClient } from '@supabase/supabase-js'
+import dotenv from 'dotenv';
+dotenv.config()
 
 interface Secrets {
     AMPLIFY_SIWA_CLIENT_ID?: string;
