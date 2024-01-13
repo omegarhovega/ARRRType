@@ -1,4 +1,7 @@
 import { createClient } from '@supabase/supabase-js';
+import { Amplify } from 'aws-amplify';
+import amplifyconfig from './amplifyconfiguration.json';
+Amplify.configure(amplifyconfig);
 
 // Parse the secrets from the environment variable
 const secretsString = process.env.secrets;
