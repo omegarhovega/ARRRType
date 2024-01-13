@@ -27,6 +27,7 @@
     "@types/jsdom": "^21.1.1",
     "@types/k6": "^0.48.0",
     "@types/node": "^18.17.0",
+    "@types/uuid": "^9.0.7",
     "@vitejs/plugin-vue": "^4.2.3",
     "@vue/test-utils": "^2.4.1",
     "@vue/tsconfig": "^0.4.0",
