@@ -8,6 +8,9 @@ import { useStore } from "./stores/store";
 import router from './router';
 import { setupCalendar, Calendar, DatePicker } from 'v-calendar';
 import 'v-calendar/style.css';
+import { Amplify } from 'aws-amplify';
+import amplifyconfig from './amplifyconfiguration.json';
+Amplify.configure(amplifyconfig);
 
 const app = createApp(App);
 
