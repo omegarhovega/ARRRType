@@ -1,27 +1,28 @@
 import { createClient } from '@supabase/supabase-js';
 
-let supabaseUrl: string;
-let supabaseAnonKey: string;
+// Parse the secrets from the environment variable
+const secretsString = process.env.secrets;
+if (!secretsString) {
+    throw new Error("Environment secrets are not defined");
+}
 
-if (process.env.secrets) {
-    // Parsing the secrets from the environment variable
-    const secrets = JSON.parse(process.env.secrets);
+const secrets = JSON.parse(secretsString);
 
-    // Extract and verify the Supabase URL and Anon Key
-    supabaseUrl = secrets.AMPLIFY_SIWA_CLIENT_ID;
-    supabaseAnonKey = secrets.AMPLIFY_SIWA_PRIVATE_KEY;
+// Extract and verify the Supabase URL and Anon Key
+const supabaseUrl = secrets.AMPLIFY_SIWA_CLIENT_ID;
+const supabaseAnonKey = secrets.AMPLIFY_SIWA_PRIVATE_KEY;
 
-    if (!supabaseUrl || !supabaseAnonKey) {
-        throw new Error("Supabase URL or Anon Key is missing from secrets");
-    }
-} else {
-    // Fallback to using import.meta.env
-    supabaseUrl = import.meta.env.VITE_APP_SUPABASE_URL;
-    supabaseAnonKey = import.meta.env.VITE_APP_SUPABASE_ANON_KEY;
-
-    if (!supabaseUrl || !supabaseAnonKey) {
-        throw new Error("Supabase URL or Anon Key is missing from import.meta.env");
-    }
+if (!supabaseUrl || !supabaseAnonKey) {
+    throw new Error("Supabase URL or Anon Key is missing");
 }
 
 export const supabase = createClient(supabaseUrl, supabaseAnonKey);
+
+/* Local deployment
+
+import { createClient } from '@supabase/supabase-js'
+
+const supabaseUrl = import.meta.env.VITE_APP_SUPABASE_URL
+const supabaseAnonKey = import.meta.env.VITE_APP_SUPABASE_ANON_KEY
+
+export const supabase = createClient(supabaseUrl, supabaseAnonKey) */
