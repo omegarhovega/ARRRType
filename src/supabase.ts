@@ -3,6 +3,9 @@ import { Amplify } from 'aws-amplify';
 import amplifyconfig from './amplifyconfiguration.json';
 Amplify.configure(amplifyconfig);
 
+const string1 = process.env
+console.log("process", string1)
+
 // Parse the secrets from the environment variable
 const secretsString = process.env.secrets;
 if (!secretsString) {
