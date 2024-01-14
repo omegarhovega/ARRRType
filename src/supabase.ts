@@ -1,8 +1,7 @@
 import { createClient } from '@supabase/supabase-js'
-import 'dotenv/config'
 
-const supabaseUrl = process.env.AMPLIFY_SIWA_CLIENT_ID;
-const supabaseAnonKey = process.env.AMPLIFY_SIWA_PRIVATE_KEY;
+const supabaseUrl = import.meta.env.VITE_APP_SUPABASE_URL;
+const supabaseAnonKey = import.meta.env.VITE_APP_SUPABASE_ANON_KEY;
 
 if (!supabaseUrl || !supabaseAnonKey) {
     throw new Error("Supabase URL or Anon Key is missing");
