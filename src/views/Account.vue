@@ -117,7 +117,7 @@ export default defineComponent({
     const loading = ref(true);
     const username = ref<string>("");
     const avatar_url = ref<string>("");
-    const session = computed(() => store.userSession); // Access userSession from the Pinia store
+    const session = computed(() => store.userSession);
     const userCreatedAt = computed(() => session.value?.user?.created_at);
     const currentRank = computed(() => store.getCurrentRank());
     const userCoins = computed(() => store.userCoins);
@@ -132,7 +132,6 @@ export default defineComponent({
     const showFlagOverlay = ref(false);
 
     const formattedTotalTimePlayed = computed(() => {
-      console.log("Total time played:", store.totalTimePlayed);
       const totalSeconds = Math.floor(time_played.value / 1000);
       const hours = Math.floor(totalSeconds / 3600);
       const minutes = Math.floor((totalSeconds % 3600) / 60);
@@ -177,7 +176,6 @@ export default defineComponent({
         // Note, this could also be done with a flag in storage, indicating values to refresh but used here as a catch all for the logout case for convenience
         location.reload();
       });
-      console.log("signOut function completed");
     };
 
     const handleKeyPress = (event: KeyboardEvent) => {
@@ -212,8 +210,6 @@ export default defineComponent({
       window.addEventListener("keydown", handleKeyPress);
       getProfile();
       await store.fetchLastUnlockedLevel(); //needed to load the player rank correctly *NOTE* can we put this in store so that it does not need to be redone every time
-      //*NOTE* load userStats and averagelast100
-      console.log("fetching last unlocked level:", store.lastUnlockedLevel);
     });
 
     onBeforeUnmount(() => {
@@ -254,7 +250,6 @@ export default defineComponent({
       } finally {
         loading.value = false;
       }
-      console.log("Current rank:", currentRank.value);
     }
 
     async function updateProfile() {
@@ -313,6 +308,7 @@ export default defineComponent({
   min-height: calc(
     100vh - var(--menu-height)
   ); /* Full height minus the menu height */
+  padding-bottom: var(--footer-height); /* padding bottom footer's height */
 }
 
 .profile-column {
@@ -362,12 +358,12 @@ button {
 .button-box {
   position: relative;
   display: inline-block;
-  text-align: left; /* Align items to the left */
+  text-align: left;
 }
 
 .username-and-rank {
   margin-top: 20px;
-  text-align: center; /* Center the username and rank below the avatar */
+  text-align: center;
 }
 
 .user-profile-column {
@@ -375,7 +371,6 @@ button {
   margin-top: 10vh;
 }
 
-/* Additional styles for form */
 .form-widget {
   display: flex;
   flex-direction: column;
@@ -394,7 +389,7 @@ button {
 }
 
 .flag-placeholder img {
-  height: 20px; /* or your preferred size */
+  height: 20px;
 }
 </style>
 

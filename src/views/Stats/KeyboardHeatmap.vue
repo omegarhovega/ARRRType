@@ -48,6 +48,7 @@ export default defineComponent({
     };
   },
   methods: {
+    // color coding depening on error rate
     getColorForKey(key: string) {
       const errorRate = this.errorRates[key] || 0;
       const scaledAlpha = Math.min(1, errorRate * 10);
@@ -68,7 +69,7 @@ export default defineComponent({
 });
 </script>
   
-  <style scoped>
+<style scoped>
 .key {
   display: inline-block;
   padding: 10px 15px;

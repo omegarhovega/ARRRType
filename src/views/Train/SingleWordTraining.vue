@@ -135,7 +135,6 @@ export default defineComponent({
     }
 
     function resetGame() {
-      console.log("Calling resetGame number of words");
       // resets game logic to reload text with randomized upper/lower case characters and signs
       initializeWrapper(event as unknown as MouseEvent);
     }
@@ -153,11 +152,9 @@ export default defineComponent({
       filter: isFinished.value ? "blur(5px)" : "none",
     }));
 
-    // Access to gamestate functions
     const gameStateManagement = useGameStateManagement();
     const { resetGameState } = gameStateManagement;
 
-    // key function to trigger game start -> called in onMounted()
     const {
       countdown,
       countdownFinished,
@@ -188,14 +185,6 @@ export default defineComponent({
 
     // Inside your setup function
     const initializeWrapper = (event: MouseEvent) => {
-      console.log("initializeWrapper is called");
-      console.log("resetGameState:", resetGameState);
-      console.log("resetChevronPosition:", resetChevronPosition);
-      console.log("countdownStart:", countdownStart);
-      console.log("isFinished:", isFinished);
-      console.log("recalculateCurrentWord:", recalculateCurrentWord);
-      console.log("currentWordArray:", currentWordArray);
-
       initialize(
         resetGameState,
         resetChevronPosition,
@@ -217,7 +206,7 @@ export default defineComponent({
         }
         switch (event.key.toUpperCase()) {
           case "1":
-            initializeWrapper(event as unknown as MouseEvent); // Invoke the function here
+            initializeWrapper(event as unknown as MouseEvent);
             break;
           case "2":
             navigateToTrain();
@@ -233,35 +222,30 @@ export default defineComponent({
         hiddenInput.value.focus();
       }
       initializeWrapper(new MouseEvent("click"));
-      console.log("Initialization started");
       loading.value = false;
-      window.addEventListener("keydown", handleKeyDown); // Add event listener when component is mounted
+      window.addEventListener("keydown", handleKeyDown);
       window.addEventListener("keydown", detectCapsLock);
       window.addEventListener("keyup", detectCapsLock);
       window.addEventListener("keydown", handleOverlayKeyPress);
-      console.log("Initialization completed");
     });
 
     // Fail-save to allow stopping games with abrupt unmountings
     onBeforeUnmount(() => {
       // Clean up all game activities
       resetGameState();
-      stopCountdown(); // Remove all global event listeners
+      stopCountdown();
       window.removeEventListener("keydown", handleKeyDown);
     });
 
-    //HANDLE KEY DONW END
-
     onUnmounted(() => {
-      console.log("Calling unMounted");
-      resetGameState(); // *NOTE* check if other variables need to be reset (fetchedText etc.)
+      resetGameState();
       stopCountdown();
       fetchedWords.value = [""];
       recalculateCurrentWord();
       currentWordArray;
       currentWordIndex.value = 1;
       currentWordCharIndex.value = 0;
-      currentWord.value = ""; // Set the initial word here
+      currentWord.value = "";
       singleWordStatsList.length = 0;
       window.removeEventListener("keydown", handleKeyDown);
       window.removeEventListener("keydown", detectCapsLock);
@@ -306,6 +290,7 @@ export default defineComponent({
   min-height: calc(
     100vh - var(--menu-height)
   ); /* Adjusted to the height of main menu, min height used so content is not pushed behing main menu on vertical resize */
+  padding-bottom: var(--footer-height); /* padding bottom footer's height */
 }
 
 #tooltip {

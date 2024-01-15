@@ -67,10 +67,6 @@ export default defineComponent({
     const updateNumberOfWords = () => {
       // Emitting the opponentWpmChanged event to the parent component
       emit("numberOfWordsChanged", numberOfWords.value);
-      console.log(
-        "Emitted opponentWpmChanged event with value:",
-        numberOfWords.value
-      );
     };
 
     const showRandomizationToggle = computed(() => {
@@ -86,10 +82,7 @@ export default defineComponent({
     });
 
     const updateRandomizationStatus = () => {
-      console.log(
-        "New Status Randomization enabled:",
-        store.randomizationEnabled
-      );
+      // currently not in use
     };
 
     // Retrieve the state from localStorage when the component is mounted
@@ -107,15 +100,13 @@ export default defineComponent({
 });
 </script>
 
-<!-- Add any necessary styling or scripting here -->
 <style scoped>
 .sub-menu-container {
   position: absolute;
-  top: 70px; /* Align to the top of the main menu container */
-  left: 0; /* Align to the left */
-  width: 100%; /* Full width */
-  z-index: 101; /* Lower z-index to appear below the main menu */
-  /* Additional styles as needed */
+  top: 70px;
+  left: 0;
+  width: 100%;
+  z-index: 101;
 }
 .toggle-switch {
   appearance: none;

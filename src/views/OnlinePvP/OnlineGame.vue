@@ -547,6 +547,7 @@ export default defineComponent({
   min-height: calc(
     100vh - var(--menu-height)
   ); /* Adjusted to the height of main menu, min height used so content is not pushed behing main menu on vertical resize */
+  padding-bottom: var(--footer-height); /* padding bottom footer's height */
 }
 
 #speed-text {

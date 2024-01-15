@@ -53,7 +53,7 @@ export default defineComponent({
       let { data, error } = await supabase
         .from("profiles")
         .select("wpm_buckets, accuracy_buckets")
-        .eq("id", store.userSession.user.id); // assuming userSession contains user id
+        .eq("id", store.userSession.user.id);
 
       if (data && !error && data.length > 0) {
         individualWpmHistogram.value = data[0].wpm_buckets;
@@ -65,15 +65,15 @@ export default defineComponent({
 
     async function fetchAllUserStats() {
       let { data, error } = await supabase
-        .from("total_games") // Change to total_games table
-        .select("wpmbuckets, grosswpmbuckets, accuracybuckets"); // Fetch the buckets directly
+        .from("total_games")
+        .select("wpmbuckets, grosswpmbuckets, accuracybuckets");
 
       if (error) {
         console.error("Error fetching bucket data:", error);
         return;
       }
 
-      // Assuming there is only one row in the total_games table or you're interested in a specific row
+      // Assuming there is only one row in the total_games table
       if (data && data.length > 0) {
         wpmHistogram.value = data[0].wpmbuckets;
         grossWpmHistogram.value = data[0].grosswpmbuckets;
@@ -135,7 +135,7 @@ export default defineComponent({
 });
 </script>
     
-    <style scoped>
+<style scoped>
 .all-time-stats {
   max-width: 100%;
   margin-left: auto;

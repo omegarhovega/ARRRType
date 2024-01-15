@@ -84,8 +84,8 @@
 
 <script lang="ts">
 import { ref, computed, onMounted } from "vue";
-import { supabase } from "../supabase"; // Adjust the path as needed
-import { useStore } from "../stores/store"; // Import the main Pinia store
+import { supabase } from "../supabase";
+import { useStore } from "../stores/store";
 
 export default {
   setup() {
@@ -95,7 +95,7 @@ export default {
     const newPassword = ref("");
     const repeatPassword = ref("");
     const newUsername = ref("");
-    const session = computed(() => store.userSession); // Access userSession from the Pinia store
+    const session = computed(() => store.userSession);
     const userEmail = computed(() => session.value?.user?.email);
     const username = ref<string>("");
 
@@ -188,9 +188,7 @@ export default {
 
     onMounted(async () => {
       getProfile();
-      await store.fetchLastUnlockedLevel(); //needed to load the player rank correctly *NOTE* can we put this in store so that it does not need to be redone every time
-      //*NOTE* load userStats and averagelast100
-      console.log("fetching last unlocked level:", store.lastUnlockedLevel);
+      await store.fetchLastUnlockedLevel(); //needed to load the player rank correctly
     });
 
     return {
@@ -215,42 +213,40 @@ export default {
 <style scoped>
 .update-user-details {
   width: 100%;
-  max-width: 300px; /* Set a maximum width */
-  margin: auto; /* Center the form */
+  max-width: 300px;
+  margin: auto;
   display: flex;
   flex-direction: column;
-  align-items: center; /* Align children (sections) in the center */
+  align-items: center;
   padding-top: 10vh;
+  padding-bottom: var(--footer-height); /* padding bottom footer's height */
 }
 
 .update-section {
-  width: 100%; /* Ensure the section takes the full width of the container */
-  margin-bottom: 20px; /* Space between sections */
+  width: 100%;
+  margin-bottom: 20px;
   display: flex;
   flex-direction: column;
-  align-items: center; /* Align items in the section to the center */
+  align-items: center;
 }
 
 .input-group {
-  width: 100%; /* Ensure the input group takes the full width of the section */
+  width: 100%;
   display: flex;
   flex-direction: column;
-  align-items: center; /* Align input fields in the center */
-  margin-bottom: 10px; /* Space between input fields */
+  align-items: center;
+  margin-bottom: 10px;
 }
 
 .input-group input {
-  width: 100%; /* Make input fields take full width of the input group */
-  padding: 3px; /* Reduced padding for less height */
-  /* If you need to set a specific height, uncomment the next line */
-  /* height: 30px; */
+  width: 100%;
+  padding: 3px;
 }
 
 .update-button {
-  width: 100%; /* Set button width to match input fields */
+  width: 100%;
   padding: 10px;
   margin-top: 10px;
-  /* Additional styling for buttons */
 }
 
 .mismatch-message {

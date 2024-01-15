@@ -24,7 +24,7 @@ export default defineComponent({
 });
 </script>
   
-  <style scoped>
+<style scoped>
 .wordmap {
   display: inline-block;
   padding: 10px 15px;

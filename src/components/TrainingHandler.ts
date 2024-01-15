@@ -22,7 +22,6 @@ export async function generateTrainingWords() {
         const problematicChars: string[] = [];
         const rates = errorRates.value;
         const numberOfWords = store.numberOfWords
-        console.log("Error rates:", errorRates.value)
         for (const char in rates) {
             if (rates[char] >= 0.1) {
                 problematicChars.push(char);
@@ -44,11 +43,9 @@ export async function generateTrainingWords() {
             }
             return { word, score };
         }) || [];
-        console.log("problematic chars:", problematicChars)
 
         // Sort words by score in descending order
         scoredWords.sort((a, b) => b.score - a.score);
-        console.log("Scored Words:", scoredWords)
 
         // Create a weighted array
         const weightedWords: string[] = [];
@@ -57,7 +54,6 @@ export async function generateTrainingWords() {
                 weightedWords.push(word);
             }
         }
-        console.log("Weighted Words:", weightedWords)
 
         // Step 3: Randomly select set number of training words from the weighted array
         // Generate 50% of set number of training words based on problematic characters
@@ -66,7 +62,6 @@ export async function generateTrainingWords() {
             const randomIndex = Math.floor(Math.random() * weightedWords.length);
             selectedProblematicWords.push(weightedWords[randomIndex]);
         }
-        console.log("Selected Problematic Words:", selectedProblematicWords);
 
         // Exclude "Space" from the slow words
         const filteredSlowWords = allTimeSlowWords.value.filter(entry => entry.word !== "Space");
@@ -75,7 +70,6 @@ export async function generateTrainingWords() {
             .map(entry => entry.word.toLowerCase())
             .filter(word => word.length >= 3)
             .slice(0, (0.25 * numberOfWords));
-        console.log("Selected Slow Words:", selectedSlowWords);
 
         // Generate 25% of set number of training words based on top mistyped words
         const selectedTopMistypedWords: string[] = topMistypedWords.value
@@ -83,14 +77,11 @@ export async function generateTrainingWords() {
             .filter(word => word.length >= 3)
             .slice(0, (0.25 * numberOfWords));
 
-        console.log("Selected Mistyped Words:", selectedTopMistypedWords);
-
         // Calculate the number of words coming from slowWords and topMistypedWords
         const slowAndMistypedCount = selectedSlowWords.length + selectedTopMistypedWords.length;
 
         // Calculate how many more words we need to fill the remaining slots to reach total number of training words
         const additionalProblematicCount = numberOfWords - ((numberOfWords * 0.5) + slowAndMistypedCount);
-        console.log("Additional problematic count:", additionalProblematicCount);
 
         // Generate additional words based on problematic characters
         const additionalProblematicWords: string[] = [];
@@ -98,7 +89,6 @@ export async function generateTrainingWords() {
             const randomIndex = Math.floor(Math.random() * weightedWords.length);
             additionalProblematicWords.push(weightedWords[randomIndex]);
         }
-        console.log("Additional problematic words:", additionalProblematicWords);
 
         // Combine all the selected words
         const combinedWords = [...selectedProblematicWords, ...selectedSlowWords, ...selectedTopMistypedWords, ...additionalProblematicWords];

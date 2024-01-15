@@ -1,3 +1,5 @@
+<!-- Component Last Round Stats) -->
+
 <template>
   <div>
     <div class="mt-1 mb-2">WPM and Accuracy per Second (Last Round):</div>
@@ -35,8 +37,6 @@
     <div class="mt-5 mb-2">Consistency (Last Round):</div>
     <p>Your relative Consistency is {{ lastRoundConsistency }} ({{ lastRoundConsistencyComment }})</p>
     <div class="mt-8 text-sm">Note: Statistics shown exclude rounds with accuracy of 50% or lower and do not include measurements from single word, keys or custom training. WPM statistic assumes average word length of 5 characters.</div>
-    <!-- Spacer for footer -->
-    <div class="mt-20 text-sm"></div>
   </div>
 </template>
     
@@ -86,7 +86,8 @@ export default defineComponent({
       lastRoundMistypedWords,
       lastRoundErrorRates,
     } = useUserStatistics();
-    const chartKey = ref(0); // New key to re-render the chart
+
+    const chartKey = ref(0); // Key to re-render the chart
 
     // Define lastRound as last entry of userStats
     const lastRound = computed<RoundStat | null>(() => {
@@ -115,7 +116,7 @@ export default defineComponent({
       return comment;
     });
 
-    //intended top drop the first value as sometimes weird behavior of single statistics in first second (currently set to 0 and considering all data)
+    //Option to slice e.g. first value of WPM per second to prune outliers (currently not in use)
     const slicedWpmPerSecond = computed(() => {
       return wpmPerSecond.value.slice(0);
     });
@@ -134,21 +135,15 @@ export default defineComponent({
       } else {
         await retrieveStats();
       }
-      console.log("Fetched userStats:", store.userStats);
-      console.log("Mounted WPM per Second:", wpmPerSecond.value);
-      console.log("Mounted Gross WPM per Second:", grossWpmPerSecond.value);
     });
 
     onUnmounted(() => {
       resetStats(); // clears previous round data
     });
 
-    // Watch for changes in wpmPerSecond and increment chartKey
+    // Watch for changes in wpmPerSecond and increments chartKey
     watchEffect(() => {
       chartKey.value++;
-      // Log the current value of chartKey
-      console.log("Current chartKey:", chartKey.value);
-      //draws data from wpmPerSecond ref which is populated from storage
       wpmPerSecond.value;
       grossWpmPerSecond.value;
     });
@@ -162,7 +157,7 @@ export default defineComponent({
       lastRoundConsistency,
       lastRoundConsistencyComment,
       lastRoundErrorRates,
-      chartKey, // Include chartKey in the returned object
+      chartKey,
     };
   },
 });
@@ -203,7 +198,6 @@ export default defineComponent({
   width: 100%;
 }
 
-/* Add this style to make the chart grow */
 LastRoundLineChart {
   flex-grow: 1;
 }

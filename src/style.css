@@ -1,6 +1,8 @@
+/* external font imports */
 @import url('https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;500&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Piedra&display=swap');
 
+/* tailwind imports */
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -19,8 +21,10 @@
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   -webkit-text-size-adjust: 100%;
-  /* important setting for menu height throughout page */
   --menu-height: 70px;
+  /* main menu height */
+  --footer-height: 35px;
+  /* footer height */
 }
 
 a {

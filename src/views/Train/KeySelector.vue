@@ -80,7 +80,6 @@ export default defineComponent({
     const isAnyKeySelected = computed(() => selectedKeys.value.length > 0);
     const startAttempted = ref(false);
 
-    // Renamed to 'keyboardRows' to match the template
     const keyboardRows = [
       // Row 1
       ["`", "1", "2", "3", "4", "5", "6", "7", "8", "9", "0", "-", "="],

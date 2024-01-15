@@ -14,7 +14,6 @@ type UserStat = {
   consistency: number
 };
 
-// Define the state type
 interface State {
   currentIndex: number;
   opponentWPM: number;
@@ -59,26 +58,21 @@ interface State {
   numberOfWords: number,
 }
 
-
-// Function to save guest progress
 function saveGuestProgress(levelNumber: number): void {
   const guestProgress = { lastUnlockedLevel: levelNumber };
   localStorage.setItem("guestProgress", JSON.stringify(guestProgress));
 }
 
-// Function to load guest progress
 function loadGuestProgress(): number {
   const guestProgress = JSON.parse(localStorage.getItem("guestProgress") ?? "{}");
   return guestProgress.lastUnlockedLevel || 1; // Return 1 if lastUnlockedLevel is undefined or 0
 }
 
-// Function to save guest coins
 function saveGuestCoins(coins: number): void {
   const guestCoins = { userCoins: coins };
   localStorage.setItem("guestCoins", JSON.stringify(guestCoins));
 }
 
-// Function to load guest coins
 function loadGuestCoins(): number {
   const guestCoinsString = localStorage.getItem("guestCoins");
   const guestCoins = JSON.parse(guestCoinsString ?? "{}");
@@ -93,7 +87,6 @@ function loadGuestCoins(): number {
 
 export const useStore = defineStore({
   id: 'mainStore',
-  // Define the state with the correct type
   state: (): State => {
     const storedState = JSON.parse(localStorage.getItem('store') ?? "{}");
     const userSession = storedState.userSession || null;
@@ -107,7 +100,7 @@ export const useStore = defineStore({
       mainMenuKey: 0,
       totalKeystrokes: 0,
       correctKeystrokes: 0,
-      wordsPerSecond: [], //identifies slowly typed words
+      wordsPerSecond: [],
       userStats: [],
       isGameStarted: false,
       isGameFinished: false,
@@ -142,14 +135,10 @@ export const useStore = defineStore({
     };
   },
   actions: {
-    // Define the types for action parameters
     setTrainingParams(mode: "text" | "words" | "random" | "single" | "keys" | "custom", wordLength: "3" | undefined) {
-      console.log("Setting mode in store to:", mode);
       this.selectedMode = mode;
       this.selectedWordLength = wordLength;
-      console.log("After setting, mode in store is:", this.selectedMode);
     },
-
 
     setModeFromRouter(mode: string) {
       if (["text", "words", "random", "single"].includes(mode)) {
@@ -164,7 +153,6 @@ export const useStore = defineStore({
     },
 
     resetUserStats() {
-      console.log("resetting userStats in store.ts")
       this.userStats = [];
     },
 
@@ -172,9 +160,7 @@ export const useStore = defineStore({
       return RANKS[this.lastUnlockedLevel - 1];
     },
 
-
     getCurrentWpm() {
-      console.log("Calling getCurrentWpm");
       return OPPONENT_WPM[this.lastUnlockedLevel - 1];
     },
 
@@ -182,54 +168,68 @@ export const useStore = defineStore({
       this.opponentWPM = wpm;
       localStorage.setItem('store', JSON.stringify(this.$state));
     },
+
     setOpponentEnabled(enabled: boolean) {
       this.opponentEnabled = enabled;
       localStorage.setItem('store', JSON.stringify(this.$state));
     },
+
     setNumberOfWords(numberOfWords: number) {
       this.numberOfWords = numberOfWords;
       localStorage.setItem('store', JSON.stringify(this.$state));
     },
-    setUserSession(session: any) { // Replace 'any' with the correct type if available
+
+    setUserSession(session: any) {
       this.userSession = session;
       localStorage.setItem('store', JSON.stringify(this.$state));
     },
+
     setLastUnlockedLevel(levelNumber: number) {
       this.lastUnlockedLevel = levelNumber;
       if (!this.userSession || !this.userSession.user) {
         saveGuestProgress(levelNumber);
       }
     },
+
     setUserCoins(coins: number) {
       this.userCoins = coins;
       if (!this.userSession || !this.userSession.user) {
         saveGuestCoins(coins); // Save to local storage if guest user
       }
     },
+
     reloadMainMenu() {
       this.mainMenuKey++;
     },
+
     incrementKeystrokes() {
       this.totalKeystrokes += 1;
     },
+
     resetKeystrokes() {
       this.totalKeystrokes = 0;
     },
-    incrementCorrectKeystrokes() {  // Add this action to increment correctKeystrokes
+
+    incrementCorrectKeystrokes() {
       this.correctKeystrokes += 1;
     },
-    resetCorrectKeystrokes() {  // Add this action to reset correctKeystrokes
+
+    resetCorrectKeystrokes() {
       this.correctKeystrokes = 0;
     },
+
     setWordsPerSecond(words: string[][]) {
       this.wordsPerSecond = words;
     },
+
     updateWordsPerSecond(newWords: string[]) {
       this.wordsPerSecond.push(newWords);
     },
+
     resetWordsPerSecond() {
       this.wordsPerSecond = [];
     },
+
     async fetchUserCoins() {
       if (this.userSession && this.userSession.user) {
         const userId = this.userSession.user.id;
@@ -251,6 +251,7 @@ export const useStore = defineStore({
         this.setUserCoins(guestCoins);
       }
     },
+
     async fetchLastUnlockedLevel() {
       if (!this.userSession || !this.userSession.user) {
         return;
@@ -270,23 +271,29 @@ export const useStore = defineStore({
 
       this.setLastUnlockedLevel(data.last_unlocked_level || 1);
     },
+
     setNoEndGameWithoutCorrectionEnabled(enabled: boolean) {
       this.noGameEndWithoutMistakeCorrection = enabled;
       localStorage.setItem('store', JSON.stringify(this.$state));
     },
+
     setRandomizationEnabled(enabled: boolean) {
       this.randomizationEnabled = enabled;
       localStorage.setItem('store', JSON.stringify(this.$state));
     },
+
     setAverageWpmLast100(value: number) {
       this.averageWpmLast100 = value;
     },
+
     setSelectedLevel(level: number | null) {
       this.selectedLevel = level;
     },
+
     setLevels(levels: number[]) {
       this.levels = levels;
     },
+
     setForceMistakeCorrection(value: boolean) {
       this.forceMistakeCorrection = value;
     },
@@ -302,21 +309,20 @@ export const useStore = defineStore({
     setupUniqueCorrectIndices(textLength: number) {
       this.uniqueCorrectIndices = Array<boolean>(textLength).fill(false);
     },
+
     resetUniqueCorrectIndices() {
       this.uniqueCorrectIndices = [];
     },
+
     setGameId(newGameId: string) {
       this.gameId = newGameId;
     },
+
     logout() {
-      // *NOTE* check if lastunlockedLevel is reset correctly or just handled by default value above
-      // Fetch guest coins
+      // actions on user logout
       const guestCoins = loadGuestCoins();
-      // Set userCoins to guestCoins
       this.setUserCoins(guestCoins);
-      // Reset user session
       this.setUserSession(null);
-      // Reload main menu
       this.reloadMainMenu();
     },
   },

@@ -369,8 +369,6 @@ export function useUserStatisticsHandler() {
         updateStats: Function,
         saveStats: Function,
     ) {
-        console.log("Calling saveGameStatistics")
-        console.log("saveGameStatistics", store.endTime, store.startTime, accuracy.value)
         if (store.endTime && store.startTime !== null && accuracy.value > 50) {
 
             // Update stats

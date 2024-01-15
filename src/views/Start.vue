@@ -138,7 +138,6 @@ export default defineComponent({
       } else if (event.key === "a" && userSession.value) {
         navigate("Account");
       } else if (event.key === "f") {
-        // direct shortcut to online lobby
         navigate("OnlineLobby");
       } else if (event.key === "p") {
         navigate("TrainingPlan");
@@ -149,7 +148,7 @@ export default defineComponent({
       window.addEventListener("keydown", handleKeyPress);
       checkFirstVisit();
       setTimeout(() => {
-        fadeOut.value = true; // Trigger the fade-out after 5 seconds
+        fadeOut.value = true; // Trigger the fade-out of short cut info overlay after 10 seconds
       }, 10000);
     });
 
@@ -184,18 +183,19 @@ export default defineComponent({
   min-height: calc(
     100vh - var(--menu-height)
   ); /* Adjusted to the height of main menu, min height used so content is not pushed behing main menu on vertical resize */
+  padding-bottom: var(--footer-height); /* padding bottom footer's height */
 }
 
 .options-container {
   display: flex;
-  justify-content: center; /* Aligns items in the center of the container */
-  flex-wrap: nowrap; /* Prevents wrapping by default */
-  gap: 10px; /* You can set a gap between the items */
+  justify-content: center;
+  flex-wrap: nowrap;
+  gap: 10px;
 }
 
 @media (max-width: 1199px) {
   .options-container {
-    flex-wrap: wrap; /* Allows items to wrap if the viewport is less than 1200px wide */
+    flex-wrap: wrap;
   }
 }
 
@@ -208,7 +208,6 @@ export default defineComponent({
 }
 
 .option-image {
-  /* Allows dynamic resizing to a certain point when screen width reduced */
   max-width: 300px;
   height: auto;
   width: 100%;
@@ -246,39 +245,39 @@ export default defineComponent({
 }
 
 .shortcut-key-small {
-  top: -10px; /* Adjust as needed */
+  top: -10px;
   left: 50%;
   transform: translate(-50%, 0);
 }
 
 .option-description {
-  font-size: 12px; /* You can adjust this size */
+  font-size: 12px;
   text-align: center;
-  margin-top: 5px; /* Optional, for a bit of spacing */
-  max-width: 250px; /* Same as the width of the image */
+  margin-top: 5px;
+  max-width: 250px;
   margin-left: auto;
   margin-right: auto;
   word-wrap: break-word;
 }
 
 .option-description-wide {
-  font-size: 12px; /* You can adjust this size */
+  font-size: 12px;
   text-align: center;
-  margin-top: 5px; /* Optional, for a bit of spacing */
-  max-width: 400px; /* Same as the width of the image */
+  margin-top: 5px;
+  max-width: 400px;
   margin-left: auto;
   margin-right: auto;
   word-wrap: break-word;
 }
 
 .bold-text {
-  margin-top: 5px; /* Optional, for a bit of spacing */
+  margin-top: 5px;
   font-weight: bold;
 }
 
 .comment {
-  margin-top: 5px; /* Optional, for a bit of spacing */
-  font-size: 12px; /* You can adjust this size */
+  margin-top: 5px;
+  font-size: 12px;
   text-align: center;
 }
 
@@ -288,7 +287,6 @@ export default defineComponent({
 }
 
 .online-players-overlay {
-  /* Existing styles */
   position: absolute;
   top: 25px;
   right: 8px;
@@ -328,12 +326,12 @@ export default defineComponent({
   background-color: rgb(234, 231, 240);
   border-radius: 5px;
   font-size: 10px;
-  box-sizing: border-box; /* Include padding and border in the element's total width and height */
+  box-sizing: border-box;
   display: flex;
   padding: 10px;
   z-index: 2;
-  align-items: center; /* Ensures vertical alignment */
-  justify-content: center; /* Centers content horizontally */
+  align-items: center;
+  justify-content: center;
   color: black;
   animation: fadeIn 1s ease-in;
 }
@@ -341,7 +339,7 @@ export default defineComponent({
 .call-out::after {
   content: "";
   position: absolute;
-  bottom: -5px; /* Adjust to align with the top of 'T' */
+  bottom: -5px;
   left: 50%;
   transform: translateX(-50%) rotate(45deg);
   width: 10px;
@@ -353,18 +351,18 @@ export default defineComponent({
 
 .call-out-content {
   display: flex;
-  align-items: center; /* Vertical alignment */
-  justify-content: center; /* Horizontal alignment */
-  padding: 5px; /* Padding around text and image */
+  align-items: center;
+  justify-content: center;
+  padding: 5px;
 }
 
 .parrot-image {
-  height: 20px; /* Adjusted as requested */
+  height: 20px;
   margin-left: 5px;
 }
 
 .fade-out {
-  animation: fadeOut 1s ease-in forwards; /* 1 second fade-out animation */
+  animation: fadeOut 1s ease-in forwards;
 }
 </style>
   

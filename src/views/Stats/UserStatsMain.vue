@@ -101,11 +101,6 @@ export default defineComponent({
         currentIndex = (currentIndex + 1) % viewNames.length;
       }
       currentView.value = viewNames[currentIndex];
-      console.log(
-        "Current component:",
-        currentView.value,
-        currentViewComponent.value
-      );
     }
 
     onMounted(() => {
@@ -133,7 +128,6 @@ export default defineComponent({
 .stats-container {
   margin-left: auto;
   margin-right: auto;
-  /* Adjust margin-top to fit below the main menu. */
   margin-top: 30px;
   display: flex;
   flex-direction: column;
@@ -142,6 +136,7 @@ export default defineComponent({
   min-height: calc(
     100vh - var(--menu-height)
   ); /* Adjusting for dynamic height */
+  padding-bottom: var(--footer-height); /* padding bottom footer's height */
 }
 
 /* Transition styles */
@@ -179,9 +174,9 @@ button {
   display: flex;
   justify-content: center;
   align-items: center;
-  font-size: 16px; /* Adjust based on your needs */
+  font-size: 16px;
   line-height: 1;
-  padding-bottom: 2px; /* pushes content upwards */
+  padding-bottom: 2px;
   margin-bottom: -2px;
 }
 </style>

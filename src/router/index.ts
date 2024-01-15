@@ -25,7 +25,8 @@ import UpdateUserDetails from '../views/UpdateUserDetails.vue';
 import Disclaimer from '../views/Legal/Disclaimer.vue';
 import Privacy from '../views/Legal/PrivacyPolicy.vue';
 
-const validModes = ['random', 'words', 'text', 'single', 'keys', 'custom']; // All valid training modes here
+// Training modes
+const validModes = ['random', 'words', 'text', 'single', 'keys', 'custom'];
 
 const routes = [
   { path: '/', name: 'Home', component: Start },
@@ -52,6 +53,7 @@ const routes = [
     name: 'Level',
     component: CampaignGame,
     beforeEnter: (to: RouteLocationNormalized, from: RouteLocationNormalized, next: NavigationGuardNext) => {
+      // check if valid train mode and level number 
       const levelNumber = parseInt(to.params.levelNumber as string);
       if (levelNumber >= 1 && levelNumber <= LEVELS) {
         next();
@@ -70,9 +72,9 @@ const routes = [
   { path: '/campaignmode', name: 'CampaignMode', component: CampaignModeSelector },
   { path: '/onlinelobby', name: 'OnlineLobby', component: OnlineLobby },
   {
-    path: '/onlinegame/',  // Define a dynamic route with a gameId parameter
-    name: 'OnlineGame',  // Name the route "OnlineGame"
-    component: OnlineGame,  // Specify the OnlineGame component
+    path: '/onlinegame/',
+    name: 'OnlineGame',
+    component: OnlineGame,
   },
   {
     path: '/update-user-details',
@@ -89,27 +91,23 @@ const router = createRouter({
   routes,
 });
 
-
 router.beforeEach((to, from, next) => {
-  const store = useStore(); // Import your store here
+  const store = useStore();
 
-  // This block handles the 'TrainMode' route
+  // different treatment of single word train mode
   if (to.name === 'TrainMode' && to.params.mode !== 'single') {
     const routeMode = to.params.mode as string;
     const storeMode = store.selectedMode;
 
-    // Only update the store if the mode from the route is different from the store
     if (routeMode !== storeMode) {
       store.setModeFromRouter(routeMode);
     }
-    next(); // This allows the navigation to proceed, should be the last call in this block
+    next();
   }
   else {
-    next(); // This allows the navigation to proceed, should be the last call in this block
+    next();
   }
 });
-
-
 
 export default router;
 

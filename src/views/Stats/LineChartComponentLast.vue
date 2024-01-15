@@ -1,3 +1,4 @@
+<!-- WPM and accuracy charts for Last Round Stats -->
 <template>
   <div>
     <LineChart

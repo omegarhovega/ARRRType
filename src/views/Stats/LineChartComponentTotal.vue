@@ -1,3 +1,4 @@
+<!-- WPM and accuracy charts for Total Site Stats -->
 <template>
   <div>
     <div class="mt-0">Total Games Played by All Users (by You): {{ totalGamesPlayed }} ({{ totalGamesPlayedByUser }})</div>
@@ -175,7 +176,7 @@ export default defineComponent({
         .single();
 
       if (data && !error) {
-        totalTimePlayed.value = data.total_time; // Assuming total_time is in milliseconds
+        totalTimePlayed.value = data.total_time; // total_time is in milliseconds
       } else {
         console.error("Error fetching total time played:", error);
       }
@@ -218,7 +219,3 @@ export default defineComponent({
 });
 </script>
 
-
-<style scoped>
-/* styles */
-</style>

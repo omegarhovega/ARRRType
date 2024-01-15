@@ -1,3 +1,4 @@
+<!-- WPM and accuracy charts for Last 100 Stats -->
 <template>
   <div>
     <LineChart
@@ -15,7 +16,7 @@
 
 <script lang="ts">
 import { defineComponent, ref } from "vue";
-import { LineChart } from "vue-chart-3"; // Import LineChart
+import { LineChart } from "vue-chart-3";
 import { Chart, registerables } from "chart.js";
 import type { TooltipItem } from "chart.js";
 Chart.register(...registerables);
@@ -23,14 +24,13 @@ Chart.register(...registerables);
 export default defineComponent({
   name: "UserStatsLineChart",
   components: {
-    LineChart, // Register LineChart
+    LineChart,
   },
   props: {
     wpmData: {
       type: Array,
       required: true,
       validator: (value: any[]) => {
-        console.log("Validating wpmData:", value); // Debug log
         return value.every((item) => typeof item === "number" || item === null);
       },
     },

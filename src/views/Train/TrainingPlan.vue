@@ -1,4 +1,3 @@
-<!-- HTML LAYOUT --->
 <template>
   <div class="container">
     <div class="username-and-rank">
@@ -125,9 +124,8 @@ export default defineComponent({
     },
   },
   setup() {
-    // VARIABLES
     const store = useStore(); // Use the Pinia store
-    const session = computed(() => store.userSession); // Access userSession from the Pinia store
+    const session = computed(() => store.userSession);
     const currentRank = computed(() => store.getCurrentRank());
     const currentWpm = computed(() => store.getCurrentWpm());
     const { user } = session.value;
@@ -138,10 +136,10 @@ export default defineComponent({
       return calendarEvents.map((event) => ({
         dates: event.start,
         dot: {
-          backgroundColor: "blue", // Adjust color as needed
+          backgroundColor: "blue",
         },
         popover: {
-          label: event.title, // Display title on hover
+          label: event.title,
         },
       }));
     });
@@ -212,6 +210,7 @@ export default defineComponent({
     // Reactive variable to hold the .ics data URL
     const icsDataUrl = ref("");
 
+    // generate training plan and create .ics for download
     const generateTrainingPlan = async () => {
       let icsContent =
         "BEGIN:VCALENDAR\nVERSION:2.0\nPRODID:-//Your Company//Your Product//EN\n";
@@ -286,8 +285,6 @@ export default defineComponent({
 
       if (error) {
         console.error("Error updating training plan:", error);
-      } else {
-        console.log("Training plan updated successfully:", data);
       }
     };
 
@@ -341,8 +338,6 @@ export default defineComponent({
     // FUNCTIONS
     onMounted(async () => {
       await store.fetchLastUnlockedLevel(); //needed to load the player rank correctly
-      //*NOTE* load userStats and averagelast100
-      console.log("fetching last unlocked level:", store.lastUnlockedLevel);
 
       // Fetch training plan from Supabase
       const { data, error } = await supabase
@@ -387,23 +382,24 @@ export default defineComponent({
 .container {
   display: flex;
   flex-wrap: wrap;
-  gap: 20px; /* Adjust the gap as needed */
+  gap: 20px;
   min-height: calc(
     100vh - var(--menu-height)
   ); /* Full height minus the menu height */
+  padding-bottom: var(--footer-height); /* padding bottom footer's height */
 }
 
 .checkbox-container {
-  display: flex; /* Aligns children (checkbox-item) in a row */
-  flex-wrap: wrap; /* Allows items to wrap to next line if needed */
+  display: flex;
+  flex-wrap: wrap;
 }
 
 .checkbox-item {
-  margin-right: 10px; /* Adds some space between checkboxes */
+  margin-right: 10px;
 }
 
 .checkbox {
-  margin-right: 5px; /* Adds some space between checkboxes */
+  margin-right: 5px;
 }
 
 .section {

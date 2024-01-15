@@ -134,7 +134,6 @@ export function useTypingTextHandler(
         const store = useStore();
         try {
             indexInterval = setInterval(() => {
-                console.log("Starting index tracking");
 
                 // Get the current index from the typing handler
                 const currentIndexValue = store.currentIndex;

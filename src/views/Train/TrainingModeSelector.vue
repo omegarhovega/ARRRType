@@ -90,11 +90,11 @@
 <script lang="ts">
 import { defineComponent, computed, onBeforeUnmount } from "vue";
 import { useStore } from "../../stores/store";
-import { useRouter } from "vue-router"; // Import useRouter
+import { useRouter } from "vue-router";
 
 export default defineComponent({
   setup() {
-    const router = useRouter(); // Initialize router
+    const router = useRouter();
     const store = useStore();
     const userSession = computed(() => store.userSession);
 
@@ -103,12 +103,7 @@ export default defineComponent({
     };
 
     const setMode = (mode: "random" | "words" | "text" | "single") => {
-      console.log("Setting mode in TrainingModeSelector to:", mode);
       store.setTrainingParams(mode, "3");
-      console.log(
-        "After setting, mode in TrainingModeSelector is:",
-        store.selectedMode
-      );
 
       // Navigate to the specific training mode
       if (mode === "single") {
@@ -146,7 +141,6 @@ export default defineComponent({
       }
     };
 
-    // Add and remove the event listener for keypress
     const addKeyPressListener = () =>
       window.addEventListener("keydown", handleKeyPress);
     const removeKeyPressListener = () =>
@@ -174,17 +168,18 @@ export default defineComponent({
   min-height: calc(
     100vh - var(--menu-height)
   ); /* Adjusted to the height of main menu, min height used so content is not pushed behing main menu on vertical resize */
+  padding-bottom: var(--footer-height); /* padding bottom footer's height */
 }
 
 .mode-boxes-container {
   display: flex;
-  justify-content: center; /* Aligns items in the center of the container */
-  flex-wrap: nowrap; /* Prevents wrapping by default */
+  justify-content: center;
+  flex-wrap: nowrap;
 }
 
 @media (max-width: 1199px) {
   .mode-boxes-container {
-    flex-wrap: wrap; /* Allows items to wrap if the viewport is less than 1200px wide */
+    flex-wrap: wrap;
   }
 }
 
@@ -192,22 +187,22 @@ export default defineComponent({
   position: relative;
   text-align: center;
   cursor: pointer;
-  width: 25%; /* Example percentage width - adjust as needed */
-  max-width: 300px; /* Control the maximum size */
+  width: 25%;
+  max-width: 300px;
   padding: 10px;
 }
 
 .training-mode-box p {
-  white-space: normal; /* Allow wrapping */
-  word-wrap: break-word; /* Break words as needed */
-  text-align: center; /* Center-align text */
-  margin: 0 auto; /* Auto margins for centering */
+  white-space: normal;
+  word-wrap: break-word;
+  text-align: center;
+  margin: 0 auto;
 }
 
 .mode-image {
   /* Allows dynamic resizing to a certain point when screen width reduced */
-  max-width: 300px; /* Maximum width is 100% of the container */
-  width: 100%; /* Width is 100% of the container */
+  max-width: 300px;
+  width: 100%;
   height: auto; /* Height will scale automatically */
   border-radius: 12px;
 }
@@ -245,14 +240,14 @@ export default defineComponent({
   align-items: center;
 }
 .bold-text {
-  margin-top: 5px; /* Optional, for a bit of spacing */
+  margin-top: 5px;
   font-weight: bold;
 }
 .option-description {
-  font-size: 12px; /* You can adjust this size */
+  font-size: 12px;
   text-align: center;
-  margin-top: 5px; /* Optional, for a bit of spacing */
-  max-width: 300px; /* Same as the width of the image */
+  margin-top: 5px;
+  max-width: 300px;
   margin-left: auto;
   margin-right: auto;
   word-wrap: break-word;

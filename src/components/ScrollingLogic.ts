@@ -13,7 +13,6 @@ export function updateScrollPosition(scrollContainer: Ref<HTMLElement | null>) {
 
         if (currentCharElement) {
             const charTop = currentCharElement.offsetTop;
-            console.log("chars chartop,", charTop)
             const lineHeight = 30; // Fixed line height, this is aligned with the speed-text div height of 90px for 3 lines shown (based on fixed font size)
             const linesToShow = 2; // Number of lines to show before scrolling
 

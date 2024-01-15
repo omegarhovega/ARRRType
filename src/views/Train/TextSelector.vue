@@ -1,16 +1,18 @@
 <template>
-  <div class="text-selector mt-10">
-    <p>Paste your text here (max 1000 characters):</p>
-    <textarea
-      v-model="customText"
-      placeholder="Input text..."
-      maxlength="1000"
-      class="custom-textarea mt-5"
-    ></textarea>
-  </div>
-  <div class="mt-5">
-    <div class="button-box">
-      <div class="shortcut-key-small">Enter<span>&#9166;</span></div><button @click="submitCustomText">Start Custom Training</button>
+  <div class="text-selector">
+    <div class="mt-10">
+      <p>Paste your text here (max 1000 characters):</p>
+      <textarea
+        v-model="customText"
+        placeholder="Input text..."
+        maxlength="1000"
+        class="custom-textarea mt-5"
+      ></textarea>
+    </div>
+    <div class="mt-5">
+      <div class="button-box">
+        <div class="shortcut-key-small">Enter<span>&#9166;</span></div><button @click="submitCustomText">Start Custom Training</button>
+      </div>
     </div>
   </div>
 </template>
@@ -72,18 +74,21 @@ export default defineComponent({
 </script>
   
 <style scoped>
+.text-selector {
+  padding-bottom: var(--footer-height); /* padding bottom footer's height */
+}
 .custom-textarea {
-  width: 100%; /* Stretches the textarea across the full width of the container */
-  height: 150px; /* Adjust height as needed */
-  margin-bottom: 20px; /* Space between textarea and button */
+  width: 100%;
+  height: 150px;
+  margin-bottom: 20px;
   padding: 10px;
   border: 1px solid #ccc;
   border-radius: 4px;
-  resize: vertical; /* Allows vertical resizing of the textarea */
+  resize: vertical;
 }
 
 .shortcut-key-small {
-  top: -10px; /* Adjust as needed */
+  top: -10px;
   left: 50%;
   transform: translate(-50%, 0);
   position: absolute;

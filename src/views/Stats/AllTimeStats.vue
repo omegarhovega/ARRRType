@@ -1,3 +1,5 @@
+<!-- Component (Last 100 Stats) -->
+
 <template>
   <div class="all-time-stats">
     <div class="mt-1 mb-2">WPM and Accuracy:</div>
@@ -14,12 +16,10 @@
     <div class="mt-5 mb-2">Consistency:</div>
     <p>Your relative Consistency is {{ consistencyForStat.percentage }} ({{ consistencyForStat.comment }})</p>
     <div class="mt-8 text-sm">Note: Statistics shown exclude rounds with accuracy of 50% or lower and do not include measurements from single word, keys or custom training. WPM statistic assumes average word length of 5 characters.</div>
-    <!-- Spacer for footer -->
-    <div class="mt-20 text-sm"></div>
   </div>
 </template>
   
-  <script lang="ts">
+<script lang="ts">
 import {
   defineComponent,
   ref,
@@ -30,7 +30,7 @@ import {
 } from "vue";
 import UserStatsLineChart from "./LineChartComponent.vue";
 import KeyboardHeatmap from "./KeyboardHeatmap.vue";
-import MistypedWordsTable from "./MistypedWordsTable.vue"; // Import the table component
+import MistypedWordsTable from "./MistypedWordsTable.vue";
 import { useUserStatistics } from "../../components/UserStatistics";
 import { useStore } from "../../stores/store";
 
@@ -48,7 +48,6 @@ export default defineComponent({
       useUserStatistics();
     const chartKey = ref(0);
 
-    // On component mount, retrieve stats
     onMounted(async () => {
       // retrieves all historical stats from database/local storage for use and fills userStats variable
       if (userSession.value) {
@@ -59,7 +58,7 @@ export default defineComponent({
     });
 
     onUnmounted(() => {
-      resetStats(); // clears data *NOTE* can we separate last round data and data loaded from storage into different variables so we could keep the statistics loaded?
+      resetStats(); // clears data
     });
 
     // Process userStats to get WPM and Accuracy arrays
@@ -70,7 +69,6 @@ export default defineComponent({
     watchEffect(() => {
       chartKey.value++;
       // Log the current value of chartKey
-      console.log("Current chartKey:", chartKey.value);
       wpmData.value = store.userStats.map((stat) => stat.wpm);
       grossWpmData.value = store.userStats.map((stat) => stat.grossWPM);
       accuracyData.value = store.userStats.map((stat) => stat.accuracy);
@@ -85,13 +83,9 @@ export default defineComponent({
       if (consistencyData.value.length === 0)
         return { percentage: "N/A", comment: "Not enough data" };
 
-      console.log("All consistency data:", consistencyData.value);
-
       const total = consistencyData.value.reduce((acc, val) => acc + val, 0);
-      console.log("Total of all consistency data:", total);
 
       const averageConsistency = total / consistencyData.value.length;
-      console.log("Average consistency:", averageConsistency);
 
       const formattedPercentage = averageConsistency.toFixed(2) + "%";
 
@@ -121,7 +115,7 @@ export default defineComponent({
 });
 </script>
   
-  <style scoped>
+<style scoped>
 .all-time-stats {
   max-width: 100%;
   margin-left: auto;

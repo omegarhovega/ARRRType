@@ -53,22 +53,23 @@ export default defineComponent({
 <style scoped>
 .not-found {
   display: flex;
-  flex-direction: column; /* Stack children vertically */
-  justify-content: center; /* Centers items vertically */
-  align-items: center; /* Centers items horizontally */
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
   min-height: calc(
     100vh - var(--menu-height)
   ); /* Full height minus the menu height */
-  text-align: center; /* Center text horizontally */
+  padding-bottom: var(--footer-height); /* padding bottom footer's height */
+  text-align: center;
 }
 .img {
   display: block;
-  margin-bottom: 10px; /* Space between the image and the text */
+  margin-bottom: 10px;
 }
 
 .text {
-  text-align: center; /* Ensure text is centered below the image */
-  width: 100%; /* Full width to ensure centering */
+  text-align: center;
+  width: 100%;
 }
 
 button {

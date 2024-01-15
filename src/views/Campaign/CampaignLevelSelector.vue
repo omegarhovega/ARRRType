@@ -75,6 +75,7 @@ export default defineComponent({
   min-height: calc(
     100vh - var(--menu-height)
   ); /* Full height minus the menu height */
+  padding-bottom: var(--footer-height); /* padding bottom footer's height */
 }
 .level-squares-container {
   display: flex;

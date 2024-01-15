@@ -40,7 +40,6 @@ function initializeSingleWordTraining() {
     const { fetchText } = useUtilities().useTextManagement('single');
     fetchText(store.numberOfWords).then((words) => {
         if (words && words.length > 0) {
-            console.log(`Fetched words are: ${words}`);
             store.startTime = new Date();
             store.currentWordStartTime = new Date();
             fetchedWords.value = words;
@@ -152,12 +151,8 @@ function setupKeyboardEvent(
         }
 
         const expectedChar = currentWord.value[currentWordCharIndex.value];
-        console.log(
-            `Expected char Index: ${currentWordCharIndex}, Expected char: ${expectedChar}, Key pressed: ${event.key}`
-        );
 
         if (event.key === expectedChar) {
-            console.log("Correct key pressed");
             store.correctKeystrokes++;
         }
 
@@ -177,7 +172,6 @@ function setupKeyboardEvent(
         store.currentIndex = currentWordCharIndex.value;
 
         if (currentWordCharIndex.value >= currentWord.value.length) {
-            console.log("End of word reached");
             endWordTimeTracking();
             updateSingleWordStats();
 
@@ -250,12 +244,10 @@ function updateSingleWordStats() {
 
     // Get the current time for endTime
     currentWordEndTime.value = new Date().getTime();
-    console.log("Current End Time.", currentWordEndTime.value);
 
     // Get the start time from the store
     if (store.currentWordStartTime) {
         currentWordStartTime.value = store.currentWordStartTime.getTime();
-        console.log("Start Time.", store.currentWordStartTime.getTime());
     } else {
         console.error("startTime is null. Cannot update stats.");
         return;
@@ -263,16 +255,12 @@ function updateSingleWordStats() {
 
     // Calculate the total time taken for the current word
     const totalTime = currentWordEndTime.value - currentWordStartTime.value;
-    console.log("Total time:", totalTime);
 
     // Calculate WPM
     const wpm = totalTime > 0 ? Math.floor((store.correctKeystrokes / 5) / (totalTime / (60 * 1000))) : 0;
-    console.log("Correct Keystrokes:", store.correctKeystrokes);
-    console.log("WPM:", wpm);
 
     // Calculate accuracy
     const accuracy = store.totalKeystrokes > 0 ? (store.correctKeystrokes / store.totalKeystrokes) * 100 : 0;
-    console.log("Accuracy:", accuracy);
 
     // Create stats object
     const stats: SingleWordStats = {
@@ -330,7 +318,6 @@ function deleteWholeWord() {
 
 function detectCapsLock(event: KeyboardEvent) {
     const store = useStore();
-    console.log("Calling detectCapslock");
     store.isCapsLockOn = event.getModifierState("CapsLock");
 }
 

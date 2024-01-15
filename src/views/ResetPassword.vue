@@ -66,7 +66,7 @@ export default defineComponent({
         alert(error.message);
       } else {
         alert("Password has been reset!");
-        // Redirect to login or some other page
+        // redirect to login
       }
     };
 
@@ -88,6 +88,7 @@ export default defineComponent({
   min-height: calc(
     100vh - var(--menu-height)
   ); /* Full height minus the menu height */
+  padding-bottom: var(--footer-height); /* padding bottom footer's height */
 }
 
 .form {

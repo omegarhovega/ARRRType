@@ -64,13 +64,7 @@ CampaignModeSelector
 </template>
   
   <script lang="ts">
-import {
-  defineComponent,
-  computed,
-  onMounted,
-  onBeforeUnmount,
-  ref,
-} from "vue";
+import { defineComponent, computed, onMounted, onBeforeUnmount } from "vue";
 import { useStore } from "../../stores/store";
 import { useRouter } from "vue-router";
 
@@ -123,6 +117,7 @@ export default defineComponent({
   justify-content: center;
   align-items: center;
   min-height: calc(100vh - var(--menu-height));
+  padding-bottom: var(--footer-height); /* padding bottom footer's height */
 }
 
 .mode-boxes-container {

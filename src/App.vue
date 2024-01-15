@@ -9,8 +9,8 @@
       </template>
       <!-- Content container with padding-top to push it below the menu -->
       <router-view :key="$route.fullPath"></router-view>
-      <Footer />
     </div>
+    <Footer />
   </div>
 </template>
 

@@ -2,7 +2,7 @@ import { createApp } from 'vue';
 import './style.css';
 import App from './App.vue';
 import { supabase } from '@/supabase';
-import type { Session } from '@supabase/supabase-js'; // Type-only import
+import type { Session } from '@supabase/supabase-js';
 import { createPinia } from 'pinia';
 import { useStore } from "./stores/store";
 import router from './router';
@@ -36,7 +36,7 @@ async function init() {
 init();
 
 supabase.auth.onAuthStateChange((_, session) => {
-    updateSession(session); // No need to extract a session property
+    updateSession(session);
 });
 
 app.config.errorHandler = (err: unknown, vm, info) => {

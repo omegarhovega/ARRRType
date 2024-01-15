@@ -9,7 +9,7 @@ Online Lobby
       <div v-if="users.length === 0">
         No users present
       </div>
-      <!-- table liating players currently waiting to start a game -->
+      <!-- table listing players currently waiting to start a game -->
       <table
         v-else
         class="users-table"
@@ -373,7 +373,7 @@ export default defineComponent({
     onUnmounted(async () => {
       window.removeEventListener("keydown", handleKeyPress);
 
-      // Notify other clients of this user's departure
+      // Notify other clients of user's departure
       lobbyChannel.send({
         type: "presence",
         event: "leave",
@@ -401,18 +401,19 @@ export default defineComponent({
   justify-content: center;
   align-items: center;
   min-height: calc(100vh - var(--menu-height));
+  padding-bottom: var(--footer-height); /* padding bottom footer's height */
 }
 
 .users-container {
-  width: 100%; /* Adjust width as needed */
-  max-width: 600px; /* Or set a maximum width */
-  margin: 0 auto; /* This will center your users container */
-  text-align: center; /* Center text for child elements */
+  width: 100%;
+  max-width: 600px;
+  margin: 0 auto;
+  text-align: center;
 }
 .start-game-container {
   display: flex;
-  justify-content: center; /* Center the start game button horizontally */
-  margin-top: 20px; /* Add space above the start game button */
+  justify-content: center;
+  margin-top: 20px;
 }
 .shortcut-key {
   position: absolute;
@@ -444,19 +445,18 @@ export default defineComponent({
 
 .users-table {
   width: 100%;
-  border-collapse: collapse; /* For a clean table look */
+  border-collapse: collapse;
 }
 
 .users-table th,
 .users-table td {
   padding: 8px;
   text-align: left;
-  border-bottom: 1px solid #ddd; /* Light line between rows */
+  border-bottom: 1px solid #ddd;
 }
 
-/* Add this CSS in your component's style section or in a separate CSS file */
 .alt-row {
-  background-color: #29435a; /* Light blue background color */
+  background-color: #29435a;
 }
 
 .avatar-img {

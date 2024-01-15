@@ -41,15 +41,6 @@ export default defineComponent({
     },
   },
   setup(props) {
-    // Watch for changes in gameText and log it
-    watch(
-      () => props.gameText,
-      (newGameText) => {
-        console.log("Received gameText charSpans:", newGameText);
-      },
-      { immediate: true }
-    );
-
     const setCharSpan = (
       el: Element | ComponentPublicInstance | null,
       index: number

@@ -309,19 +309,16 @@ export async function setAverageWpmLast100(userSession?: any): Promise<number> {
         }
 
         last100Stats = data || [];
-        console.log("Last 100 stats logged in:", last100Stats);
     }
     // If user is guest
     else {
         const userStatsString = localStorage.getItem("userStats");
         if (!userStatsString) {
-            console.log("No User Stats found in local storage.");
             return 0; // Handle the case where userStats is null
         }
 
         // Parse the stored JSON string to an object
         last100Stats = JSON.parse(userStatsString).slice(-100);
-        console.log("Last 100 stats guest:", last100Stats);
     }
 
     if (last100Stats.length === 0) {
@@ -404,7 +401,6 @@ export async function updateAllTimeSlowWords(userSession?: any): Promise<void> {
         const existingSlowWordsString = localStorage.getItem("allTimeSlowWords");
         if (existingSlowWordsString) {
             existingSlowWords = JSON.parse(existingSlowWordsString);
-            console.log("Existing slow words guest users in updateAllTimeSlowWords:", existingSlowWords)
         }
     }
 

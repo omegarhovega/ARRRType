@@ -190,27 +190,20 @@ export default defineComponent({
     }
 
     function resetGameForRandomization() {
-      console.log("Calling resetGame randomization");
       // resets game logic to reload text with randomized upper/lower case characters and signs
       resetGame(opponentWpmFromStore.value);
     }
 
     function resetGameForForceMistakeCorrection() {
-      console.log("Calling resetGame mistake correction");
-      // You can pass the current opponentWpmFromStore or any other value that you deem necessary
       resetGame(opponentWpmFromStore.value);
       resetHasMistake();
     }
 
     function resetGameForNoEndWithoutMistakeCorrection() {
-      console.log("Calling resetGame noEnd without correction");
-      // You can pass the current opponentWpmFromStore or any other value that you deem necessary
       resetGame(opponentWpmFromStore.value);
     }
 
     function resetGameForNumberOfWordsChanged() {
-      console.log("Calling resetGame number of words");
-      // resets game logic to reload text with randomized upper/lower case characters and signs
       resetGame(opponentWpmFromStore.value);
     }
 
@@ -223,12 +216,12 @@ export default defineComponent({
         0
       );
       // Calculate the current progress
-      return (correctCount / uniqueCorrectIndices.length) * 100; // This will be in percentage
+      return (correctCount / uniqueCorrectIndices.length) * 100; // percentage
     });
 
     const currentProgressGross = computed(() => {
       // Calculate the current progress
-      return (currentIndexWatcher.value / fetchedText.value.length) * 100; // This will be in percentage
+      return (currentIndexWatcher.value / fetchedText.value.length) * 100; // percentage
     });
 
     // check if condition is that game cannot end without correction and adjust progress measure accordingly
@@ -257,7 +250,6 @@ export default defineComponent({
       nextTick(() => {
         const spans = document.querySelectorAll("#speed-text span");
         charSpans.value = Array.from(spans);
-        console.log("charSpans value", charSpans.value);
       });
     };
 
@@ -359,8 +351,7 @@ export default defineComponent({
         handleGameEnd(); // handle case opponent finishes first
       },
       (status: boolean, opponentWpm: number) => {
-        // handles changing opponent settings in Training with reload/reset
-        //resetGame(opponentWpm); *NOTE* not needed due to reset functions above
+        // handles changing opponent settings in Training with reload/reset (currently not in use as done above)
       }
     );
 
@@ -433,7 +424,6 @@ export default defineComponent({
     // *NOTE* removed watcher for endTime and handle gameEnd through flow alone
 
     function handleGameEnd() {
-      console.log("Selected mode value in handleGameEnd:", selectedMode.value);
       // triggers overlay above
       endGame(removeKeyDownListener); // *NOTE* sequence important since some functions check if there is an endTime which is set here
       stopGameActivities(
@@ -443,10 +433,6 @@ export default defineComponent({
         stopCountdown
       );
       if (doStatistics.value) {
-        console.log(
-          "Calling saveGameStatistics in TrainMain, doStatistics",
-          doStatistics.value
-        );
         saveGameStatistics(
           wpm,
           grossWpm,
@@ -462,18 +448,10 @@ export default defineComponent({
         // modes where no stats are measured
       }
       saveTotalTimePlayed();
-      console.log(
-        "Time and Levels played TrainMain",
-        store.totalTimePlayed,
-        store.numberOfGamesPlayed
-      );
     }
 
     function resetGame(newWpm: number) {
-      //*NOTE* move to GameStateManagement with reusable code so it works for both training and campaign games
       // Reset other game variables
-      console.log("Received newWpm in resetGame:", newWpm);
-      console.log("Calling resetGame");
 
       stopGameActivities(
         stopOpponentProgress,
@@ -481,11 +459,7 @@ export default defineComponent({
         stopIndexTracking,
         stopCountdown
       );
-      resetGameActivities(
-        resetOpponentProgress,
-        resetGameState, // from GameStateManagement
-        resetStats // from UserStatistics, *NOTE* prevent from removing local storage data that needs to be kept
-      );
+      resetGameActivities(resetOpponentProgress, resetGameState, resetStats);
       if (store.selectedMode === "keys") {
         const selectedKeys = JSON.parse(
           localStorage.getItem("selectedKeys") || "[]"
@@ -539,15 +513,6 @@ export default defineComponent({
       }
     }
 
-    // DEBUGGING------------------------------------REMOVE-------------------------------------
-    watch(
-      () => currentProgress.value,
-      (newValue, oldValue) => {
-        console.log(`Progress changed from ${oldValue} to ${newValue}`);
-      }
-    );
-    // DEBUGGING------------------------------------REMOVE-------------------------------------
-
     // Lifecycle hooks *NOTE* check
     onMounted(async () => {
       // check if mobile device
@@ -589,7 +554,6 @@ export default defineComponent({
       resetGameState();
     });
 
-    // *NOTE* check if chevron needs to be reset
     onUnmounted(() => {
       stopGameActivities(
         stopOpponentProgress,
@@ -603,22 +567,11 @@ export default defineComponent({
         resetGameState, // from GameStateManagement
         resetStats // from UserStatistics, *NOTE* prevent from removing local storage data that needs to be kept
       );
-      removeKeyDownListener(); // Remove keydown event listener
-      fetchedText.value = ""; // clear data, incl chars which are calculated from it
-      console.log("Component is unmounting");
-      console.log("Current state of wpmPerSecond:", wpmPerSecond.value);
+      removeKeyDownListener();
+      fetchedText.value = ""; // clear data, incl. chars which are calculated from it
       window.removeEventListener("keydown", handleOverlayKeyPress);
-
-      console.log("Component is unmounting");
-      console.log("Current chevronTop:", chevronTop.value);
-      console.log("Current chevronLeft:", chevronLeft.value);
-      console.log("Current charSpans:", charSpans.value);
-      console.log("Current scrollContainer:", scrollContainer.value);
-      console.log("Current tooltipTimeoutId:", tooltipTimeoutId.value);
-      console.log("Current countdownInterval:", countdownInterval.value);
     });
 
-    // *NOTE* check what is needed
     return {
       currentIndexWatcher,
       countdown,
@@ -692,10 +645,11 @@ export default defineComponent({
   min-height: calc(
     100vh - var(--menu-height)
   ); /* Adjusted to the height of main menu, min height used so content is not pushed behing main menu on vertical resize */
+  padding-bottom: var(--footer-height); /* padding bottom footer's height */
 }
 
 #speed-text {
-  white-space: normal; /* pre-wrap not used */
+  white-space: normal;
   text-align: justify;
   overflow-wrap: break-word;
   height: 90px; /* *NOTE* important to have aligned with scroll funtion */
@@ -736,9 +690,9 @@ export default defineComponent({
   top: 1px;
   left: 0px;
   height: 28px;
-  width: 2px; /* Change this to make the line thicker or thinner */
+  width: 2px;
   background-color: #e69500;
-  z-index: 1000; /* Ensure it's above the text but below other overlays */
+  z-index: 1000;
   transition: top 0.1s ease, left 0.1s ease;
 }
 

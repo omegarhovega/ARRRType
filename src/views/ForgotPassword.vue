@@ -30,13 +30,13 @@ import { supabase } from "../supabase";
 
 export default defineComponent({
   setup() {
-    const email = ref<string>(""); // Type for the email
+    const email = ref<string>("");
 
     const handleResetPassword = async () => {
       const { data, error } = await supabase.auth.resetPasswordForEmail(
         email.value,
         {
-          redirectTo: "http://localhost:5173/reset", // *NOTE* Update this URL
+          redirectTo: "ResetPassword",
         }
       );
       if (error) {
@@ -59,27 +59,28 @@ export default defineComponent({
 <style scoped>
 .login {
   display: flex;
-  justify-content: center; /* Centers items horizontally */
-  align-items: center; /* Centers items vertically */
+  justify-content: center;
+  align-items: center;
   min-height: calc(
     100vh - var(--menu-height)
   ); /* Full height minus the menu height */
-  flex-wrap: wrap; /* Allows items to wrap if needed */
-  gap: 10px; /* You can set a gap between the items */
+  padding-bottom: var(--footer-height); /* padding bottom footer's height */
+  flex-wrap: wrap;
+  gap: 10px;
 }
 .login-container {
   display: flex;
-  justify-content: center; /* Centers items horizontally in the mode-boxes-container */
-  flex-wrap: wrap; /* Allows items to wrap within the mode-boxes-container */
-  gap: 10px; /* You can set a gap between the items */
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 10px;
 }
 .input-field {
   color: #36454f;
 }
 .login-form {
   display: flex;
-  flex-direction: column; /* Align items vertically */
-  gap: 10px; /* Add space between items */
+  flex-direction: column;
+  gap: 10px;
   width: 200px;
 }
 
