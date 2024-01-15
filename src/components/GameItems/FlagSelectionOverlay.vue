@@ -34,7 +34,6 @@ export default defineComponent({
 
     function selectFlag(flagId: number) {
       emit("update-flag", flagId); // Emit the selected avatar ID
-      // close(); // Optional: Close immediately after selection
     }
 
     function close() {

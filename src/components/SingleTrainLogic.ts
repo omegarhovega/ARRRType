@@ -1,6 +1,3 @@
-// SingleTrainLogic.ts
-
-// Import required dependencies and types
 import { reactive, ref, computed, nextTick } from 'vue';
 import type { ComputedRef } from 'vue';
 import type { ComponentPublicInstance } from "vue";
@@ -37,10 +34,9 @@ const averageAccuracy = computed(() => {
 });
 
 
-// Initialization Function
+// logic for single word training
 function initializeSingleWordTraining() {
     const store = useStore();
-    console.log("initializeSingleWordTraining called");
     const { fetchText } = useUtilities().useTextManagement('single');
     fetchText(store.numberOfWords).then((words) => {
         if (words && words.length > 0) {
@@ -50,7 +46,7 @@ function initializeSingleWordTraining() {
             fetchedWords.value = words;
             currentWordIndex.value = 1;
             currentWordCharIndex.value = 0;
-            currentWord.value = words[0];  // Set the initial word here
+            currentWord.value = words[0];
             singleWordStatsList.length = 0;
         } else {
             console.error("No words were fetched");
@@ -59,8 +55,6 @@ function initializeSingleWordTraining() {
         console.error(`Error fetching words: ${error}`);
     });
 }
-
-//HANDLEKEYDOWN
 
 interface SetupKeyboardEventReturns {
     handleKeyDown: (event: KeyboardEvent) => void;
@@ -88,6 +82,8 @@ function setupKeyboardEvent(
     const {
         saveTotalTimePlayed,
     } = useUtilities();
+
+    // split text into words
     function recalculateCurrentWord() {
         const currentWords = computed(() => currentWord.value.split(""));
         return currentWords;
@@ -95,6 +91,7 @@ function setupKeyboardEvent(
 
     const currentWordArray = recalculateCurrentWord();
 
+    // logic to restart single-word game
     function initialize(
         resetGameState: Function,
         resetChevronPosition: Function,
@@ -105,7 +102,6 @@ function setupKeyboardEvent(
         recalculateCurrentWord: Function,
         currentWordArray: any,
     ) {
-        console.log("Restarting game");
         resetGameState();
         resetChevronPosition(chevronTop, chevronLeft);
         fetchedWords.value = [""];
@@ -122,7 +118,6 @@ function setupKeyboardEvent(
 
 
     function handleGameEnd(stopCountdown: Function, isFinished: any) {
-        console.log("Calling handleGameEnd")
         store.endTime = new Date();
         stopCountdown();
         window.removeEventListener("keydown", handleKeyDown);
@@ -130,16 +125,14 @@ function setupKeyboardEvent(
         saveTotalTimePlayed();
     }
 
+    // modified logic for single-word game, handled on word by word basis
     function handleKeyDown(event: KeyboardEvent) {
         if (isFinished.value) {
             if (event.key === "r" || event.key === "R") {
-                console.log("Restarting game via shortcut");
                 initialize(resetGameState, resetChevronPosition, chevronTop, chevronLeft, countdownStart, isFinished, recalculateCurrentWord, currentWordArray);
             }
             return;
         }
-
-        console.log(`Key pressed: ${event.key}`);
 
         if (currentWord.value.length === 0) return;
 
@@ -172,7 +165,7 @@ function setupKeyboardEvent(
 
         if (event.key === "Backspace") {
             if (event.ctrlKey) {
-                deleteWholeWord(); // Create this function to handle deleting the whole word
+                deleteWholeWord();
             } else {
                 deleteLastChar();
             }
@@ -196,7 +189,7 @@ function setupKeyboardEvent(
             // Reset the 'typed' state
             store.typed = {};
 
-            console.log("Loading next word");
+            // continues to next word
             loadNextWord(() => {
                 nextTick(() => {
                     charSpans.value = [];
@@ -205,14 +198,11 @@ function setupKeyboardEvent(
                 });
             });
         }
-        console.log(`Current word is: ${currentWord.value}`);
     }
 
     type AfterLoadCallback = () => void;
 
     function loadNextWord(afterLoad?: AfterLoadCallback) {
-        console.log('loadNextWord called');
-        console.log(`Current index is: ${currentWordIndex.value}, Total words: ${fetchedWords.value.length}`);
         const store = useStore();
         if (currentWordIndex.value < fetchedWords.value.length) {
             currentWord.value = fetchedWords.value[currentWordIndex.value];  // Updated line
@@ -230,15 +220,14 @@ function setupKeyboardEvent(
             if (afterLoad) {
                 afterLoad();
             }
-        } else if (currentWordIndex.value >= fetchedWords.value.length) {
-            console.log("Reached the end of the word list. Finalizing game.");
+        } else if (currentWordIndex.value >= fetchedWords.value.length) { // final word is reached
             handleGameEnd(stopCountdown, isFinished); // Directly call handleGameEnd
             fetchedWords.value = [];
             return;
         }
     }
     return {
-        handleKeyDown,  // The handleKeyDown function
+        handleKeyDown,
         initialize: () => initialize(resetGameState, resetChevronPosition, chevronTop, chevronLeft, countdownStart, isFinished, recalculateCurrentWord, currentWordArray),
         handleGameEnd: () => handleGameEnd(stopCountdown, isFinished),
         recalculateCurrentWord,
@@ -246,18 +235,16 @@ function setupKeyboardEvent(
     };
 }
 
-// Start Time Tracking
+// functions to start and stop time tracking for each new word
 function startWordTimeTracking() {
     currentWordStartTime.value = new Date().getTime();
 }
 
-// End Time Trackinggar
 function endWordTimeTracking() {
     currentWordEndTime.value = new Date().getTime();
 }
 
-// Update Stats
-// Update Stats
+// Update Statistics on a word-by-word basis
 function updateSingleWordStats() {
     const store = useStore();
 
@@ -299,11 +286,6 @@ function updateSingleWordStats() {
     singleWordStatsList.push(stats);
 }
 
-
-// Load Next Word
-
-
-// Inside SingleTrainLogic.ts
 function deleteLastChar() {
     const store = useStore();
     if (currentWordCharIndex.value > 0) {
@@ -315,7 +297,6 @@ function deleteLastChar() {
         store.typed = { ...store.typed };  // Trigger reactivity
     }
 }
-
 
 // Finalize Test
 function finalizeSingleWordTest(handleGameEnd?: () => void) {
@@ -353,7 +334,6 @@ function detectCapsLock(event: KeyboardEvent) {
     store.isCapsLockOn = event.getModifierState("CapsLock");
 }
 
-// Export all necessary reactive states and functions
 export {
     singleWordStatsList,
     currentWordCharIndex,

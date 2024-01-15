@@ -8,8 +8,6 @@ import { allTimeSlowWords, loadAllTimeSlowWords } from './UserStatisticsCalculat
 
 
 export function useUtilities() {
-
-    console.log("Calling useUtilities");
     const store = useStore();
 
     // Function to fetch texts from the database (longer texts for campaign, not words)
@@ -28,53 +26,39 @@ export function useUtilities() {
 
 
     // Text Management Hook
-    //*NOTE* remove performance variables and measurement in production
-    // Can fetch words or texts (latter used in campaigns)
+    // Can fetch words or texts depending on training mode or campaign
     // Currently minimum word length fixed to 3 characters
     function useTextManagement(mode: 'text' | 'words' | 'random' | 'single' | 'keys' | 'custom', wordLength?: '3') {
-        console.log("Calling useTextManagement");
         const fetchedText = ref<string>("");
 
-        // 1. fetches (a) random texts for campaign or (b) 50 words based on randomly generated index for training
+        // 1. fetches (a) random texts for campaign or (b) a set number of words based on randomly generated index for training
         async function fetchText(numberOfWords: number, selectedKeys?: string[]): Promise<string[]> {
             return new Promise(async (resolve, reject) => {
                 try {
-                    const t0 = performance.now();  // Overall start time
 
                     if (mode === 'text') {
-                        const t1 = performance.now();  // Start time for fetching texts
                         const texts = await fetchDataFromDB('texts');
                         if (texts) {
                             const randomIndex = Math.floor(Math.random() * texts.length);
                             fetchedText.value = (texts[randomIndex] as any).text;
-                            console.log("Text fetched:", fetchedText.value);
                             store.loading = false;
                             store.setupUniqueCorrectIndices(fetchedText.value.length);
                         } else {
                             console.error('Text still not generated.');
                         }
-                        const t2 = performance.now();  // End time for fetching texts
-                        console.log(`Time taken for fetching texts: ${t2 - t1} milliseconds.`);
                     } else if (mode === 'words') {
-                        const t1 = performance.now(); //*NOTE* can be removed
                         if (allTimeSlowWords.value.length === 0) {
-                            console.log("allTimeSlowWords is empty, loading data...");
                             await loadAllTimeSlowWords(store.userSession); // *NOTE* check if user session correctly handled
-                            console.log("Data loaded for allTimeSlowWords:", allTimeSlowWords.value);
                         }
                         await generateTrainingWords();  // Generate the training words here
                         if (trainingWords.value.length > 0) {
                             fetchedText.value = trainingWords.value.join(' ');
-                            console.log("Training words generated");
                             store.loading = false;
                             store.setupUniqueCorrectIndices(fetchedText.value.length);
                         } else {
                             console.error('Training words are still not generated.');
                         }
-                        const t2 = performance.now();  // End time for fetching words and generating training words
-                        console.log(`Time taken for fetching words and generating training words: ${t2 - t1} milliseconds.`);
                     } else if (mode === 'random' || mode === 'single') {
-                        const t1 = performance.now(); //*NOTE* can be removed
                         const words = await fetchDataFromDB('words', '3_letters');
                         if (words) {
                             const wordListFromDB = words.map((item: any) => item['3_letters']);
@@ -83,8 +67,6 @@ export function useUtilities() {
                             store.setupUniqueCorrectIndices(fetchedText.value.length);
                             store.loading = false;
                         }
-                        const t2 = performance.now();  // End time for fetching random words
-                        console.log(`Time taken for fetching random words: ${t2 - t1} milliseconds.`);
                     } else if (mode === 'keys' && selectedKeys) {
                         const generatedWords = [];
                         for (let i = 0; i < numberOfWords; i++) {
@@ -105,7 +87,6 @@ export function useUtilities() {
                         store.setupUniqueCorrectIndices(fetchedText.value.length);
                         store.loading = false;
                     }
-                    const t3 = performance.now();//*NOTE* can be removed
                     if (store.randomizationEnabled && (mode === 'words' || mode === 'random' || mode === 'single' || mode === 'keys')) {
                         // Apply random capitalization
                         fetchedText.value = fetchedText.value
@@ -129,11 +110,6 @@ export function useUtilities() {
                             })
                             .join(' ');
                     }
-                    const t4 = performance.now();  // End time for text randomization
-                    console.log(`Time taken for text randomization: ${t4 - t3} milliseconds.`);
-
-                    const tEnd = performance.now();  // Overall end time
-                    console.log(`Total time taken for fetchText: ${tEnd - t0} milliseconds.`);
 
                     resolve(fetchedText.value.split(' '));
                 } catch (error) {
@@ -153,7 +129,7 @@ export function useUtilities() {
 
     }
 
-    // Additional utility function to get random words
+    // Helper functions
     function getRandomWords(wordList: string[], numWords: number): string[] {
         const randomWords: string[] = [];
 
@@ -165,17 +141,14 @@ export function useUtilities() {
         return randomWords;
     }
 
-    // Helper function to get a random integer between min (inclusive) and max (exclusive)
     function getRandomInt(min: number, max: number): number {
         return Math.floor(Math.random() * (max - min) + min);
     }
 
-    // Helper function to capitalize the first letter of a string
     function capitalizeFirstLetter(string: string) {
         return string.charAt(0).toUpperCase() + string.slice(1);
     }
 
-    // Helper function to add a random punctuation after a word
     function addRandomPunctuation(word: string) {
         const punctuations = [',', '.', ':', ';', '-', '?', '!', '"', ''];
         const randomIndex = Math.floor(Math.random() * punctuations.length);
@@ -185,7 +158,7 @@ export function useUtilities() {
 
     // Handles chevron animation behavior
     // Position of chevron is based on current character position in DOM (can be calculated given fixed line height and rendering information from browser)
-    // Resizing window currently does not update position and correct positioning after resize requires an input
+    // Resizing window currently does not update position and correct positioning after resize requires an new user keystroke after resize
     // Chevron has slight delay added to provide smooth transition (trade-off: at very high WPM speeds slight delay visible)
     // Interacts with CSS styling of chevron div in components
     function useChevronAnimation(
@@ -193,14 +166,12 @@ export function useUtilities() {
         chevronTop: Ref<number>,
         chevronLeft: Ref<number>,
     ) {
-        console.log("Calling useChevronAnimation");
         let animationFrameId: number | null = null;
         let startingTime: number | null = null;
 
         const watchedCurrentIndex = computed(() => store.currentIndex);
 
         watch(watchedCurrentIndex, (newIndex) => {
-            console.log("Calling watch chevron, new index", newIndex, "charSpans length", charSpans.value.length);
             nextTick().then(() => {
                 // Cancel any ongoing animation
                 if (animationFrameId !== null) {
@@ -210,7 +181,6 @@ export function useUtilities() {
                 if (newIndex === charSpans.value.length) {
                     // Handle the case when the last character is typed
                     moveChevronToEndOfText(chevronTop, chevronLeft, charSpans);
-                    console.log("Last character, moving chevron to:", chevronTop, chevronLeft)
                     return;
                 }
 
@@ -258,12 +228,6 @@ export function useUtilities() {
                             }
                         };
 
-                        console.log("Animating from (Top, Left):", currentTop, currentLeft, "to (Top, Left):", newTop, newLeft);
-                        console.log("New Top and Left:", newTop, newLeft);
-                        console.log("Current Top and Left:", currentTop, currentLeft);
-                        console.log('Span Rect:', spanRect);
-                        console.log('Text Box Rect:', textBoxRect);
-
                         animationFrameId = requestAnimationFrame(animate);
                     }
                 }
@@ -290,7 +254,6 @@ export function useUtilities() {
 
     function resetChevronPosition(chevronTop: Ref<number>, chevronLeft: Ref<number>) {
         const textBoxElement = document.getElementById("speed-text");
-        console.log("Calling standalone resetChevronPosition");
         // important for relative chevron postion to adjust - scroll box again back to top, then no potential negative top margin is applied
         if (textBoxElement) {
             textBoxElement.scrollTop = 0;
@@ -299,9 +262,8 @@ export function useUtilities() {
         chevronLeft.value = 0;
     }
 
-    // calculating time elapsed for test
+    // calculating time elapsed for finishing game
     function useTimeDifference() {
-        console.log("Calling useTimeDifference")
 
         return computed(() => {
             if (store.endTime && store.startTime !== null) {
@@ -315,7 +277,7 @@ export function useUtilities() {
                 const formattedSeconds = String(seconds).padStart(2, "0");
                 return `${formattedMinutes}m ${formattedSeconds}s`;
             } else {
-                console.log("Error returning time elapsed.");
+                console.warn("Error returning time elapsed.");
                 return "00m 00s";
             }
         });
@@ -345,8 +307,9 @@ export function useUtilities() {
         return findBucketIndex(accuracy, accuracyBucketRanges);
     }
 
+    // Additional statistics------------------------------------------------------------------------------------------------
+    // includes statistics on total time and games played by user as well as histogram data on all-time WPM and accuracy (detailed values in stats only for last 100 games stored)
 
-    // function to save selected total statistics for all players
     async function saveTotalTimePlayed() {
         let gamesPlayed = 0;
         let totalTimePlayed = 0;
@@ -454,8 +417,6 @@ export function useUtilities() {
         store.numberOfGamesPlayed = gamesPlayed;
         store.totalTimePlayed = totalTimePlayed;
     }
-
-
 
     return {
         useTextManagement,

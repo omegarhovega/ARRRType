@@ -34,7 +34,6 @@ export default defineComponent({
 
     function selectAvatar(avatarId: number) {
       emit("update-avatar", avatarId); // Emit the selected avatar ID
-      // close(); // Optional: Close immediately after selection
     }
 
     function close() {

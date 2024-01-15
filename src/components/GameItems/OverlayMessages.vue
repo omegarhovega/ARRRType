@@ -47,13 +47,13 @@ export default defineComponent({
 <style scoped>
 #mistake-overlay {
   position: absolute;
-  top: 100%; /* Positioned just below the container it's related to */
-  left: 50%; /* Center horizontally */
-  transform: translateX(-50%); /* Center horizontally */
-  z-index: 50; /* Adjust as needed, but ensure it's above the text box */
-  width: auto; /* Adjust width as needed */
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 50;
+  width: auto;
   padding: 10px;
-  background-color: #2d4053; /* Or any other color */
+  background-color: #2d4053;
   color: rgb(205, 52, 52);
   border-radius: 5px;
   font-size: 1rem;
@@ -66,12 +66,12 @@ export default defineComponent({
 #capslock-overlay {
   position: absolute;
   bottom: 100%;
-  left: 50%; /* Center horizontally */
-  transform: translateX(-50%); /* Center horizontally */
-  z-index: 1001; /* Adjust as needed, but ensure it's above the text box */
-  width: auto; /* Adjust width as needed */
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 1001;
+  width: auto;
   padding: 10px;
-  background-color: #2d4053; /* Or any other color */
+  background-color: #2d4053;
   color: rgb(205, 52, 52);
   border-radius: 5px;
   font-size: 1rem;

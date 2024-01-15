@@ -7,6 +7,8 @@ interface PayloadType {
     progress: number;
 }
 
+// logic for human vs. human game, unique playerIDs and gameId used for identification
+// supabase realtime channel created for every individual game where players broadcast progress to each other and heartbeat to measure latency
 export function useMultiplayerRealtime(
     gameId: ComputedRef<string | null>,
     playerID: string,
@@ -20,7 +22,7 @@ export function useMultiplayerRealtime(
     const channel = supabase.channel(`game_${gameId.value}`);
     console.log(`Channel initialized for game: ${gameId.value}`);
 
-    const opponents: Ref<any[]> = ref([]); // Populate this array with opponent data
+    const opponents: Ref<any[]> = ref([]);
     const opponentProgresses = reactive<Record<string, number>>({});
     let heartbeatInterval: NodeJS.Timeout | null = null;
     const latency = ref(0);
@@ -28,8 +30,7 @@ export function useMultiplayerRealtime(
     const players = ref([]);
     const isChannelSubscribed = ref(false);
 
-    // Heartbeat logic
-    // Supabase game table needs RLS permission to UPDATE for the heartbeat to function
+    // Heartbeat channel listens for UPDATE events in supabase games row with gameId
     const heartbeatchannel = supabase.channel(`game-heartbeat-${gameId.value}`)
         .on("postgres_changes", {
             event: "UPDATE",
@@ -40,8 +41,8 @@ export function useMultiplayerRealtime(
             handleHeartbeatUpdate(payload);
         });
 
+    // calculate latency based on heartbeat (currently not shown but round-trip latency is used)
     function handleHeartbeatUpdate(payload: any) {
-        console.log("Change received!", payload);
         const updatedHeartbeat = payload.new.heartbeat;
         const timestampString = sessionStorage.getItem("lastHeartbeatTimestamp");
 
@@ -52,7 +53,6 @@ export function useMultiplayerRealtime(
 
             if (userHeartbeat) {
                 latency.value = (now - timestampBeforeRpc) / 2;
-                console.log(`Latency for user ${playerID}: ${latency.value}ms`);
             }
         } else {
             console.error("No timestamp found in sessionStorage for last heartbeat.");
@@ -60,9 +60,7 @@ export function useMultiplayerRealtime(
     }
 
     const callInsertHeartbeat = async (gameId: any, userId: any) => {
-        const timestampBeforeRpc = Date.now(); // Record the timestamp before RPC call
-
-        console.log("calling insert Heartbeat rpc")
+        const timestampBeforeRpc = Date.now(); // Record the timestamp before supabase remote heartbeat function call
 
         const { data, error } = await supabase.rpc("update_heartbeat", {
             game_id: gameId,
@@ -72,7 +70,7 @@ export function useMultiplayerRealtime(
         if (error) {
             console.log("Error calling insert_heartbeat:", error.message);
         } else {
-            // Store the timestamp to compare with the server's response
+            // Store the timestamp to compare with the server's response to calculate round-trip latency
             sessionStorage.setItem(
                 "lastHeartbeatTimestamp",
                 timestampBeforeRpc.toString()
@@ -90,9 +88,8 @@ export function useMultiplayerRealtime(
     };
 
 
-    // Function to broadcast current progress for users which allows different progress bars to be updated
+    // Function to broadcast current progress in supabase realtime game channel to update different progress bars shown for each player
     async function broadcastProgress(newProgress: number, oldProgress: number) {
-        console.log(`Attempting to broadcast progress. Channel subscribed: ${isChannelSubscribed.value}, New Progress: ${newProgress}, Old Progress: ${oldProgress}`);
         if (isChannelSubscribed.value && newProgress !== oldProgress) {
             const messageId = `${Date.now()}-${playerID}`;
             const sendTimestamp = Date.now();
@@ -109,7 +106,7 @@ export function useMultiplayerRealtime(
             });
 
             if (newProgress === 100) {
-                console.log("Progress reached 100, updating game finish time");
+                // sets game finish time once progress in 100%
                 await updateGameFinishTime();
             }
         }
@@ -133,7 +130,7 @@ export function useMultiplayerRealtime(
             return;
         }
 
-        // Merge the existing finishing_times with the current player's time
+        // Merge any existing finishing_times with the current player's time
         const existingFinishingTimes =
             existingData?.[0]?.finishing_times || {};
         const updatedFinishingTimes = {
@@ -156,6 +153,7 @@ export function useMultiplayerRealtime(
             ).map((time) => new Date(time as string));
             const playerFinishTime = new Date(updatedFinishingTimes[playerID]);
 
+            // determine game end message for player depending on win or loss
             if (
                 finishingTimesArray.every(
                     (otherTime) => playerFinishTime <= otherTime
@@ -169,11 +167,10 @@ export function useMultiplayerRealtime(
                 playerWon.value = false;
             }
         }
-        console.log("Game finish time updated.");
     }
 
+    // initial setup of multiplayer game
     async function setupMultiplayerGame() {
-        console.log("Setting up multiplayer game...");
         // Fetch game details
         const { data: gameData, error: gameError } = await supabase
             .from("games")
@@ -194,21 +191,21 @@ export function useMultiplayerRealtime(
                 console.log("Current Player ID:", playerID);
             }
 
-            // Update the start_time if available
+            // Start countdown for game once the set start time is reached
             if (gameData[0].start_time) {
                 startTime.value = gameData[0].start_time;
                 countdownStart();
             }
         }
 
-        // Setup channel subscriptions
+        // Setup channel subscriptions for players
         setupChannelSubscriptions();
         isChannelSubscribed.value = true;
 
         console.log("Multiplayer game setup complete.");
     }
 
-    // heartbeat channel setup
+    // separate supabase channel for hearbeat
     function setupChannelSubscriptions() {
         heartbeatchannel.subscribe();
         // Send a heartbeat message every 5 seconds
@@ -225,12 +222,11 @@ export function useMultiplayerRealtime(
 
     function handleCurrentProgressUpdate(payload: any) {
         const typedPayload = payload.payload as PayloadType;
-        const receiveTimestamp = Date.now();
-        const latency = receiveTimestamp - payload.timestamp;
         if (payload.payload && payload.payload.playerId !== playerID) {
             // update opponent progress in local state
             opponentProgresses[typedPayload.playerId] = typedPayload.progress;
         }
+        // if own progress, send update
         const echoTimestamp = Date.now();
         channel.send({
             type: "broadcast",
@@ -240,6 +236,7 @@ export function useMultiplayerRealtime(
         });
     }
 
+    // calculate own round-trip latency
     function handleEchoLatency(payload: any) {
         const receiveTimestamp = Date.now();
         const originalTimestamp = payload.originalTimestamp;
@@ -256,6 +253,7 @@ export function useMultiplayerRealtime(
         }
     }
 
+    // end heartbeat channel and processing
     function cleanup() {
         if (heartbeatInterval !== null) {
             clearInterval(heartbeatInterval);

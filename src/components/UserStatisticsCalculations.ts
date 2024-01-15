@@ -5,20 +5,16 @@ import { supabase } from "../supabase";
 
 
 // 1. WPM and Accuracy Statistics ----------------------------------------------------------------------------------------------------------------------------
-// Calculate last round average WPM (based on correct keystrokes from Pinia store, assumes average word length of 5 characters) -> uses Pinia Store
-// inputs: Total time passed
+// basis for data in WPM and accuracy charts in stats overview
 
-// statistics used for end of round overlay *NOTE* potentially directly do in end game watch function
+// statistics used for end of round overlay
 export const wpm = computed(() => {
     const store = useStore();
-    // Debugging line
-    console.log("Start Time:", store.startTime, "End Time:", store.endTime);
+    // Only calculate WPM if the game is finished
     if (store.endTime && store.startTime !== null) {
         const wpmValue = calculateWPM(
             store.endTime.getTime() - store.startTime.getTime()
         );
-        // Debugging line
-        console.log("Calculated WPM:", wpmValue);
         return wpmValue;
     } else {
         return 0;
@@ -27,7 +23,7 @@ export const wpm = computed(() => {
 
 export const grossWpm = computed(() => {
     const store = useStore();
-    // Only calculate WPM if the game is finished
+    // Only calculate Gross WPM if the game is finished
     if (store.endTime && store.startTime !== null) {
         return calculateGrossWPM(
             store.endTime.getTime() - store.startTime.getTime()
@@ -37,25 +33,19 @@ export const grossWpm = computed(() => {
     }
 });
 
+// Average WPM for whole game, assumes average word length of 5 characters
+// WPM measures correct keystrokes per time used for text
 export function calculateWPM(totalTime: number): number {
     const store = useStore();
-    // Debugging line
-    console.log("Total Time in calculateWPM:", totalTime, "Correct Keystrokes:", store.correctKeystrokes);
     const wpm = Math.floor(store.correctKeystrokes / 5 / (totalTime / (60 * 1000)));
-    // Debugging line
-    console.log("WPM in calculateWPM:", wpm);
     return wpm;
 }
 
-// Calculate last round average Gross WPM (based on total keystrokes from Pinia store, assumes average word length of 5 characters) -> uses Pinia Store
-// inputs: Total time passed
+// Average Gross WPM for whole game, assumes average word length of 5 characters
+// Gross WPM measures total keystrokes (correct or incorrect) per time used for text
 export function calculateGrossWPM(totalTime: number): number {
     const store = useStore();
-    // Debugging line
-    console.log("Total Time in calculateGrossWPM:", totalTime, "Correct Keystrokes:", store.correctKeystrokes);
     const grossWpm = Math.floor(store.totalKeystrokes / 5 / (totalTime / (60 * 1000)));
-    // Debugging line
-    console.log("grossWPM in calculateGrossWPM:", grossWpm);
     return grossWpm
 }
 
@@ -65,27 +55,21 @@ export const previousKeystrokes: Ref<number> = ref(0);
 export const previousCorrectKeystrokes: Ref<number> = ref(0);
 export let interval: number | null = null;
 
-// start WPM per second tracking for round -> uses Pinia Store
+// start WPM per second tracking for round (for last round per second stat overview)
 export function startWpmTracking() {
     try {
-        console.log("Starting WPM tracking")
         interval = setInterval(() => {
             const store = useStore();
-            console.log("Store data at each second:", store);
-            // Calculate WPM per second based on correct keystrokes in interval
+            // Calculate WPM per second based on correct keystrokes in interval and update respective arrays
             const wpmForSecond = ((store.correctKeystrokes - previousCorrectKeystrokes.value) / 5) * 60;
-            console.log("correctKeystrokes", store.correctKeystrokes, "previouscorrectKeystrokes", previousCorrectKeystrokes.value)
-            // Calculate Gross WPM per second based on total keystrokes in interval
             const grossWpmForSecond = ((store.totalKeystrokes - previousKeystrokes.value) / 5) * 60;
-            console.log("totalKeystrokes", store.totalKeystrokes, "previousKeystrokes", previousKeystrokes.value)
-            // Update arrays
+
             wpmPerSecond.value.push(wpmForSecond);
             grossWpmPerSecond.value.push(grossWpmForSecond);
 
             // Update the previous keystrokes for the next iteration
             previousCorrectKeystrokes.value = store.correctKeystrokes;
             previousKeystrokes.value = store.totalKeystrokes;
-            console.log("WPM per second:", wpmPerSecond.value);
 
         }, 1000) as unknown as number;
     } catch (e) {
@@ -93,9 +77,8 @@ export function startWpmTracking() {
     }
 }
 
-// stop WPM per second tracking for round, called after round to ensure that it is reset before next -> uses Pinia Store
+// stop WPM per second tracking for round, called after round to ensure that it is reset before next
 export function stopWpmTracking() {
-    const store = useStore();
     try {
         if (interval) {
             clearInterval(interval);
@@ -103,16 +86,14 @@ export function stopWpmTracking() {
         }
         previousKeystrokes.value = 0; // resets between each round
         previousCorrectKeystrokes.value = 0; // resets between each round
-        console.log("stopping WPM per second tracking", wpmPerSecond.value, grossWpmPerSecond.value)
-        console.log("Value of userStats in stopWpmTracking:", store.userStats);
     } catch (e) {
         console.error("Error while stopping WPM Tracking:", e);
     }
 }
 
 // calculate accuracy per second for last round using logged gross/net wpm tracking data
+// accuracy is measured as WPM / Gross WPM
 export const accuracyPerSecond = computed(() => {
-    console.log("Calculating accuracyPerSecond")
     const accuracies: number[] = [];  // Explicitly specify the type
     for (let i = 0; i < wpmPerSecond.value.length; i++) {
         const wpm = wpmPerSecond.value[i];
@@ -127,17 +108,14 @@ export const accuracyPerSecond = computed(() => {
     return accuracies;
 });
 
-// When called, what values, correct values?, when cleared
-
-
 // 2. Mistyped Words -----------------------------------------------------------------------------------------------------------------------------------------
+// basis for mistyped words display on stats overview
 
 export const historicalWordErrors = ref<{ [key: string]: number }>({});
 
-// all-time mistyped words from local or database storage (should be called after userStats is populated with historical data after retrieveStats() call) -> uses Pinia Store
+// all-time mistyped words from local or database storage (to be called after userStats is populated with historical data after retrieveStats() call)
 export const topMistypedWords = computed(() => {
     const store = useStore();
-    console.log("Computing topMistypedWords with userStats:", store.userStats);
 
     // Check if userStats.value is populated
     if (store.userStats && store.userStats.length > 0) {
@@ -156,9 +134,6 @@ export const topMistypedWords = computed(() => {
                 });
             }
 
-            // Log unique error words for the current round
-            console.log("Unique error words for round ID " + stat.id + ":", Array.from(uniqueErrorWords));
-
             // Update the error count for each unique error word in historical data
             uniqueErrorWords.forEach(word => {
                 if (!historicalWordErrors.value[word]) {
@@ -172,23 +147,19 @@ export const topMistypedWords = computed(() => {
         });
     }
 
-    // Log the historical wordErrors
-    console.log("Historical wordErrors:", historicalWordErrors.value);
-
     return Object.entries(historicalWordErrors.value)
         .sort(([, aFreq], [, bFreq]) => bFreq - aFreq)
         .slice(0, 13)
         .map(([text, frequency]) => ({ text, frequency }));
 });
 
-// last round mistyped words -> uses Pinia Store
+// last round mistyped words
 export const lastRoundMistypedWords = computed(() => {
     const store = useStore();
     const lastRound = store.userStats[store.userStats.length - 1];
     if (!lastRound || !lastRound.errors) return [];
 
     const uniqueWords = new Set<string>();
-    console.log("Unique words set:", uniqueWords);
 
     lastRound.errors.forEach(error => {
         // Check if the error word is not undefined, not empty, and is not a punctuation
@@ -197,12 +168,12 @@ export const lastRoundMistypedWords = computed(() => {
         }
     });
 
-    console.log("Unique words:", Array.from(uniqueWords));  // Debugging line
     return Array.from(uniqueWords);
 });
 
 
 // 3. Mistyped Characters ----------------------------------------------------------------------------------------------------------------------------------
+// basis for keyboard heatmap in stats overview
 
 // aggregated data for mistyped characters heatmap
 export const aggregatedData = ref<{ totalOccurrences: { [key: string]: number }, mistakesMade: { [key: string]: number } }>({
@@ -234,7 +205,7 @@ export function getTopMistypedCharacters(): string[] {
 }
 
 
-// calculating last round error rates for heatmap -> uses Pinia Store
+// calculating last round error rates for heatmap 
 export const lastRoundErrorRates = computed(() => {
     const store = useStore();
     const lastRound = store.userStats[store.userStats.length - 1];
@@ -249,18 +220,15 @@ export const lastRoundErrorRates = computed(() => {
     return rates;
 });
 
-// Function to aggregate heatmap data for AllTimeStats -> uses Pinia Store
+// Function to aggregate heatmap data for AllTimeStats
 export function aggregateHeatmapData(): void {
     const store = useStore();
-    console.log("Calling aggregateHeatmapData")
     try {
         // Reset aggregated data
         aggregatedData.value = {
             totalOccurrences: {},
             mistakesMade: {}
         };
-        console.log("Aggregated Data Occ:", aggregatedData.value.totalOccurrences);
-        console.log("Aggregated Data Mistakes:", aggregatedData.value.mistakesMade);
 
         // iterates over total userStats data
         store.userStats.forEach(stat => {
@@ -275,7 +243,6 @@ export function aggregateHeatmapData(): void {
             }
         });
 
-        console.log("Fetched heatmap:", aggregatedData.value);
     } catch (e) {
         console.error("Error while aggregating heatmap data:", e);
     }
@@ -283,6 +250,7 @@ export function aggregateHeatmapData(): void {
 
 
 // 4. Consistency Statistic ----------------------------------------------------------------------------------------------------------------------------------
+// claculates consitency figure for stats page
 
 // Calculate consistency for last round
 export const consistencyForStat = computed(() => {
@@ -295,24 +263,19 @@ export const consistencyForStat = computed(() => {
     }
 });
 
+// consistency defined as standard deviation divided by WPM as percentage (average variation around average WPM)
 export function calculateConsistency(): number {
     try {
-        console.log("Calling calculateConsistency")
         if (wpmPerSecond.value.length === 0) return 0;  // Return a default value if the array is empty
 
-        // *NOTE* mean wpm used for whole test (avoids impresicision caused by measuring WPMperSecond in intervals which discards partial inverval data)
+        // mean wpm used for whole test (avoids impresicision caused by measuring WPMperSecond in intervals which discards partial inverval data)
         const squaredDifferences = wpmPerSecond.value.map(value => Math.pow(value - wpm.value, 2));
-        console.log("Squared differences:", squaredDifferences);
         const sumOfSquaredDifferences = squaredDifferences.reduce((total, value) => total + value, 0);
-        console.log("Sum of squared differences:", sumOfSquaredDifferences);
         const variance = sumOfSquaredDifferences / (wpmPerSecond.value.length - 1);
-        console.log("Variance:", variance)
         const standardDeviation = Math.sqrt(variance);
-        console.log("StDev:", standardDeviation)
 
         // Calculate the Coefficient of Variation (consistency)
         const relativeConsistency = (standardDeviation / wpm.value) * 100;
-        console.log("Relative Cons.:", relativeConsistency)
         return relativeConsistency;
     } catch (e) {
         console.error("Error while calculating consistency", e);
@@ -322,21 +285,17 @@ export function calculateConsistency(): number {
 
 
 // 5. Identify Slow Words ----------------------------------------------------------------------------------------------------------------------------------
+// identifies words that were typed slower than WPM average of user in last 100 games for training mode "Learn from Mistakes"
 
-// *NOTE* not in use yet, should separate logic for logged in users and pull from supabase
-
-// average last 100 rounds Wpm calculation for slow words definition -> uses local storage 
-// average last 100 rounds Wpm calculation for slow words definition -> uses local storage or Supabase
+// average last 100 rounds Wpm calculation for slow words definition
 export async function setAverageWpmLast100(userSession?: any): Promise<number> {
-    console.log("Calling setAverageWpmLast100");
     let last100Stats: any[] = [];
     const store = useStore();
-    console.log("UserSession, userId:", userSession);
 
-    // If user is logged in
+    // If user logged in
     if (userSession && userSession.user) {
         const userId = userSession.user.id;
-        // Fetch stats from Supabase for the logged-in user
+
         const { data, error } = await supabase
             .from('user_stats')
             .select('wpm')
@@ -352,7 +311,7 @@ export async function setAverageWpmLast100(userSession?: any): Promise<number> {
         last100Stats = data || [];
         console.log("Last 100 stats logged in:", last100Stats);
     }
-    // If user is a guest
+    // If user is guest
     else {
         const userStatsString = localStorage.getItem("userStats");
         if (!userStatsString) {
@@ -373,40 +332,25 @@ export async function setAverageWpmLast100(userSession?: any): Promise<number> {
         return acc + stat.wpm;
     }, 0);
 
-    console.log("Total WPM:", totalWpm);  // Removed .value
-
     const average = totalWpm / last100Stats.length;
 
     store.setAverageWpmLast100(average);
-    console.log("Calculated Average WPM:", average);
 
     return average;
 };
-
-
 
 export const slowWords = ref<Array<{ word: string, wpm: number }>>([]);
 export const uniqueSlowWords = ref(new Set<string>());
 export const allTimeSlowWords = ref<Array<{ word: string, wpm: number }>>([]);
 
-// Identify slow words -> uses Pinia Store
+// Identify slow words based on last 100 games WPM average
 export function identifySlowWords(): void {
     const store = useStore();
-    console.log("Calling identifySlowWords");
     // Clear the previous slow words array
     slowWords.value = [];
 
-    // Debug: Log the initial state
-    console.log('Initial slowWords:', slowWords.value);
-    console.log('Initial uniqueSlowWords:', uniqueSlowWords.value); // still has a value after round when logging in after logging out
-
     // Use a Set to keep track of unique slow words
     uniqueSlowWords.value = new Set<string>(); // Clear the set
-    console.log('Clearing initial uniqueSlowWords:', uniqueSlowWords)
-
-    // Debug: Log data sources
-    console.log('wpmPerSecond:', wpmPerSecond.value);
-    console.log('store.wordsPerSecond:', store.wordsPerSecond);
 
     // Loop through each second
     for (let i = 0; i < store.wordsPerSecond.length; i++) {
@@ -414,8 +358,6 @@ export function identifySlowWords(): void {
         const currentWpm = wpmPerSecond.value[i];
 
         const averageWpm = store.averageWpmLast100;
-        // Debug: Log the current WPM and average WPM
-        console.log(`currentWpm: ${currentWpm}, averageWpmLast100: ${store.averageWpmLast100}`);
 
         // Get the words typed in the current second
         const wordsInCurrentSecond = store.wordsPerSecond[i];
@@ -432,18 +374,12 @@ export function identifySlowWords(): void {
                 }
             }
         }
-        // Debug: Log the final state
     }
-    console.log('Final slowWords:', slowWords.value);
-    console.log('Final uniqueSlowWords:', uniqueSlowWords.value);
-    console.log("Identified slow words local storage:", localStorage.getItem("allTimeSlowWords"));
-    console.log("Identified slow words value:", slowWords.value);
 }
 
-// Update all-time slow words *NOTE* need to pull allTimeSlowWords from local storage / supabase
+// Update all-time slow words
 export async function updateAllTimeSlowWords(userSession?: any): Promise<void> {
     let existingSlowWords: Array<{ word: string, wpm: number }> = [];
-    console.log("slowWords before update in updateAllTimeSlowWords:", slowWords.value);
 
     // For logged-in users, fetch from Supabase
     if (userSession && userSession.user) {
@@ -459,17 +395,8 @@ export async function updateAllTimeSlowWords(userSession?: any): Promise<void> {
             return;
         }
 
-        // *NOTE DEBUG*
-        if (data) {
-            console.log("All data from Supabase:", data);
-            if (data['100_slow_words'] === undefined) {
-                console.log("100_slow_words is undefined in Supabase data");
-            }
-        }
-
         if (data && data['100_slow_words']) {
             existingSlowWords = data['100_slow_words'];
-            console.log("Existing slow words looged in users in updateAllTimeSlowWords:", existingSlowWords)
         }
     }
     // For logged-out users, fetch from local storage
@@ -486,9 +413,6 @@ export async function updateAllTimeSlowWords(userSession?: any): Promise<void> {
     if (allTimeSlowWords.value.length > 100) {
         allTimeSlowWords.value = allTimeSlowWords.value.slice(-100);
     }
-    console.log("Updated alltimeslowords:", allTimeSlowWords.value);
-
-    console.log("slowWords after update in updateAllTimeSlowWords:", slowWords.value);
 }
 
 
@@ -496,17 +420,18 @@ export async function updateAllTimeSlowWords(userSession?: any): Promise<void> {
 export async function saveAllTimeSlowWords(userSession?: any): Promise<void> {
     const userId = userSession && userSession.user ? userSession.user.id : null;
 
-    // For logged-in users, save to Supabase
+    // For logged-in users
     if (userId) {
-        return; // handled by saveStats function to  avoid separate writes to same table
+        return; // handled by saveStats function already, so no duplicate action here
     }
-    // For guest users, save to local storage *NOTE* needs to take in new slow words and keep old ones
+    // For guest users, save to local storage
     else {
         localStorage.setItem("allTimeSlowWords", JSON.stringify(allTimeSlowWords.value));
         localStorage.setItem("lastSlowWords", JSON.stringify(slowWords.value));
     }
-    //*NOTE* check if sequence is right
-    slowWords.value = []; // reset slow words to empty
+
+    // reset slow words to empty
+    slowWords.value = [];
     allTimeSlowWords.value = [];
 
 }

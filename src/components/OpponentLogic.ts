@@ -1,6 +1,7 @@
 import { ref, computed } from "vue";
-import { useStore } from "../stores/store"; // Import the useStore function from the Pinia store
+import { useStore } from "../stores/store";
 
+// handle computer opponent progress
 export function useOpponentLogic(fetchedText: any, opponentWpmLevel: any, onOpponentFinish: () => void, onOpponentStatusChange?: (status: boolean, opponentWpm: number) => void) {
     // Pinia store
     const store = useStore();
@@ -9,14 +10,12 @@ export function useOpponentLogic(fetchedText: any, opponentWpmLevel: any, onOppo
     const opponentProgress = ref<number>(0);
     const opponentProgressInterval = ref<number | undefined>(undefined);
 
-    function resetOpponentProgress() { // redundant to stopOpponentProgress?
-        console.log("Calling resetOpponentProgress"); // Debugging log
+    function resetOpponentProgress() {
         clearInterval(opponentProgressInterval.value);
         opponentProgress.value = 0;
     }
 
     function startOpponentProgress() {
-        console.log("Calling startOpponentProgress")
         clearInterval(opponentProgressInterval.value);
 
         opponentProgressInterval.value = setInterval(() => {
@@ -28,19 +27,15 @@ export function useOpponentLogic(fetchedText: any, opponentWpmLevel: any, onOppo
                 100
             );
 
-            // Check if the opponent has reached the end
             if (opponentProgress.value >= 100) {
-                // Opponent has reached the end, call the callback
+                // Opponent has reached the end, callback
                 onOpponentFinish();
             }
 
         }, 100) as unknown as number;
     }
 
-
     function stopOpponentProgress() {
-        console.log("Calling stopOpponentProgress")
-        // stops backgound coloring if player finishes first
         clearInterval(opponentProgressInterval.value);
         opponentProgressInterval.value = undefined;
     }

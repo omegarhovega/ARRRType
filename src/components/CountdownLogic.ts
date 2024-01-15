@@ -11,6 +11,7 @@ interface CountdownLogic {
     countdownInterval: Ref<number | null>;
 }
 
+// Logic for countdown at the beginning of a game, when countdown reaches 0, graphic is shown briefly in countdown bubble
 export function useCountdownLogic(onCountdownEnd: () => void): CountdownLogic {
     const countdown = ref<number>(DEFAULT_COUNTDOWN_VALUE);
     const countdownFinished = ref<boolean>(false);
@@ -18,7 +19,6 @@ export function useCountdownLogic(onCountdownEnd: () => void): CountdownLogic {
     const countdownInterval = ref<number | null>(null);
 
     function stopCountdown() {
-        console.log("Calling stopCountdown")
         if (countdownInterval.value !== null) {
             clearInterval(countdownInterval.value);
             countdownInterval.value = null;
@@ -28,7 +28,7 @@ export function useCountdownLogic(onCountdownEnd: () => void): CountdownLogic {
     }
 
     function countdownStart() {
-        console.log("Calling countdownStart")
+        // Clear any old countdown interval
         if (countdownInterval.value !== null) {
             clearInterval(countdownInterval.value);
         }
@@ -36,7 +36,6 @@ export function useCountdownLogic(onCountdownEnd: () => void): CountdownLogic {
         countdown.value = DEFAULT_COUNTDOWN_VALUE;
         countdownFinished.value = false;
         showCountdown.value = true;
-        console.log("current countdown, finished?, show?:", countdown.value, countdownFinished.value, showCountdown.value);
 
         countdownInterval.value = window.setInterval(() => {
             countdown.value -= 1;

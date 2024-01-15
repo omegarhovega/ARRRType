@@ -1,3 +1,5 @@
+// helper file for user statistics
+
 import {
     wpm,
     grossWpm,
@@ -37,10 +39,7 @@ export function useUserStatistics() {
         saveGameStatistics,
     } = useUserStatisticsHandler();
 
-    // Additional logic can go here
-
     return {
-        // Variables
         wpm,
         grossWpm,
         wpmPerSecond,
@@ -54,8 +53,6 @@ export function useUserStatistics() {
         accuracyPerSecond,
         slowWords,
         allTimeSlowWords,
-
-        // Methods
         resetStats,
         retrieveStats,
         updateStats,
@@ -71,12 +68,9 @@ export function useUserStatistics() {
         loadAllTimeSlowWords,
         aggregateHeatmapData,
         saveGameStatistics,
-
-        // Any additional variables and methods
     };
 }
 
-// You can also export individual items if needed
 export {
     wpmPerSecond,
     grossWpmPerSecond,

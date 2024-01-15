@@ -25,7 +25,7 @@ export function useMultiplayerTextManagement() {
 
             const textId = gameData.text_id;
 
-            // Step 2: Fetch text based on textId from texts table
+            // Step 2: Fetch text based on textId
             const { data: textData, error: textError } = await supabase
                 .from("texts")
                 .select("text")
@@ -40,7 +40,7 @@ export function useMultiplayerTextManagement() {
             if (textData) {
                 fetchedText.value = textData.text;
                 store.loading = false;
-                // Initialize uniqueCorrectIndices based on the length of fetched text
+                // unique correct indices needed to measure player progress (depends on if force correction mode chosen or not)
                 store.setupUniqueCorrectIndices(fetchedText.value.length);
             } else {
                 console.error("Text still not generated for multiplayer.");
@@ -68,24 +68,22 @@ interface MultiplayerGameStateManagement {
     resetGameActivities: (resetGameState: Function, resetStats: Function) => void;
 }
 
+// modified gamestate management for multiplayer
 export function useMultiplayerGameStateManagement(): MultiplayerGameStateManagement {
     const store = useStore();
 
-    // Function to start the game
     function startGame() {
         store.isGameStarted = true;
         store.startTime = new Date();
         store.typingAllowed = true;
     }
 
-    // Function to end the game
     function endGame(onFinish: () => void) {
         store.isGameFinished = true;
         store.endTime = new Date();
         onFinish();
     }
 
-    // Function to reset the game
     function resetGameState() {
         const store = useStore();
         store.isGameStarted = false;
@@ -103,17 +101,14 @@ export function useMultiplayerGameStateManagement(): MultiplayerGameStateManagem
     }
 
     function stopGameActivities(stopWpmTracking: Function, stopIndexTracking: Function, stopCountdown: Function) {
-        // Stop WPM tracking
         stopWpmTracking();
-        // Stop index tracking
         stopIndexTracking();
-        // stop countdown logic
         stopCountdown();
     }
 
     function resetGameActivities(resetGameState: Function, resetStats: Function) {
-        resetGameState(); // from GameStateManagement
-        resetStats(); // from UserStatistics
+        resetGameState();
+        resetStats();
     }
 
     return {
@@ -134,6 +129,7 @@ interface CountdownLogic {
     countdownInterval: Ref<number | null>;
 }
 
+// modified countdown logic for multiplayer
 export function useMultiplayerCountdownLogic(onCountdownEnd: () => void, startTime: Date | null): CountdownLogic {
     const countdown = ref<number>(DEFAULT_COUNTDOWN_VALUE);
     const countdownFinished = ref<boolean>(false);
@@ -196,13 +192,9 @@ export function useMultiplayerCountdownLogic(onCountdownEnd: () => void, startTi
     };
 }
 
+// modified logic for multiplayer level win 
 export const handlePvPLevelWin = async () => {
-    console.log("Calling handleLevelWin");
     const store = useStore();
-    console.log("User won PvP Game.");
-    console.log("userSession:", store.userSession);
-    console.log("userCoins:", store.userCoins);
-    console.log("store:", store);
     const userId = store.userSession ? store.userSession.user.id : null;
     const newCoins = store.userCoins + 10;
 
@@ -219,12 +211,11 @@ export const handlePvPLevelWin = async () => {
         } else {
             // Re-fetch user coins from the store
             await store.fetchUserCoins();
-            store.reloadMainMenu(); // Trigger the reload of main_menu
+            store.reloadMainMenu();
         }
     }
     // Logic for guests
     else {
-        // Update coins in the store
         store.setUserCoins(newCoins);
     }
 };

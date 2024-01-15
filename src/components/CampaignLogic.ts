@@ -4,11 +4,10 @@ import { supabase } from "../supabase";
 import { useStore } from "../stores/store";
 import { MAX_ROUNDS, WINNINGS } from './GameConstants';
 
-// maximum number of games for level vs. computer
+// maximum number of games per level
 export const maxRounds = ref(MAX_ROUNDS);
 
-// Logic for changing result message content depening on level/game outcome  ------------------------------------------------
-// Directly called in DOM
+// Result message content depening on level/game outcome
 export function getResultMessageCampaign(
     wpm: Ref<number>,
     levelFinished: Ref<boolean>,
@@ -38,9 +37,8 @@ export function getResultMessageCampaign(
     });
 }
 
-// Logic for detecting whether level/game has ended and handling level win ------------------------------------------------
+// Detecting whether level/game has ended and handling level win
 // In case of level win by user and level played being the current highest unlocked, increment coins and unlock next level, reset necessary variables
-
 export const handleGameProgress = async (
     maxRounds: Ref<number>,
     levelFinished: Ref<boolean>,
@@ -61,9 +59,8 @@ export const handleGameProgress = async (
         levelFinished.value = true;
         showResultsOverlay.value = true;
 
-        // Check if the played level is the last unlocked level
+        // Check if the played level is the last unlocked level and if user won the game
         if (selectedLevel === storeLastUnlockedLevel.value) {
-            // User won the game
             if (store.playerLives > store.opponentLives) {
                 await handleLevelWin(selectedLevel, levels, store.userSession, store.userCoins, store);
             }
@@ -89,10 +86,9 @@ export const handleLevelWin = async (
 
     // Logic for logged-in users
     if (userId) {
-        // Call the update function
+        // Update the last unlocked level in the store if there is a next one
         const success = await updateUnlockedLevel(userId, nextLevel);
         if (success) {
-            // Commit the change to the local state
             store.setLastUnlockedLevel(nextLevel);
         }
 
@@ -104,33 +100,30 @@ export const handleLevelWin = async (
         if (error) {
             console.error("Error updating coins:", error);
         } else {
-            console.log("Coins updated successfully:", data);
             // Re-fetch user coins from the store
             await store.fetchUserCoins();
-            store.reloadMainMenu(); // Trigger the reload of main_menu to see the updated coins number
+            // Trigger the reload of main_menu to see the updated coins number
+            store.reloadMainMenu();
         }
 
         // Unlock the next level if there is one and user won
         if (selectedLevel < levels.length - 1) {
-            console.log("Unlocking next level:", nextLevel);
             store.setLastUnlockedLevel(nextLevel);
         }
     }
     // Logic for guests
     else {
-        // Update coins in the store *NOTE* disappear after refresh
+        // Update coins in the store
         store.setUserCoins(newCoins);
-        console.log("Coins updated successfully:", newCoins);
 
         // Update the last unlocked level in the store if there is a next one
         if (selectedLevel < levels.length) {
             store.setLastUnlockedLevel(nextLevel);
-            console.log("Unlocking next level:", nextLevel)
         }
     }
 };
 
-
+// Update last unlocked level for logged in users
 export async function updateUnlockedLevel(userId: string, newLevel: number): Promise<boolean> {
     const { data, error } = await supabase
         .from("profiles")
@@ -144,6 +137,7 @@ export async function updateUnlockedLevel(userId: string, newLevel: number): Pro
     return true;
 }
 
+// Reduces lives for players / computer opponents if they loose, or for both if result is a draw
 export function updateLivesAfterRound(wpm: number, opponentWpmLevel: Ref<number>) {
     const store = useStore();
 
@@ -152,16 +146,13 @@ export function updateLivesAfterRound(wpm: number, opponentWpmLevel: Ref<number>
     } else if (wpm < opponentWpmLevel.value) {
         store.playerLives -= 1;
     } else {
-        // If there is a tie, both players lose a life
         store.playerLives -= 1;
         store.opponentLives -= 1;
     }
-    console.log("Player lives after round", store.playerLives);
-    console.log("Opponent lives after round", store.opponentLives);
 }
 
-// Logic for resetting variables for new round-------------------------------------------------------------------
-// *NOTE* sequence of reset commands important
+// Logic for resetting variables for new round
+// Sequence of reset commands needs to be maintained
 
 export const resetGameStateForNewRound = (
 ) => {

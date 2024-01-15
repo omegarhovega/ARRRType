@@ -52,7 +52,6 @@ export function useUserStatisticsHandler() {
     // 2. Reset Stats
     function resetStats() {
         // reset data in Pinia store in preaparation of new round, after saving key variables to local store/database
-        console.log("Calling resetStats")
         store.resetUserStats(); //(sets id, timestamp, wpm, grossWPM accuracy, errors, totalOccurrences, mistakesMade, consistency to null)
         store.resetKeystrokes();
         store.resetCorrectKeystrokes();
@@ -62,32 +61,20 @@ export function useUserStatisticsHandler() {
         grossWpmPerSecond.value = [];
         previousKeystrokes.value = 0;
         previousCorrectKeystrokes.value = 0;
-        console.log("resetting userStats:", store.userStats)
-        console.log("resetting wpmPerSecond:", wpmPerSecond.value)
-        console.log("resetting grossWpmPerSecond:", grossWpmPerSecond.value)
-        console.log("resetting total Keystrokes:", store.totalKeystrokes)
-        console.log("resetting correct Keystrokes:", store.correctKeystrokes)
-        console.log("resetting previousKeystrokes:", previousKeystrokes.value)
-        console.log("resetting previousCorrectKeystrokes:", previousCorrectKeystrokes.value)
-        console.log("resetting wordsperSecond:", store.wordsPerSecond)
     }
 
     // 3. Save Stats
     async function saveStats(userSession?: any) {
-        console.log("Calling saveStats")
 
         await setAverageWpmLast100(userSession);
 
         const avgWpm = store.averageWpmLast100;
-        console.log("Calculated averageWpmLast100:", avgWpm);
 
         // If userSession is provided and has a user property, use the user ID, otherwise set userId to null
         const userId = userSession && userSession.user ? userSession.user.id : null;
-        console.log("Received userId in saveStats:", userId);
 
         // Load last round/last 100 slow words for user
         identifySlowWords();
-        console.log("Slow Words:", slowWords.value, allTimeSlowWords.value)
         await updateAllTimeSlowWords(userSession);
         await saveAllTimeSlowWords(userSession);
 
@@ -146,12 +133,12 @@ export function useUserStatisticsHandler() {
             }
 
             // B: Aggregated statistics one data point per user
-            // Save last round's net/gross WPM per second to 'profiles' table
+            // Save last round's net/gross WPM per second to supabase 'profiles' table
             // Allows to populate last round stats across sessions for registered users
 
             let gamesPlayed = 0;
             let totalTimePlayed = 0;
-            let timeElapsed = 0;  // Initialize timeElapsed variable
+            let timeElapsed = 0;
 
             // Calculate timeElapsed for the current game
             if (store.endTime && store.startTime !== null) {
@@ -200,8 +187,6 @@ export function useUserStatisticsHandler() {
 
                 if (profileUpdateError) {
                     console.error("Error saving last round WPM to Supabase:", profileUpdateError);
-                } else {
-                    console.log("Last round WPM saved successfully to profiles table");
                 }
             }
         } else {
@@ -257,9 +242,7 @@ export function useUserStatisticsHandler() {
 
     // 4. Retrieve Stats
     async function retrieveStats(userSession?: any) {
-        console.log("Calling retrieveStats")
         const userId = userSession && userSession.user ? userSession.user.id : null;
-        console.log("Received userId in retrieveStats:", userId);
 
         // 1. LOGGED IN USERS (supabase data)
         if (userId) {
@@ -275,7 +258,6 @@ export function useUserStatisticsHandler() {
             } else if (roundData && roundData.length > 0) {
                 roundId.value = roundData[0].id;
             }
-            console.log("Round Id fetched", roundId.value);
 
             // Now fetch other statistics based on the last roundId
             const { data, error } = await supabase
@@ -287,7 +269,6 @@ export function useUserStatisticsHandler() {
             if (error) {
                 console.error("Error retrieving stats from Supabase:", error);
             } else {
-                console.log("Fetched data from Supabase:", data);
                 store.userStats = data.map(stat => ({
                     id: stat.id,
                     timestamp: new Date(stat.created_at),
@@ -342,7 +323,6 @@ export function useUserStatisticsHandler() {
 
                 if (stats) {
                     store.userStats = JSON.parse(stats);
-                    console.log("Saved stats:", store.userStats);
                 }
                 if (heatmapData) {
                     aggregatedData.value = JSON.parse(heatmapData);
@@ -354,12 +334,10 @@ export function useUserStatisticsHandler() {
                 if (lastRoundGrossWpm) {
                     grossWpmPerSecond.value = JSON.parse(lastRoundGrossWpm);
                 }
-                console.log("Successfully retrieved stats from local storage");
 
                 // Update the store with total time played and number of games
                 const storedTotalTimePlayed = localStorage.getItem("totalTimePlayed");
                 const storedGamesPlayed = localStorage.getItem("gamesPlayed");
-                console.log("fetching games played from local storage:", storedGamesPlayed)
                 if (storedTotalTimePlayed !== null) {
                     store.totalTimePlayed = parseInt(storedTotalTimePlayed, 10);
                 }

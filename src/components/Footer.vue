@@ -36,7 +36,6 @@
 <script lang="ts">
 export default {
   name: "FooterComponent",
-  // Other component options
 };
 </script>
 
@@ -53,22 +52,22 @@ export default {
 }
 
 .footer-content {
-  display: flex; /* Changed to flex to align items in a row */
-  justify-content: center; /* Center items horizontally */
-  align-items: center; /* Center items vertically */
+  display: flex;
+  justify-content: center;
+  align-items: center;
   padding: 10px;
   color: #d5ddd7;
 }
 
 .footer-link,
 .divider {
-  color: inherit; /* Use color from parent */
-  margin: 0 5px; /* Uniform margin for all elements */
-  text-decoration: none; /* No underline on links */
+  color: inherit;
+  margin: 0 5px;
+  text-decoration: none;
   font-size: 10px;
   opacity: 0.5;
-  display: inline-flex; /* Inline-flex for aligning with the image */
-  align-items: center; /* Center text and image vertically */
+  display: inline-flex;
+  align-items: center;
 }
 
 .footer-link:hover {
@@ -76,8 +75,8 @@ export default {
 }
 
 .footer-image {
-  height: 10px; /* Adjust height as necessary */
-  width: auto; /* Keep image aspect ratio */
-  margin-right: 5px; /* Space between image and text */
+  height: 10px;
+  width: auto;
+  margin-right: 5px;
 }
 </style>

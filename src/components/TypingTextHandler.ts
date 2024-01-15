@@ -1,7 +1,7 @@
 import { ref, onMounted, onUnmounted, computed, watch } from 'vue';
 import type { Ref } from 'vue';
-import { useStore } from "../stores/store"; // Import the useStore function from the Pinia store
-import { updateScrollPosition } from "./ScrollingLogic"; // Import the useStore function from the Pinia store
+import { useStore } from "../stores/store";
+import { updateScrollPosition } from "./ScrollingLogic";
 
 interface TypingTextHandler {
     accuracy: Ref<number>;
@@ -23,7 +23,7 @@ interface TypingTextHandler {
 
 
 function splitText(text: string): string[] {
-    // This regex splits on word boundaries and ignores punctuation/symbols
+    // Regex splits on word boundaries and ignores punctuation/symbols
     return text.match(/\b(?:[a-zA-Z-]+['’]?[a-zA-Z-]*|[.,!?;])\b/g) || [];
 }
 
@@ -39,7 +39,7 @@ export function useIndexToWordMapping(fetchedText: Ref<string>) {
             if (newText[i] === " ") {
                 indexToWordMapping[i] = "Space";
             } else {
-                indexToWordMapping[i] = allWords[wordIndex]; // every character has word mapped to it
+                indexToWordMapping[i] = allWords[wordIndex]; // every character has the respective word mapped to it
                 if (
                     i + 1 < newText.length &&
                     (newText[i + 1] === " " || i + 1 === newText.length - 1)
@@ -55,6 +55,7 @@ export function useIndexToWordMapping(fetchedText: Ref<string>) {
     };
 }
 
+// main logic for player inputs
 export function useTypingTextHandler(
     fetchedText: Ref<string>,
     scrollContainer: Ref<HTMLElement | null>,
@@ -63,7 +64,8 @@ export function useTypingTextHandler(
     currentProgress?: Ref<number>,
     noEndWithoutCorrection?: Ref<boolean>
 ): TypingTextHandler {
-    const store = useStore();
+    const store = useStore(); // import Pinia store
+
     const errors = computed(() => store.errors);
     const totalOccurrences = ref<{ [key: string]: number }>({});
     const mistakesMade = ref<{ [key: string]: number }>({});
@@ -74,13 +76,11 @@ export function useTypingTextHandler(
     const hasMistake = ref(false);
 
     function handleKeyDown(event: KeyboardEvent) {
-        const store = useStore();
-        console.log("Calling handleKeyDown");
         if (!store.typingAllowed) {
-            return; // Exit the function if typing is not allowed
+            return; // Exit if typing is not allowed
         }
 
-        // Prevent default browser behavior for space bar *NOTE* to prevent Firefox from scrolling on space
+        // Prevent default browser behavior for space bar to prevent Firefox from scrolling on space
         if (event.key === ' ') {
             event.preventDefault();
         }
@@ -90,21 +90,14 @@ export function useTypingTextHandler(
             event.key === 'Backspace'
         ) {
 
-            //Prevent progress when mistake is made until it is corrected (otherwise stuck at incorrect index) - only active if switch on and currently not used
+            // *mode currently not used*
+            //Prevent progress when mistake is made until it is corrected (otherwise stuck at incorrect index) - only active if switch on
             if (store.forceMistakeCorrection && hasMistake.value && event.key !== 'Backspace') {
                 return;  // Prevent further typing until the mistake is corrected
             }
             // Handle the error recording, but exclude 'Backspace'
-            // Inside handleKeyDown function
             if (event.key !== currentChar.value && event.key !== 'Backspace') {
                 const wordForCurrentIndex = indexToWordMapping[store.currentIndex];
-
-                console.log("Error detected:", {
-                    typed: event.key,
-                    expected: currentChar.value,
-                    position: store.currentIndex,
-                    word: wordForCurrentIndex === ' ' ? 'Space' : wordForCurrentIndex,
-                });
 
                 errors.value.push({
                     attempted: event.key,
@@ -116,7 +109,6 @@ export function useTypingTextHandler(
             }
 
             store.incrementKeystrokes();
-            console.log("Total Keystrokes:", store.totalKeystrokes);
 
             if (event.ctrlKey && event.key === 'Backspace') {
                 deleteLastWord();
@@ -126,8 +118,6 @@ export function useTypingTextHandler(
                 typeChar(event.key);
             }
         }
-        const wordForCurrentChar = indexToWordMapping[store.currentIndex];
-        console.log("Current Word:", wordForCurrentChar);
     }
 
     function resetHasMistake() {
@@ -139,7 +129,7 @@ export function useTypingTextHandler(
     let previousIndex = ref(0);
     let indexInterval: number | null = null;
 
-    // Function to start tracking index per second
+    // Function to start tracking current index every second
     function startIndexTracking() {
         const store = useStore();
         try {
@@ -159,7 +149,6 @@ export function useTypingTextHandler(
                     if (word && !wordsThisSecond.includes(word)) {
                         wordsThisSecond.push(word);
                     }
-                    console.log("Word inside index traching:", word);
                 }
 
                 wordsPerSecond.value.push(wordsThisSecond);
@@ -183,7 +172,6 @@ export function useTypingTextHandler(
                 indexInterval = null;
             }
             previousIndex.value = 0;
-            console.log("Last index:", store.currentIndex);  // Log words per second
         } catch (e) {
             console.error("Error while stopping index tracking:", e);
         }
@@ -191,8 +179,6 @@ export function useTypingTextHandler(
 
     // handles deleting characters for determining current index
     function deleteLastChar() {
-
-        console.log("Calling deleteLastChar")
         if (store.currentIndex > 0) {
             store.currentIndex -= 1;
             store.typedIndices.pop();
@@ -208,9 +194,8 @@ export function useTypingTextHandler(
         hasMistake.value = remainingMistakes;
     }
 
-    // Allows deleting last word for shortcut Ctrl + Backspace
+    // Allows deleting whole last word for shortcut Ctrl + Backspace
     function deleteLastWord() {
-        console.log("Calling deleteLastWord")
         // If the current character is a space, delete it and return
         if (store.currentIndex > 0 && fetchedText.value.charAt(store.currentIndex - 1) === " ") {
             deleteLastChar();
@@ -225,7 +210,6 @@ export function useTypingTextHandler(
 
     // handles player input and determines correct and incorrect keystrokes
     function typeChar(char: string) {
-        console.log("Calling typeChar");
         store.typed[store.currentIndex] = char; // Update the typed dictionary
 
         // Record the expected character to totalOccurrences
@@ -235,30 +219,31 @@ export function useTypingTextHandler(
 
             if (char === fetchedText.value[store.currentIndex]) {
                 store.incrementCorrectKeystrokes();
-                store.uniqueCorrectIndices[store.currentIndex] = true; // needed to assess current progress (indices correctly typed/total indices for text)
+                store.uniqueCorrectIndices[store.currentIndex] = true;
             } else {
                 mistakesMade.value[expectedChar] = (mistakesMade.value[expectedChar] || 0) + 1;
-                store.uniqueCorrectIndices[store.currentIndex] = false; // needed to assess current progress (indices correctly typed/total indices for text)
+                store.uniqueCorrectIndices[store.currentIndex] = false;
             }
 
 
             store.typedIndices.push(store.currentIndex); // Add the currentIndex to typedIndices
             store.currentIndex += 1;
         }
-        console.log("Current Index:", store.currentIndex);
 
         if (store.currentIndex === fetchedText.value.length) {
+            // if force correction slider is on, player cannot finish until all mistakes are corrected
             if (noEndWithoutCorrection?.value) {
+                // currentProgress calculated based on correct characters, can only reach 100 if all characters are correctly typed
                 if (currentProgress?.value === 100) {
-                    onTypingEnd();  // *NOTE* same function as below, so no need
+                    onTypingEnd();
                 }
                 // Do nothing if progress is not 100%
             } else {
-                onTypingEnd();  // Existing callback when typing is finished for single player
+                onTypingEnd();  // Callback when no forced correction is enabled and player reaches last character
             }
         }
-
-        updateScrollPosition(scrollContainer); // handle scrolling while player types
+        // logic to handle scrolling
+        updateScrollPosition(scrollContainer);
     }
 
     // Removing input listener at game end
@@ -266,9 +251,8 @@ export function useTypingTextHandler(
         window.removeEventListener("keydown", handleKeyDown);
     }
 
-    //detection for capslock overlay
+    //detection for capslock warning overlay
     function detectCapsLock(event: KeyboardEvent) {
-        console.log("Calling detectCapslock");
         store.isCapsLockOn = event.getModifierState('CapsLock');
     }
 
