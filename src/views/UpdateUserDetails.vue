@@ -12,9 +12,11 @@
           id="username"
           type="text"
           v-model="newUsername"
+          autocomplete="off"
         />
       </div>
       <button
+        type="button"
         class="update-button"
         @click="updateUsername"
       >Update Username</button>
@@ -30,6 +32,7 @@
           id="new-email"
           type="email"
           v-model="newEmail"
+          autocomplete="off"
         />
       </div>
       <div class="input-group">
@@ -38,6 +41,7 @@
           id="repeat-email"
           type="email"
           v-model="repeatEmail"
+          autocomplete="off"
         />
       </div>
       <p
@@ -45,6 +49,7 @@
         class="mismatch-message"
       >Emails do not match!</p>
       <button
+        type="button"
         class="update-button"
         @click="updateEmail"
       >Update Email</button>
@@ -58,6 +63,7 @@
           id="new-password"
           type="password"
           v-model="newPassword"
+          autocomplete="off"
         />
       </div>
       <div class="input-group">
@@ -66,6 +72,7 @@
           id="repeat-password"
           type="password"
           v-model="repeatPassword"
+          autocomplete="off"
         />
       </div>
       <p
@@ -73,6 +80,7 @@
         class="mismatch-message"
       >Passwords do not match!</p>
       <button
+        type="button"
         class="update-button"
         @click="updatePassword"
       >Update Password</button>
@@ -247,6 +255,7 @@ export default {
   width: 100%;
   padding: 10px;
   margin-top: 10px;
+  background: black;
 }
 
 .mismatch-message {

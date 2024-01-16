@@ -277,7 +277,7 @@ export function useUtilities() {
                 const formattedSeconds = String(seconds).padStart(2, "0");
                 return `${formattedMinutes}m ${formattedSeconds}s`;
             } else {
-                console.warn("Error returning time elapsed.");
+                //console.warn("Error returning time elapsed."); note triggers at beginning of game
                 return "00m 00s";
             }
         });
