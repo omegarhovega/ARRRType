@@ -4,7 +4,6 @@
     class="all-time-stats"
   >
     <UserStatsBarChartTotal
-      :key="chartKey"
       :wpmHistogram="wpmHistogram"
       :grossWpmHistogram="grossWpmHistogram"
       :accuracyHistogram="accuracyHistogram"
@@ -41,8 +40,6 @@ export default defineComponent({
   },
   setup() {
     const store = useStore();
-
-    const chartKey = ref(0);
 
     const individualWpmHistogram = ref<number[]>([]);
     const individualAccuracyHistogram = ref<number[]>([]);
@@ -113,8 +110,6 @@ export default defineComponent({
       await fetchAllUserStats();
       await fetchIndividualUserStats();
       await fetchUserSpecificStats();
-
-      chartKey.value++;
     });
 
     return {
@@ -124,7 +119,6 @@ export default defineComponent({
       wpmHistogram,
       grossWpmHistogram,
       accuracyHistogram,
-      chartKey,
       userSession,
       individualWpmHistogram,
       individualAccuracyHistogram,
