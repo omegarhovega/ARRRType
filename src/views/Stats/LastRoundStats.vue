@@ -61,6 +61,8 @@ interface RoundStat {
   wpm: number;
   grossWPM: number;
   accuracy: number;
+  wpmPerSecond: number[];
+  grossWpmPerSecond: number[];
   errors: Array<{ attempted: string; expected: string; word: string }>;
   totalOccurrences: { [key: string]: number };
   mistakesMade: { [key: string]: number };
@@ -80,8 +82,6 @@ export default defineComponent({
     const {
       retrieveStats,
       resetStats,
-      wpmPerSecond,
-      grossWpmPerSecond,
       accuracyPerSecond,
       lastRoundMistypedWords,
       lastRoundErrorRates,
@@ -116,6 +116,14 @@ export default defineComponent({
       return comment;
     });
 
+    // Get the last round's wpmPerSecond and grossWpmPerSecond, or default to an empty array
+    const wpmPerSecond = computed(() =>
+      lastRound.value ? lastRound.value.wpmPerSecond : []
+    );
+    const grossWpmPerSecond = computed(() =>
+      lastRound.value ? lastRound.value.grossWpmPerSecond : []
+    );
+
     //Option to slice e.g. first value of WPM per second to prune outliers (currently not in use)
     const slicedWpmPerSecond = computed(() => {
       return wpmPerSecond.value.slice(0);
@@ -126,7 +134,13 @@ export default defineComponent({
     });
 
     const slicedAccuracyPerSecond = computed(() => {
-      return accuracyPerSecond.value.slice(0);
+      return slicedWpmPerSecond.value.map((wpm, index) => {
+        const grossWpm = slicedGrossWpmPerSecond.value[index];
+        if (grossWpm === 0) {
+          return null; // Avoid division by zero
+        }
+        return (wpm / grossWpm) * 100; // Calculate the accuracy percentage
+      });
     });
 
     onMounted(async () => {

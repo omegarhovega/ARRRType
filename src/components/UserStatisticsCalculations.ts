@@ -93,13 +93,13 @@ export function stopWpmTracking() {
 
 // calculate accuracy per second for last round using logged gross/net wpm tracking data
 // accuracy is measured as WPM / Gross WPM
-export const accuracyPerSecond = computed(() => {
-    const accuracies: number[] = [];  // Explicitly specify the type
+export const accuracyPerSecond = computed((): (number | null)[] => {
+    const accuracies: (number | null)[] = [];
     for (let i = 0; i < wpmPerSecond.value.length; i++) {
         const wpm = wpmPerSecond.value[i];
         const grossWpm = grossWpmPerSecond.value[i];
         if (grossWpm === 0) {
-            accuracies.push(0); // Handle division by zero
+            accuracies.push(null); // Changed from 0 to null for division by zero
         } else {
             const accuracy = (wpm / grossWpm) * 100;
             accuracies.push(accuracy);
@@ -107,6 +107,7 @@ export const accuracyPerSecond = computed(() => {
     }
     return accuracies;
 });
+
 
 // 2. Mistyped Words -----------------------------------------------------------------------------------------------------------------------------------------
 // basis for mistyped words display on stats overview

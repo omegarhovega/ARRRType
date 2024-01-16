@@ -101,7 +101,10 @@ import type { Ref, ComponentPublicInstance } from "vue";
 import { useStore } from "../../stores/store";
 import { useTypingTextHandler } from "../../components/TypingTextHandler";
 import { useUtilities } from "../../components/Utilities";
-import { useUserStatistics } from "../../components/UserStatistics";
+import {
+  grossWpmPerSecond,
+  useUserStatistics,
+} from "../../components/UserStatistics";
 import {
   useMultiplayerTextManagement,
   useMultiplayerGameStateManagement,
@@ -320,6 +323,7 @@ export default defineComponent({
       wpm,
       grossWpm,
       consistencyForStat,
+      wpmPerSecond,
       resetStats,
       updateStats,
       saveStats,
@@ -345,6 +349,8 @@ export default defineComponent({
         grossWpm,
         accuracy,
         errors,
+        wpmPerSecond,
+        grossWpmPerSecond,
         totalOccurrences,
         mistakesMade,
         consistencyForStat,

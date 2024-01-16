@@ -8,6 +8,8 @@ type UserStat = {
   wpm: number,
   grossWPM: number,
   accuracy: number,
+  wpmPerSecond: number[],
+  grossWpmPerSecond: number[],
   errors: Array<{ attempted: string, expected: string, word: string }>,
   totalOccurrences: { [key: string]: number },
   mistakesMade: { [key: string]: number },

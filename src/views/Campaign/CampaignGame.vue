@@ -424,6 +424,8 @@ export default defineComponent({
       saveStats,
       startWpmTracking,
       stopWpmTracking,
+      wpmPerSecond,
+      grossWpmPerSecond,
       consistencyForStat,
       saveGameStatistics,
     } = useUserStatistics();
@@ -455,6 +457,8 @@ export default defineComponent({
         grossWpm,
         accuracy,
         errors,
+        wpmPerSecond,
+        grossWpmPerSecond,
         totalOccurrences,
         mistakesMade,
         consistencyForStat,

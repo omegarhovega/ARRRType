@@ -116,7 +116,10 @@ import { useTypingTextHandler } from "../../components/TypingTextHandler";
 import { useCountdownLogic } from "../../components/CountdownLogic";
 import { useGameStateManagement } from "../../components/GameStateManagement";
 import { useUtilities } from "../../components/Utilities";
-import { useUserStatistics } from "../../components/UserStatistics";
+import {
+  grossWpmPerSecond,
+  useUserStatistics,
+} from "../../components/UserStatistics";
 import { useRouter } from "vue-router";
 import PlayerProgress from "../../components/GameItems/PlayerProgress.vue";
 import OpponentProgress from "../../components/GameItems/OpponentProgress.vue";
@@ -438,6 +441,8 @@ export default defineComponent({
           grossWpm,
           accuracy,
           errors,
+          wpmPerSecond,
+          grossWpmPerSecond,
           totalOccurrences,
           mistakesMade,
           consistencyForStat,
@@ -538,7 +543,7 @@ export default defineComponent({
       window.addEventListener("keydown", handleOverlayKeyPress);
     });
 
-    // Fail-save to allow stopping games with abrupt unmountings
+    // Fail-save to allow stopping games with abrupt unmountings *CHECK if needed*
     onBeforeUnmount(() => {
       // Clean up all game activities
       stopGameActivities(

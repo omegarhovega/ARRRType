@@ -25,7 +25,7 @@ export function useUserStatisticsHandler() {
 
     // 1. Update Stats
     // *NOTE* excludes stats < 50% (might show results not saved for last round still, consider amending)
-    function updateStats(newWpm: number, newGrossWpm: number, newAccuracy: number, errors: Array<{ attempted: string, expected: string, word: string }>, totalOccurrences: { [key: string]: number }, mistakesMade: { [key: string]: number }, consistency: number) {
+    function updateStats(newWpm: number, newGrossWpm: number, newAccuracy: number, newWpmPerSecond: number[], newGrossWpmPerSecond: number[], errors: Array<{ attempted: string, expected: string, word: string }>, totalOccurrences: { [key: string]: number }, mistakesMade: { [key: string]: number }, consistency: number) {
         if (newAccuracy > 50) {
             try {
                 roundId.value++;
@@ -35,6 +35,8 @@ export function useUserStatisticsHandler() {
                     wpm: newWpm,
                     grossWPM: newGrossWpm,
                     accuracy: newAccuracy,
+                    wpmPerSecond: newWpmPerSecond,
+                    grossWpmPerSecond: newGrossWpmPerSecond,
                     errors: errors,
                     totalOccurrences: totalOccurrences,
                     mistakesMade: mistakesMade,
@@ -119,6 +121,8 @@ export function useUserStatisticsHandler() {
                     wpm: stat.wpm,
                     grossWPM: stat.grossWPM,
                     accuracy: stat.accuracy,
+                    wpmPerSecond: stat.wpmPerSecond,
+                    grossWpmPerSecond: stat.grossWpmPerSecond,
                     created_at: stat.timestamp,
                     errors: stat.errors,
                     totalOccurrences: stat.totalOccurrences,
@@ -145,15 +149,17 @@ export function useUserStatisticsHandler() {
                 timeElapsed = store.endTime.getTime() - store.startTime.getTime();
             }
 
-            // Calculate bucket index for WPM and Accuracy
+            // Fetch last (gross) WPM per second data and calculate bucket index for WPM and Accuracy
             const latestStats = store.userStats[store.userStats.length - 1];
+            const lastWpmPerSecond = latestStats ? latestStats.wpmPerSecond : [];
+            const lastGrossWpmPerSecond = latestStats ? latestStats.grossWpmPerSecond : [];
             const wpmBucketIndex = calculateBucketIndex(latestStats.wpm, 'wpm');
             const accuracyBucketIndex = calculateBucketIndex(latestStats.accuracy, 'accuracy');
 
             // Fetch the current bucket arrays from the database
             const { data: profileData, error: profileFetchError } = await supabase
                 .from('profiles')
-                .select('wpm_buckets, accuracy_buckets, games_played, time_played')
+                .select('wpm_buckets, accuracy_buckets, last_round_wpm, last_round_gross_wpm, games_played, time_played')
                 .eq('id', userId)
                 .single();
 
@@ -174,8 +180,8 @@ export function useUserStatisticsHandler() {
                     .from('profiles')
                     .upsert({
                         id: userId,
-                        last_round_wpm: JSON.stringify(wpmPerSecond.value),
-                        last_round_gross_wpm: JSON.stringify(grossWpmPerSecond.value),
+                        last_round_wpm: lastWpmPerSecond,
+                        last_round_gross_wpm: lastGrossWpmPerSecond,
                         wpm_buckets: profileData.wpm_buckets,
                         accuracy_buckets: profileData.accuracy_buckets,
                         time_played: totalTimePlayed,
@@ -262,7 +268,7 @@ export function useUserStatisticsHandler() {
             // Now fetch other statistics based on the last roundId
             const { data, error } = await supabase
                 .from('user_stats')
-                .select('id, wpm, grossWPM, accuracy, created_at, errors, totalOccurrences, mistakesMade, consistency')
+                .select('id, wpm, grossWPM, accuracy, wpmPerSecond, grossWpmPerSecond, created_at, errors, totalOccurrences, mistakesMade, consistency')
                 .eq('user_id', userId)
                 .order('id', { ascending: true }); // to show last round played last
 
@@ -275,6 +281,8 @@ export function useUserStatisticsHandler() {
                     wpm: stat.wpm,
                     grossWPM: stat.grossWPM,
                     accuracy: stat.accuracy,
+                    wpmPerSecond: stat.wpmPerSecond,
+                    grossWpmPerSecond: stat.grossWpmPerSecond,
                     errors: stat.errors,
                     totalOccurrences: stat.totalOccurrences || {},
                     mistakesMade: stat.mistakesMade || {},
@@ -282,7 +290,6 @@ export function useUserStatisticsHandler() {
                 }));
                 aggregateHeatmapData();
             }
-
 
             // Fetch total time played and number of games from Supabase
             const { data: profileData, error: profileError } = await supabase
@@ -295,11 +302,12 @@ export function useUserStatisticsHandler() {
             if (profileError) {
                 console.error("Error retrieving last_round_wpm from Supabase:", profileError);
             } else {
+                // wpm per second data currently stored in jsonb format in supabase table (Supabase automatically parses JSON columns into JavaScript objects), consider converting to int4[]
                 if (profileData && profileData.last_round_wpm) {
-                    wpmPerSecond.value = JSON.parse(profileData.last_round_wpm);
+                    wpmPerSecond.value = profileData.last_round_wpm;
                 }
                 if (profileData && profileData.last_round_gross_wpm) {
-                    grossWpmPerSecond.value = JSON.parse(profileData.last_round_gross_wpm);
+                    grossWpmPerSecond.value = profileData.last_round_gross_wpm;
                 }
                 // Update the store with total time played and number of games
                 if (profileData) {
@@ -363,6 +371,8 @@ export function useUserStatisticsHandler() {
         grossWpm: ComputedRef<number>,
         accuracy: Ref<number> | ComputedRef<number>,
         errors: Ref<Array<{ attempted: string; expected: string; word: string }>>,
+        wpmPerSecond: Ref<number[]>,
+        grossWpmPerSecond: Ref<number[]>,
         totalOccurrences: Ref<{ [key: string]: number; }>,
         mistakesMade: Ref<{ [key: string]: number; }>,
         consistencyForStat: ComputedRef<number>,
@@ -376,6 +386,8 @@ export function useUserStatisticsHandler() {
                 wpm.value,
                 grossWpm.value,
                 accuracy.value,
+                wpmPerSecond.value,
+                grossWpmPerSecond.value,
                 errors.value,
                 totalOccurrences.value,
                 mistakesMade.value,
