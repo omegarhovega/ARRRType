@@ -9,12 +9,12 @@
       <router-link
         to="/privacy"
         class="footer-link"
-      >Privacy Policy</router-link>
+      >Privacy</router-link>
       <span class="divider">|</span>
-      <a
+      <router-link
+        to="/contact"
         class="footer-link"
-        href="mailto:admin@arrrtype.com"
-      >Contact Us</a>
+      >Contact</router-link>
       <span class="divider">|</span>
       <a
         href="https://github.com/omegarhovega/ARRRType"

@@ -24,6 +24,7 @@ import OnlineGame from '../views/OnlinePvP/OnlineGame.vue';
 import UpdateUserDetails from '../views/UpdateUserDetails.vue';
 import Disclaimer from '../views/Legal/Disclaimer.vue';
 import Privacy from '../views/Legal/PrivacyPolicy.vue';
+import Contact from '../views/Legal/Contact.vue';
 
 // Training modes
 const validModes = ['random', 'words', 'text', 'single', 'keys', 'custom'];
@@ -83,6 +84,7 @@ const routes = [
   },
   { path: '/disclaimer', name: 'Disclaimer', component: Disclaimer },
   { path: '/privacy', name: 'Privacy', component: Privacy },
+  { path: '/contact', name: 'Contact', component: Contact },
   { path: '/:catchAll(.*)', name: 'NotFound', component: NotFound }, // catchall 404
 ];
 
