@@ -8,6 +8,7 @@
   <input
     ref="hiddenInput"
     class="hidden-input"
+    id="hidden"
   />
   <div id="root">
 

@@ -320,45 +320,6 @@ export function useUtilities() {
             timeElapsed = store.endTime.getTime() - store.startTime.getTime();
         }
 
-        // Assume last game stats are the last element in userStats array
-        const lastGameStats = store.userStats[store.userStats.length - 1];
-        const wpmBucketIndex = getWpmBucketIndex(lastGameStats.wpm);
-        const grossWpmBucketIndex = getWpmBucketIndex(lastGameStats.grossWPM);
-        const accuracyBucketIndex = getAccuracyBucketIndex(lastGameStats.accuracy);
-
-
-        // Fetch the latest data based on login status
-        if (store.userSession && store.userSession.user) {
-            const userId = store.userSession.user.id;
-
-            // Fetch from database
-            const { data, error: fetchError } = await supabase
-                .from('profiles')
-                .select('games_played, time_played')
-                .eq('id', userId)
-                .single();
-
-            if (fetchError) {
-                console.error('Error fetching latest data:', fetchError);
-            }
-
-            if (data) {
-                gamesPlayed = data.games_played || 0;
-                totalTimePlayed = data.time_played || 0;
-            }
-        } else {
-            // Fetch from localStorage
-            const storedGamesPlayed = localStorage.getItem("gamesPlayed");
-            const storedTotalTimePlayed = localStorage.getItem("totalTimePlayed");
-
-            gamesPlayed = storedGamesPlayed ? parseInt(storedGamesPlayed, 10) : 0;
-            totalTimePlayed = storedTotalTimePlayed ? parseInt(storedTotalTimePlayed, 10) : 0;
-        }
-
-        // Increment the counters
-        gamesPlayed++;
-        totalTimePlayed += timeElapsed;  // Update to add only the timeElapsed for this game
-
         // Update the total_time and total_count in the total_games table
         try {
             // Fetch the current total time, count, and buckets from total_games table
@@ -375,28 +336,52 @@ export function useUtilities() {
                 let newTotalTime = totalData.total_time + timeElapsed;
                 let newTotalCount = totalData.total_count + 1;
 
-                // Increment the correct buckets
-                const updatedWpmBuckets = [...totalData.wpmbuckets];
-                const updatedGrossWpmBuckets = [...(totalData.grosswpmbuckets || new Array(20).fill(0))];
-                const updatedAccuracyBuckets = [...totalData.accuracybuckets];
+                // Check if wpm, grossWPM, and accuracy have values (then wpm and accuracy statistics are not saved in total stats)
+                // this applies to certain game modes that do not save statistics (single word training, etc.) as well as cases where accuracy is <50%
+                // time played and play count is always done
+                const lastGameStats = store.userStats.length > 0 ? store.userStats[store.userStats.length - 1] : null;
+                if (lastGameStats && lastGameStats.wpm !== undefined && lastGameStats.grossWPM !== undefined && lastGameStats.accuracy !== undefined) {
+                    // define buckets for total site stats
+                    const wpmBucketIndex = getWpmBucketIndex(lastGameStats.wpm);
+                    const grossWpmBucketIndex = getWpmBucketIndex(lastGameStats.grossWPM);
+                    const accuracyBucketIndex = getAccuracyBucketIndex(lastGameStats.accuracy);
 
-                updatedWpmBuckets[wpmBucketIndex] = (updatedWpmBuckets[wpmBucketIndex] || 0) + 1;
-                updatedGrossWpmBuckets[grossWpmBucketIndex] = (updatedGrossWpmBuckets[grossWpmBucketIndex] || 0) + 1;
-                updatedAccuracyBuckets[accuracyBucketIndex] = (updatedAccuracyBuckets[accuracyBucketIndex] || 0) + 1;
+                    // Increment the correct buckets
+                    const updatedWpmBuckets = [...totalData.wpmbuckets];
+                    const updatedGrossWpmBuckets = [...(totalData.grosswpmbuckets || new Array(20).fill(0))];
+                    const updatedAccuracyBuckets = [...totalData.accuracybuckets];
 
-                // Update the total_games table with new total time, count, and buckets
-                const { error: updateTimeError } = await supabase
-                    .from('total_games')
-                    .update({
-                        total_time: newTotalTime,
-                        total_count: newTotalCount,
-                        wpmbuckets: updatedWpmBuckets,
-                        grosswpmbuckets: updatedGrossWpmBuckets,
-                        accuracybuckets: updatedAccuracyBuckets
-                    })
-                    .eq('id', 1);  // Adjust as needed based on your table's structure
+                    updatedWpmBuckets[wpmBucketIndex] = (updatedWpmBuckets[wpmBucketIndex] || 0) + 1;
+                    updatedGrossWpmBuckets[grossWpmBucketIndex] = (updatedGrossWpmBuckets[grossWpmBucketIndex] || 0) + 1;
+                    updatedAccuracyBuckets[accuracyBucketIndex] = (updatedAccuracyBuckets[accuracyBucketIndex] || 0) + 1;
 
-                if (updateTimeError) throw updateTimeError;
+                    // Update the total_games table with new total time, count, and buckets
+                    const { error: updateTimeError } = await supabase
+                        .from('total_games')
+                        .update({
+                            total_time: newTotalTime,
+                            total_count: newTotalCount,
+                            wpmbuckets: updatedWpmBuckets,
+                            grosswpmbuckets: updatedGrossWpmBuckets,
+                            accuracybuckets: updatedAccuracyBuckets
+                        })
+                        .eq('id', 1);  // Adjust as needed based on your table's structure
+
+                    if (updateTimeError) throw updateTimeError;
+                } else {
+                    // If no wpm data due to game mode, update the total_games table with new total time and count, but not the buckets
+                    const { error: updateTimeError } = await supabase
+                        .from('total_games')
+                        .update({
+                            total_time: newTotalTime,
+                            total_count: newTotalCount
+                            // Buckets are not updated
+                        })
+                        .eq('id', 1);  // Adjust as needed based on your table's structure
+
+                    if (updateTimeError) throw updateTimeError;
+                }
+
             } else {
                 console.error("No total time, count, or bucket data found to update.");
                 // Handle scenario where there's no total data, possibly initialize a new row if needed

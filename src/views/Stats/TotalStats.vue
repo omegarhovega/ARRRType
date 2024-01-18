@@ -15,8 +15,6 @@
     <div class="text-sm mt-8">
       Note: WPM and accuracy statistics shown exclude rounds with accuracy of 50% or lower and do not include measurements from single word, keys or custom training. WPM statistic assumes average word length of 5 characters. Total games played and total time played include only finished games.
     </div>
-    <div class="text-sm mt-20">
-    </div>
   </div>
   <div
     v-else
@@ -107,9 +105,13 @@ export default defineComponent({
 
     // On component mount, retrieve stats
     onMounted(async () => {
-      await fetchAllUserStats();
-      await fetchIndividualUserStats();
-      await fetchUserSpecificStats();
+      if (store.userSession) {
+        await fetchAllUserStats();
+        await fetchIndividualUserStats();
+        await fetchUserSpecificStats();
+      } else {
+        console.log("User not logged in.");
+      }
     });
 
     return {

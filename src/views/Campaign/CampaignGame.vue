@@ -9,6 +9,7 @@ CampaignGame
   <input
     ref="hiddenInput"
     class="hidden-input"
+    id="hiddeninput"
   />
   <div id="root">
     <div

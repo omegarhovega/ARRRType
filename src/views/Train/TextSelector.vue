@@ -7,6 +7,7 @@
         placeholder="Input text..."
         maxlength="1000"
         class="custom-textarea mt-5"
+        id="usertext"
       ></textarea>
     </div>
     <div class="mt-5">

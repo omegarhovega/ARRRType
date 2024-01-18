@@ -2,7 +2,7 @@ import { defineStore } from 'pinia';
 import { supabase } from '@/supabase';
 import { RANKS, OPPONENT_WPM } from "../components/GameConstants";
 
-type UserStat = {
+export type UserStat = {
   id: number,
   timestamp: Date,
   wpm: number,

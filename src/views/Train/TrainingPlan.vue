@@ -223,7 +223,46 @@ export default defineComponent({
       // Clear existing events
       calendarEvents.splice(0, calendarEvents.length);
 
-      // Accumulate calendar events
+      // Get the RRULE string for selected training days
+      const rruleDays = userPreferences.value.trainingDays
+        .map((dayName) => convertDayToICSDay(dayName))
+        .join(",");
+
+      // Find the first training day that matches the selected weekdays
+      let seriesStartDate = new Date(startDate);
+      while (
+        !userPreferences.value.trainingDays.some((dayName) =>
+          isTrainingDay(seriesStartDate, dayName)
+        )
+      ) {
+        seriesStartDate.setDate(seriesStartDate.getDate() + 1);
+      }
+
+      // Define the start and end time for the series based on the first valid training day
+      const seriesStartTime = new Date(
+        seriesStartDate.getFullYear(),
+        seriesStartDate.getMonth(),
+        seriesStartDate.getDate(),
+        parseInt(userPreferences.value.timeOfDay.split(":")[0]),
+        parseInt(userPreferences.value.timeOfDay.split(":")[1])
+      );
+      const seriesEndTime = new Date(
+        seriesStartTime.getTime() + sessionDuration * 60000
+      );
+
+      // Add the single VEVENT with the combined RRULE
+      icsContent += "BEGIN:VEVENT\n";
+      icsContent += `DTSTART:${formatDateToICS(seriesStartTime)}\n`;
+      icsContent += `DTEND:${formatDateToICS(seriesEndTime)}\n`;
+      icsContent += `RRULE:FREQ=WEEKLY;BYDAY=${rruleDays};UNTIL=${calculateSeriesEndDate(
+        startDate,
+        Number(userPreferences.value.lengthInWeeks)
+      )}\n`;
+      icsContent += "SUMMARY:Training Session\n";
+      icsContent += `DESCRIPTION:${sessionDescription.value}\n`;
+      icsContent += "END:VEVENT\n";
+
+      // Generate individual calendar events for display
       for (let day = 0; day < trainingLengthInDays; day++) {
         const trainingDate = new Date(startDate);
         trainingDate.setDate(startDate.getDate() + day);
@@ -233,36 +272,23 @@ export default defineComponent({
             isTrainingDay(trainingDate, dayName)
           )
         ) {
-          const startTime = new Date(
+          const eventStartTime = new Date(
             trainingDate.getFullYear(),
             trainingDate.getMonth(),
             trainingDate.getDate(),
             parseInt(userPreferences.value.timeOfDay.split(":")[0]),
             parseInt(userPreferences.value.timeOfDay.split(":")[1])
           );
-          const endTime = new Date(
-            startTime.getTime() + sessionDuration * 60000
+          const eventEndTime = new Date(
+            eventStartTime.getTime() + sessionDuration * 60000
           );
 
           calendarEvents.push({
-            start: startTime,
-            end: endTime,
+            start: eventStartTime,
+            end: eventEndTime,
             title: "ArrrType Training Session",
             content: sessionDescription.value,
           });
-
-          // Add events to the icsContent string
-          const dayAbbr = convertDayToICSDay(weekday(startTime));
-          icsContent += "BEGIN:VEVENT\n";
-          icsContent += `DTSTART:${formatDateToICS(startTime)}\n`;
-          icsContent += `DTEND:${formatDateToICS(endTime)}\n`;
-          icsContent += `RRULE:FREQ=WEEKLY;BYDAY=${dayAbbr};UNTIL=${calculateSeriesEndDate(
-            startDate, // Use the existing Date object
-            Number(userPreferences.value.lengthInWeeks)
-          )}\n`;
-          icsContent += "SUMMARY:Training Session\n";
-          icsContent += `DESCRIPTION:${sessionDescription.value}\n`;
-          icsContent += "END:VEVENT\n";
         }
       }
 
