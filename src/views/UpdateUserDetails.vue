@@ -16,7 +16,7 @@
         />
       </div>
       <button
-        type="button"
+        type="submit"
         class="update-button"
         @click="updateUsername"
       >Update Username</button>
@@ -49,7 +49,7 @@
         class="mismatch-message"
       >Emails do not match!</p>
       <button
-        type="button"
+        type="submit"
         class="update-button"
         @click="updateEmail"
       >Update Email</button>
@@ -80,7 +80,7 @@
         class="mismatch-message"
       >Passwords do not match!</p>
       <button
-        type="button"
+        type="submit"
         class="update-button"
         @click="updatePassword"
       >Update Password</button>

@@ -83,7 +83,10 @@ Using Composition API
         <!-- *Linked wallet placeholder* -->
       </div>
       <div class="button-box mt-5">
-        <button @click="goToUpdateUserDetails">
+        <button
+          type="button"
+          @click="goToUpdateUserDetails"
+        >
           <div class="shortcut-key-small">U</div>Update User Details
         </button>
       </div>
@@ -371,6 +374,7 @@ export default defineComponent({
 
 button {
   position: relative;
+  background: black;
 }
 
 .button-box {

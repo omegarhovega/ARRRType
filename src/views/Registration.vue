@@ -118,7 +118,6 @@ export default defineComponent({
           alert(
             "Registration successful! Please check your email for confirmation."
           );
-          console.log("Registration data:", data);
           router.push("/login");
         }
       } else {
