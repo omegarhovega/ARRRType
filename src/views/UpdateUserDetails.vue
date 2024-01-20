@@ -15,6 +15,12 @@
           autocomplete="off"
         />
       </div>
+      <p
+        v-if="usernameTakenError"
+        class="mismatch-message"
+      >
+        Username already taken.
+      </p>
       <button
         type="submit"
         class="update-button"
@@ -107,6 +113,8 @@ export default {
     const userEmail = computed(() => session.value?.user?.email);
     const username = ref<string>("");
 
+    const usernameTakenError = ref(false);
+
     // Computed properties for mismatch
     const emailMismatch = computed(() => newEmail.value !== repeatEmail.value);
     const passwordMismatch = computed(
@@ -139,13 +147,35 @@ export default {
       }
     }
 
+    async function isUsernameTaken(newUsername: any) {
+      // Check if the username already exists in the database
+      const { data, error } = await supabase
+        .from("profile_names")
+        .select("username")
+        .ilike("username", `%${newUsername.trim()}%`); // Correct use of ilike
+
+      return data && data.length > 0;
+    }
+
     async function updateUsername() {
       try {
+        // Reset the error state at the beginning of the method
+        usernameTakenError.value = false;
+
         const user =
           session.value && session.value.user ? session.value.user.id : null;
 
         if (!user) {
           throw new Error("User is not logged in");
+        }
+
+        // Check if the username is already taken and it's not the user's current username
+        if (
+          (await isUsernameTaken(newUsername.value)) &&
+          newUsername.value.toLowerCase() !== username.value.toLowerCase()
+        ) {
+          usernameTakenError.value = true;
+          return;
         }
 
         const { data, error } = await supabase
@@ -154,6 +184,9 @@ export default {
           .eq("id", user);
 
         if (error) throw error;
+
+        // Update the displayed username immediately after successful update
+        username.value = newUsername.value;
 
         // Handle successful username update
         alert("Username updated successfully");
@@ -212,6 +245,7 @@ export default {
       updateEmail,
       updatePassword,
       updateUsername,
+      usernameTakenError,
     };
   },
 };
