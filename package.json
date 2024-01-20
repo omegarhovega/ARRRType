@@ -12,7 +12,7 @@
   },
   "dependencies": {
     "@popperjs/core": "^2.11.8",
-    "@supabase/supabase-js": "^2.32.0",
+    "@supabase/supabase-js": "^2.39.3",
     "canvas-confetti": "^1.9.0",
     "chart.js": "^3.9.1",
     "dotenv": "^16.3.1",

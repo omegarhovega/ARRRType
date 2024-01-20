@@ -58,7 +58,7 @@
       </div>
     </div>
     <div class="login-section">
-      <template v-if="userSession">
+      <template v-if="session">
         <div class="button-box mr-3">
           <button @click="navigate('Account')">
             <div class="shortcut-key-small">A</div>Account
@@ -102,6 +102,7 @@ import {
 } from "vue";
 import { useStore } from "../stores/store";
 import { useRouter } from "vue-router";
+import { supabase } from "../supabase";
 
 export default defineComponent({
   setup() {
@@ -110,7 +111,8 @@ export default defineComponent({
 
     // Pinia store
     const store = useStore();
-    const userSession = computed(() => store.userSession);
+    const session = computed(() => store.userSession);
+    const username = ref<string>("");
 
     // First visit check
     const isFirstVisit = ref(true);
@@ -131,11 +133,11 @@ export default defineComponent({
         navigate("CampaignMode");
       } else if (event.key === "s") {
         navigate("Stats");
-      } else if (event.key === "l" && !userSession.value) {
+      } else if (event.key === "l" && !session.value) {
         navigate("Login");
-      } else if (event.key === "r" && !userSession.value) {
+      } else if (event.key === "r" && !session.value) {
         navigate("Register");
-      } else if (event.key === "a" && userSession.value) {
+      } else if (event.key === "a" && session.value) {
         navigate("Account");
       } else if (event.key === "f") {
         navigate("OnlineLobby");
@@ -144,7 +146,46 @@ export default defineComponent({
       }
     };
 
+    async function getProfile() {
+      try {
+        // Guard clause to check if session and user are defined
+        if (!session.value || !session.value.user) {
+          console.warn("Session or user is not defined");
+          return;
+        }
+
+        let { data, error, status } = await supabase
+          .from("profiles")
+          .select("username")
+          .eq("id", session.value.user.id)
+          .single();
+
+        if (error && status !== 406) throw error;
+
+        // Check if username is null or undefined (indicated first login) and set it from auth metadata from registration
+        if (data && (data.username === null || data.username === undefined)) {
+          let metadata = session.value.user.user_metadata;
+
+          const { error: updateError } = await supabase
+            .from("profiles")
+            .update({ username: metadata.username })
+            .eq("id", session.value.user.id);
+
+          if (updateError) {
+            console.error("Error updating profile:", updateError);
+          } else {
+            console.log("Profile updated successfully.");
+          }
+        } else if (data) {
+          username.value = data.username;
+        }
+      } catch (error) {
+        alert((error as Error).message);
+      }
+    }
+
     onMounted(async () => {
+      getProfile();
       window.addEventListener("keydown", handleKeyPress);
       checkFirstVisit();
       setTimeout(() => {
@@ -165,7 +206,7 @@ export default defineComponent({
     });
 
     return {
-      userSession,
+      session,
       navigate,
       isFirstVisit,
       fadeOut,

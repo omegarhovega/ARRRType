@@ -217,7 +217,6 @@ export default defineComponent({
     });
 
     async function getProfile() {
-      // pulls user info from supabase table
       try {
         loading.value = true;
 
@@ -231,7 +230,7 @@ export default defineComponent({
         let { data, error, status } = await supabase
           .from("profiles")
           .select(
-            `username, website, avatar_id, time_played, games_played, flag_id`
+            "username, website, avatar_id, time_played, games_played, flag_id"
           )
           .eq("id", user.id)
           .single();
@@ -239,11 +238,30 @@ export default defineComponent({
         if (error && status !== 406) throw error;
 
         if (data) {
-          username.value = data.username;
+          // Always set these values
           avatar_id.value = data.avatar_id;
           time_played.value = data.time_played;
           games_played.value = data.games_played;
           flag_id.value = data.flag_id;
+
+          // Check and update username if it's null or undefined (indicated first login)
+          if (data.username === null || data.username === undefined) {
+            const metadata = user.user_metadata;
+            const { error: updateError } = await supabase
+              .from("profiles")
+              .update({ username: metadata.username })
+              .eq("id", user.id);
+
+            if (updateError) {
+              console.error("Error updating profile:", updateError);
+            } else {
+              console.log("Profile updated successfully.");
+              // Set the updated username
+              username.value = metadata.username;
+            }
+          } else {
+            username.value = data.username;
+          }
         }
       } catch (error) {
         alert((error as Error).message);

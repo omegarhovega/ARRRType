@@ -13,6 +13,13 @@ Using Composition API
         class="login-form"
       >
         <input
+          type="text"
+          v-model="username"
+          placeholder="Username"
+          required
+          class="input-field"
+        />
+        <input
           type="email"
           v-model="email"
           placeholder="Email"
@@ -75,6 +82,8 @@ export default defineComponent({
     const confirmPassword = ref("");
     const router = useRouter();
 
+    const username = ref("");
+
     const emailMismatch = computed(() => {
       return email.value !== confirmEmail.value;
     });
@@ -96,12 +105,15 @@ export default defineComponent({
         const { data, error } = await supabase.auth.signUp({
           email: email.value,
           password: password.value,
+          options: {
+            data: {
+              username: username.value,
+            },
+          },
         });
-        console.log("SignUp response:", { data, error });
 
         if (error) {
           alert(error.message);
-          console.log("Registration error:", error);
         } else {
           alert(
             "Registration successful! Please check your email for confirmation."
@@ -122,6 +134,7 @@ export default defineComponent({
       isFormValid,
       emailMismatch,
       passwordMismatch,
+      username,
       handleRegistration,
     };
   },
