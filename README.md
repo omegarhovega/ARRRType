@@ -4,6 +4,8 @@ ARRRType is an open source typing game, made by pirates for pirates <img src="ht
 
 Our goal is to build a fun application allowing anyone to meaningfully increase their typing speed by using the most effective training methods.
 
+A live version is currently at https://arrrtype.com.
+
 # <img src="https://github.com/omegarhovega/ARRRType/blob/main/public/ship_p.png?raw=true" alt="ship" width="20"/> Documentation
 
 Under construction.
