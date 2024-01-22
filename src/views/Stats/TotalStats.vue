@@ -18,7 +18,7 @@
   </div>
   <div
     v-else
-    class="all-time-stats mt-30"
+    class="all-time-stats text-yellow-500 mt-30"
   >
     <h2>Login or Register to see Total Site Stats</h2>
   </div>

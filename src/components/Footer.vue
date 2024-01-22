@@ -28,7 +28,11 @@
           class="footer-image"
         />GitHub
       </a>
-      <span class="divider">| v0.9b</span>
+      <span class="divider">|</span>
+      <router-link
+        to="/news"
+        class="footer-link"
+      >v0.95b</router-link>
     </div>
   </footer>
 </template>

@@ -1,5 +1,11 @@
 <template>
   <div class="start-page">
+    <div class="news-box">
+      <span class="text-yellow-500"><b>New:</b></span> <router-link
+        to="/news"
+        class="footer-link"
+      ><u>Update v0.95b</u></router-link>
+    </div>
     <div class="options-container">
       <div
         class="option-box"
@@ -86,8 +92,11 @@
             <div class="shortcut-key-small">R</div>Register
           </button>
         </div>
-        <p class="comment">Login or Register to not loose your Pirate progress</p>
+        <p class="comment text-yellow-500">Login or Register to not loose your Pirate progress</p>
       </template>
+    </div>
+    <div class="stats-box text-slate-400">
+      Total games played: {{ totalGamesPlayed }}, Total time played: {{ formattedTotalTimePlayed }}
     </div>
   </div>
 </template>
@@ -113,6 +122,10 @@ export default defineComponent({
     const store = useStore();
     const session = computed(() => store.userSession);
     const username = ref<string>("");
+
+    // for display above menu
+    const totalGamesPlayed = ref(0);
+    const totalTimePlayed = ref(0);
 
     // First visit check
     const isFirstVisit = ref(true);
@@ -184,8 +197,31 @@ export default defineComponent({
       }
     }
 
+    async function fetchGameStats() {
+      let { data, error } = await supabase
+        .from("total_games")
+        .select("total_count, total_time")
+        .single();
+
+      if (data && !error) {
+        totalGamesPlayed.value = data.total_count;
+        totalTimePlayed.value = data.total_time;
+      } else {
+        console.error("Error fetching game stats:", error);
+      }
+    }
+
+    const formattedTotalTimePlayed = computed(() => {
+      const totalSeconds = Math.floor(totalTimePlayed.value / 1000);
+      const hours = Math.floor((totalSeconds % 86400) / 3600);
+      const minutes = Math.floor((totalSeconds % 3600) / 60);
+
+      return `${hours}h ${minutes}m`;
+    });
+
     onMounted(async () => {
       getProfile();
+      await fetchGameStats();
       window.addEventListener("keydown", handleKeyPress);
       checkFirstVisit();
       setTimeout(() => {
@@ -210,6 +246,8 @@ export default defineComponent({
       navigate,
       isFirstVisit,
       fadeOut,
+      totalGamesPlayed,
+      formattedTotalTimePlayed,
     };
   },
 });
@@ -405,5 +443,26 @@ export default defineComponent({
 .fade-out {
   animation: fadeOut 1s ease-in forwards;
 }
+
+.news-box {
+  background-color: #3c4c60; /* A blue-gray color */
+  padding-left: 8px;
+  padding-right: 8px;
+  padding-top: 2px;
+  padding-bottom: 2px;
+  border-radius: 10px;
+  margin-bottom: 20px;
+  font-size: 13px;
+}
+
+.stats-box {
+  background-color: #3c4c60; /* A blue-gray color */
+  padding-left: 8px;
+  padding-right: 8px;
+  padding-top: 2px;
+  padding-bottom: 2px;
+  border-radius: 10px;
+  margin-top: 30px;
+  font-size: 12px;
+}
 </style>
-  

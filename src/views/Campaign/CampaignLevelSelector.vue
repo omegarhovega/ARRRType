@@ -9,7 +9,7 @@ CampaignLevelSelector
       v-if="!userSession"
       class="mb-5"
     >
-      <p class="font-bold">Note: You are not logged in and your progress is <span class="text-red-500">not</span> saved.</p>
+      <p class="font-bold">Note: You are not logged in and your progress is <span class="text-yellow-500">not</span> saved.</p>
     </div>
     <div class="level-squares-container">
       <div class="level-squares">

@@ -28,7 +28,7 @@
     </div>
 
     <div v-if="!userSession">
-      <p class="font-bold">Note: You are not logged in and your statistics are <span class="text-red-500">not</span> saved.</p>
+      <p class="font-bold">Note: You are not logged in and your statistics are <span class="text-yellow-500">not</span> saved.</p>
     </div>
 
     <!-- Dynamic Element -->

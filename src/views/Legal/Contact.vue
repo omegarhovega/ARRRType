@@ -1,6 +1,6 @@
 <template>
   <div class="contact-form">
-    Contact us using <u>admin@arrrtype.com</u>
+    Contact us using <a href="mailto:admin@arrrtype.com"><span class="text-yellow-500">admin@arrrtype.com</span></a>
   </div>
 </template>
   
