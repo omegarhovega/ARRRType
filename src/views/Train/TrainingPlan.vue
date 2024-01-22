@@ -85,7 +85,10 @@
       <div class="mt-5">
         <v-calendar :attributes="calendarAttributes"></v-calendar>
       </div>
-      <div class="section">
+      <div
+        class="section"
+        v-if="showDownload"
+      >
         <div class="mt-5 mb-1">Create a series in your calendar for your training sessions:</div>
         <button
           v-if="icsDataUrl"
@@ -171,18 +174,6 @@ export default defineComponent({
       "Sunday",
     ];
 
-    function weekday(date: Date): string {
-      return [
-        "Sunday",
-        "Monday",
-        "Tuesday",
-        "Wednesday",
-        "Thursday",
-        "Friday",
-        "Saturday",
-      ][date.getDay()];
-    }
-
     // Computed property for session description based on user level
     const sessionDescription = computed(() => {
       switch (userLevel.value) {
@@ -209,9 +200,16 @@ export default defineComponent({
 
     // Reactive variable to hold the .ics data URL
     const icsDataUrl = ref("");
+    const showDownload = ref(false);
 
     // generate training plan and create .ics for download
     const generateTrainingPlan = async () => {
+      // check whether all fields are filled out
+      if (!validateTrainingPlanInput()) {
+        showDownload.value = false;
+        return;
+      }
+
       let icsContent =
         "BEGIN:VCALENDAR\nVERSION:2.0\nPRODID:-//Your Company//Your Product//EN\n";
 
@@ -312,6 +310,8 @@ export default defineComponent({
       if (error) {
         console.error("Error updating training plan:", error);
       }
+
+      showDownload.value = true;
     };
 
     function isTrainingDay(date: Date, dayName: string): boolean {
@@ -361,6 +361,23 @@ export default defineComponent({
       return formatDateToICS(endDate);
     }
 
+    const validateTrainingPlanInput = () => {
+      const prefs = userPreferences.value;
+      if (
+        !prefs.startDate ||
+        prefs.trainingDays.length === 0 ||
+        !prefs.timeOfDay ||
+        !prefs.duration ||
+        !prefs.lengthInWeeks
+      ) {
+        alert(
+          "Please fill out all options before generating the training plan."
+        );
+        return false;
+      }
+      return true;
+    };
+
     // FUNCTIONS
     onMounted(async () => {
       await store.fetchLastUnlockedLevel(); //needed to load the player rank correctly
@@ -398,6 +415,7 @@ export default defineComponent({
       icsDataUrl,
       calendarEvents,
       calendarAttributes,
+      showDownload,
     };
   },
 });
