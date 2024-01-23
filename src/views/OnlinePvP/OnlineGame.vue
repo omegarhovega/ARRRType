@@ -367,6 +367,11 @@ export default defineComponent({
 
     // End of game overlay key press logic
     function handleOverlayKeyPress(event: KeyboardEvent) {
+      // Check to ensure that shortcuts are not accidentally carried over to other components
+      const currentRoute = router.currentRoute.value.name;
+
+      if (currentRoute !== "OnlineGame") return;
+
       if (isFinished.value) {
         if (event.ctrlKey || event.metaKey || event.altKey || event.shiftKey) {
           return;

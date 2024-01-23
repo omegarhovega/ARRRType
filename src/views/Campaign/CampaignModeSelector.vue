@@ -79,6 +79,11 @@ export default defineComponent({
 
     // keyboard navigation shortcuts
     const handleKeyPress = (event: KeyboardEvent) => {
+      // Check to ensure that shortcuts are not accidentally carried over to other components
+      const currentRoute = router.currentRoute.value.name;
+
+      if (currentRoute !== "CampaignMode") return;
+
       if (event.ctrlKey || event.metaKey || event.altKey || event.shiftKey) {
         return;
       }

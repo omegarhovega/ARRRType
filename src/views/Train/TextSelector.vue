@@ -12,14 +12,14 @@
     </div>
     <div class="mt-5">
       <div class="button-box">
-        <div class="shortcut-key-small">Enter<span>&#9166;</span></div><button @click="submitCustomText">Start Custom Training</button>
+        <button @click="submitCustomText">Start Custom Training</button>
       </div>
     </div>
   </div>
 </template>
   
 <script lang="ts">
-import { defineComponent, ref, onMounted, onBeforeUnmount } from "vue";
+import { defineComponent, ref } from "vue";
 import { useStore } from "../../stores/store";
 import { useRouter } from "vue-router";
 
@@ -48,24 +48,6 @@ export default defineComponent({
       }
     };
 
-    const handleKeyPress = (event: KeyboardEvent) => {
-      if (event.ctrlKey || event.metaKey || event.altKey || event.shiftKey) {
-        return;
-      }
-
-      if (event.key === "Enter") {
-        submitCustomText();
-      }
-    };
-
-    onMounted(async () => {
-      window.addEventListener("keydown", handleKeyPress);
-    });
-
-    onBeforeUnmount(() => {
-      window.removeEventListener("keydown", handleKeyPress);
-    });
-
     return {
       customText,
       submitCustomText,
@@ -93,7 +75,7 @@ export default defineComponent({
   left: 50%;
   transform: translate(-50%, 0);
   position: absolute;
-  width: 65px;
+  width: 20px;
   height: 20px;
   background: linear-gradient(to bottom, #f2f2f2, #ccc);
   color: #000;

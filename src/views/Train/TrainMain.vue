@@ -498,13 +498,22 @@ export default defineComponent({
     }
 
     function handleOverlayKeyPress(event: KeyboardEvent) {
+      // Check to ensure that shortcuts are not accidentally carried over to other components
+      const currentRoute = router.currentRoute.value.name;
+
+      if (currentRoute !== "TrainMode") return;
+
       if (isFinished.value) {
         if (event.ctrlKey || event.metaKey || event.altKey || event.shiftKey) {
           return;
         }
         switch (event.key.toUpperCase()) {
           case "1":
-            loadNewGame();
+            if (store.selectedMode === "custom") {
+              router.push({ name: "TextSelector" });
+            } else {
+              loadNewGame();
+            }
             break;
           case "2":
             navigateToTrain();

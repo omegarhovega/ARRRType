@@ -11,7 +11,7 @@
     <p class="text">404</p>
     <p class="text">Page not found :-(</p>
     <button @click="goToStart">
-      <div class="shortcut-key">S</div>Back to Start
+      Back to Start
     </button>
   </div>
 </template>
@@ -27,20 +27,6 @@ export default defineComponent({
     const goToStart = () => {
       router.push("/");
     };
-
-    const handleKeyPress = (event: any) => {
-      if (event.key === "s") {
-        goToStart();
-      }
-    };
-
-    onMounted(() => {
-      window.addEventListener("keydown", handleKeyPress);
-    });
-
-    onUnmounted(() => {
-      window.removeEventListener("keydown", handleKeyPress);
-    });
 
     return {
       goToStart,

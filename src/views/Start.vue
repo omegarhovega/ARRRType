@@ -136,6 +136,11 @@ export default defineComponent({
     };
 
     const handleKeyPress = (event: KeyboardEvent) => {
+      // Check to ensure that shortcuts are not accidentally carried over to other components
+      const currentRoute = router.currentRoute.value.name;
+
+      if (currentRoute !== "Home") return;
+
       if (event.ctrlKey || event.metaKey || event.altKey || event.shiftKey) {
         return;
       }

@@ -503,13 +503,19 @@ export default defineComponent({
 
     // handling player inputs within results overlay to allow hitting enter for continuing
     const handleKeyPress = (event: KeyboardEvent) => {
+      // Check to ensure that shortcuts are not accidentally carried over to other components
+      const currentRoute = router.currentRoute.value.name;
+
+      if (currentRoute !== "Level") return;
+
       // Check if 'B' is pressed and level is locked to go back
       if (event.key === "b" && isLevelLocked.value) {
         goBackToCampaign();
         return;
       }
 
-      if (event.key !== "Enter") {
+      // key handles either next round or end of level
+      if (event.key !== "1") {
         return;
       }
 

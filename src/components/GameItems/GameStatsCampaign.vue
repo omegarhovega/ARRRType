@@ -30,7 +30,7 @@
         class="mt-5"
       >Note: Results are not saved, accuracy is 50% or lower.</p>
       <div class="training-mode-box mt-7">
-        <div class="shortcut-key text-base">Enter<span>&#9166;</span></div>
+        <div class="shortcut-key text-base">1</div>
         <button
           v-if="!levelFinished"
           @click="handleNextRoundClick"
@@ -40,7 +40,6 @@
         <button
           v-if="levelFinished"
           @click="backToOverview"
-          @keyup.enter="backToOverview"
         >
           Return to overview
         </button>
@@ -154,7 +153,7 @@ export default defineComponent({
   top: -10px;
   left: 50%;
   transform: translate(-50%, 0);
-  width: 65px;
+  width: 20px;
   height: 20px;
   background: linear-gradient(to bottom, #f2f2f2, #ccc);
   color: #000;

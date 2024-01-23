@@ -56,6 +56,7 @@ import type { Component } from "vue";
 import AllTimeStats from "./AllTimeStats.vue";
 import LastRoundStats from "./LastRoundStats.vue";
 import TotalStats from "./TotalStats.vue";
+import { useRouter } from "vue-router";
 import { useStore } from "../../stores/store";
 
 export default defineComponent({
@@ -72,6 +73,8 @@ export default defineComponent({
     },
   },
   setup(props) {
+    const router = useRouter();
+
     const currentView = ref(props.initialView);
     const viewNames = ["AllTimeStats", "LastRoundStats", "TotalStats"];
     const store = useStore();
@@ -91,6 +94,11 @@ export default defineComponent({
     });
 
     function handleKeyPress(event: KeyboardEvent) {
+      // Check to ensure that shortcuts are not accidentally carried over to other components
+      const currentRoute = router.currentRoute.value.name;
+
+      if (currentRoute !== "Stats") return;
+
       if (event.ctrlKey || event.metaKey || event.altKey || event.shiftKey) {
         return;
       }
