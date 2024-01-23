@@ -97,18 +97,21 @@ export default defineComponent({
       // Check to ensure that shortcuts are not accidentally carried over to other components
       const currentRoute = router.currentRoute.value.name;
 
-      if (currentRoute !== "Stats") return;
-
-      if (event.ctrlKey || event.metaKey || event.altKey || event.shiftKey) {
+      if (currentRoute == "Stats" || currentRoute == "LastRoundStats") {
+        if (event.ctrlKey || event.metaKey || event.altKey || event.shiftKey) {
+          return;
+        }
+        let currentIndex = viewNames.indexOf(currentView.value);
+        if (event.key === "ArrowLeft") {
+          currentIndex =
+            (currentIndex - 1 + viewNames.length) % viewNames.length;
+        } else if (event.key === "ArrowRight") {
+          currentIndex = (currentIndex + 1) % viewNames.length;
+        }
+        currentView.value = viewNames[currentIndex];
+      } else {
         return;
       }
-      let currentIndex = viewNames.indexOf(currentView.value);
-      if (event.key === "ArrowLeft") {
-        currentIndex = (currentIndex - 1 + viewNames.length) % viewNames.length;
-      } else if (event.key === "ArrowRight") {
-        currentIndex = (currentIndex + 1) % viewNames.length;
-      }
-      currentView.value = viewNames[currentIndex];
     }
 
     onMounted(() => {
