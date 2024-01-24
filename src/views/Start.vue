@@ -225,18 +225,23 @@ export default defineComponent({
     });
 
     onMounted(async () => {
+      checkFirstVisit();
       getProfile();
       await fetchGameStats();
       window.addEventListener("keydown", handleKeyPress);
-      checkFirstVisit();
-      setTimeout(() => {
-        fadeOut.value = true; // Trigger the fade-out of short cut info overlay after 10 seconds
-      }, 10000);
+
+      if (isFirstVisit.value) {
+        setTimeout(() => {
+          fadeOut.value = true; // Trigger the fade-out of short cut info overlay after 10 seconds
+        }, 10000);
+      }
     });
 
     const checkFirstVisit = () => {
-      if (localStorage.getItem("visited")) {
-        isFirstVisit.value = false;
+      isFirstVisit.value = !localStorage.getItem("visited");
+
+      if (!isFirstVisit.value) {
+        fadeOut.value = false;
       } else {
         localStorage.setItem("visited", "true");
       }
