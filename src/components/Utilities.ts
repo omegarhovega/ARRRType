@@ -311,8 +311,6 @@ export function useUtilities() {
     // includes statistics on total time and games played by user as well as histogram data on all-time WPM and accuracy (detailed values in stats only for last 100 games stored)
 
     async function saveTotalTimePlayed() {
-        let gamesPlayed = 0;
-        let totalTimePlayed = 0;
         let timeElapsed = 0;  // Initialize timeElapsed variable
 
         // Calculate timeElapsed for the current game
@@ -390,17 +388,23 @@ export function useUtilities() {
             console.error("Error updating total time, count, or buckets:", error);
         }
 
-        // Save the updated values
         if (store.userSession && store.userSession.user) {
-            return // handled in saveStats function in UserStatisticsHandler
+            return; // handled in saveStats function in UserStatisticsHandler
         } else {
-            localStorage.setItem("totalTimePlayed", totalTimePlayed.toString());
-            localStorage.setItem("gamesPlayed", gamesPlayed.toString());
-        }
+            // Handle guest users
+            let currentGamesPlayed = parseInt(localStorage.getItem("gamesPlayed") || "0");
+            let currentTotalTimePlayed = parseInt(localStorage.getItem("totalTimePlayed") || "0");
 
-        // Update the store with the new values
-        store.numberOfGamesPlayed = gamesPlayed;
-        store.totalTimePlayed = totalTimePlayed;
+            currentGamesPlayed += 1;
+            currentTotalTimePlayed += timeElapsed;
+
+            localStorage.setItem("totalTimePlayed", currentTotalTimePlayed.toString());
+            localStorage.setItem("gamesPlayed", currentGamesPlayed.toString());
+
+            // Update the store with the new values
+            store.numberOfGamesPlayed = currentGamesPlayed;
+            store.totalTimePlayed = currentTotalTimePlayed;
+        }
     }
 
     return {
