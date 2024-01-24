@@ -168,7 +168,7 @@ export default defineComponent({
       try {
         // Guard clause to check if session and user are defined
         if (!session.value || !session.value.user) {
-          console.warn("Session or user is not defined");
+          console.log("No Session defined. Guest user mode.");
           return;
         }
 

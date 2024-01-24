@@ -461,7 +461,7 @@ export default defineComponent({
 }
 
 .alt-row {
-  background-color: #29435a;
+  background-color: #3c5266;
 }
 
 .avatar-img {

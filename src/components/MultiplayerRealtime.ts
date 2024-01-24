@@ -82,7 +82,7 @@ export function useMultiplayerRealtime(
         if (gameId.value == null) {
             return;
         } else {
-            console.log("calling insert Heartbeat with", gameId.value, playerID);
+            console.log("Heartbeat");
             callInsertHeartbeat(gameId.value, playerID);
         }
     };

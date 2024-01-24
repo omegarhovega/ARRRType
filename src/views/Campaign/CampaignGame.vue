@@ -193,6 +193,9 @@ export default defineComponent({
       );
     }
 
+    // taunts speech bubble interval reference
+    let tauntIntervalId: any = null;
+
     // Refs
     const scrollContainer = ref<HTMLElement | null>(null);
     const gameJustEnded = ref(false);
@@ -272,15 +275,15 @@ export default defineComponent({
     const showTaunt = ref(true);
     const randomTaunt = ref(generateRandomTaunt());
     const updateRandomTaunt = () => {
-      // Generate random taunt regardless of game state
-      randomTaunt.value = generateRandomTaunt();
-
-      // Show taunt only if the game is not finished
-      if (!isFinished) {
+      if (!isFinished.value) {
+        // Generate random taunt regardless of game state
+        randomTaunt.value = generateRandomTaunt();
         showTaunt.value = true;
 
         // Set a timer to clear the taunt text after 5 seconds
         setTimeout(clearTaunt, 5000);
+      } else {
+        showTaunt.value = false;
       }
     };
 
@@ -350,6 +353,10 @@ export default defineComponent({
       startOpponentProgress();
       startWpmTracking();
       startIndexTracking();
+      // Update the taunt text initially
+      updateRandomTaunt();
+      // Update the taunt text every 10 seconds
+      tauntIntervalId = setInterval(updateRandomTaunt, 10000);
       window.removeEventListener("keydown", handleKeyDown); // Remove previous stale keydown listener if any
       window.addEventListener("keydown", handleKeyDown); // Add new keydown listener
     });
@@ -466,6 +473,7 @@ export default defineComponent({
         updateStats,
         saveStats
       );
+      clearInterval(tauntIntervalId); // important to stop taunt intervall from running on
       saveTotalTimePlayed();
     }
 
@@ -562,10 +570,6 @@ export default defineComponent({
         fetchText(store.numberOfWords); // Fetch the initial text
         countdownStart(); // Start the initial countdown
       }
-      // Update the taunt text initially
-      updateRandomTaunt();
-      // Update the taunt text every 10 seconds
-      setInterval(updateRandomTaunt, 10000);
     });
 
     // Fail-save to allow stopping games with abrupt unmountings
