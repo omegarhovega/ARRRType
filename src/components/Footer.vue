@@ -23,7 +23,7 @@
         class="footer-link"
       >
         <img
-          src="/github.png"
+          src="/github.webp"
           alt="Github"
           class="footer-image"
         />GitHub

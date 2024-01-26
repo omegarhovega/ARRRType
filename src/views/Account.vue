@@ -13,14 +13,14 @@ Using Composition API
       <div class="avatar-placeholder">
         <!-- Avatar display -->
         <img
-          :src="`/avatars/Head${avatar_id}.png`"
+          :src="`/avatars/Head${avatar_id}.webp`"
           alt="User Avatar"
         />
       </div>
       <!-- Flag display under the avatar -->
       <div class="flag-placeholder mt-5">
         <img
-          :src="`/flags/Flag${flag_id}.png`"
+          :src="`/flags/Flag${flag_id}.webp`"
           alt="Country Flag"
         />
       </div>

@@ -11,7 +11,7 @@
     >
       <div class="image-container">
         <img
-          :src="wpm > opponentWpmLevel ? '/parrot_p.png' : '/skull_p.png'"
+          :src="wpm > opponentWpmLevel ? '/parrot_p.webp' : '/skull_p.webp'"
           alt="Result Icon"
           width="30"
           height="30"

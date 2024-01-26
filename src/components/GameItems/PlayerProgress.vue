@@ -40,7 +40,7 @@ export default defineComponent({
     },
   },
   setup(props) {
-    const imageList = ["/ship_p.png", "/parrot_p.png", "/skull_p.png"];
+    const imageList = ["/ship_p.webp", "/parrot_p.webp", "/skull_p.webp"];
 
     const randomImage = computed(() => {
       const randomIndex = Math.floor(Math.random() * imageList.length);

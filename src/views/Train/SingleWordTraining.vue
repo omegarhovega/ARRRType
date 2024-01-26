@@ -38,7 +38,7 @@
           </template>
           <template v-else-if="countdownFinished">
             <img
-              src="/skull_p.png"
+              src="/skull_p.webp"
               alt="Skull"
               width="22"
               height="22"
@@ -228,7 +228,6 @@ export default defineComponent({
       }
       initializeWrapper(new MouseEvent("click"));
       loading.value = false;
-      window.addEventListener("keydown", handleKeyDown);
       window.addEventListener("keydown", detectCapsLock);
       window.addEventListener("keyup", detectCapsLock);
       window.addEventListener("keydown", handleOverlayKeyPress);
@@ -252,7 +251,6 @@ export default defineComponent({
       currentWordCharIndex.value = 0;
       currentWord.value = "";
       singleWordStatsList.length = 0;
-      window.removeEventListener("keydown", handleKeyDown);
       window.removeEventListener("keydown", detectCapsLock);
       window.removeEventListener("keyup", detectCapsLock);
       window.removeEventListener("keydown", handleOverlayKeyPress);

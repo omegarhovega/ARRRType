@@ -8,7 +8,7 @@
       <img
         v-for="flagId in flagIds"
         :key="flagId"
-        :src="`/flags/Flag${flagId}.png`"
+        :src="`/flags/Flag${flagId}.webp`"
         @click="selectFlag(flagId)"
         alt="Flag Image"
       />

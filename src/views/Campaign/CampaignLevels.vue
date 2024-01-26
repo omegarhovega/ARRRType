@@ -18,7 +18,7 @@ CampaignLevels
       </div>
       <div v-if="!isLastUnlocked">
         <img
-          src="/skull_p.png"
+          src="/skull_p.webp"
           class="skull"
           alt="Level Image"
         />
@@ -35,21 +35,21 @@ CampaignLevels
     <div class="info-box">
       <div class="info-row">
         <img
-          src="/ship_p.png"
+          src="/ship_p.webp"
           alt="Speed"
           class="info-icon"
         > {{ opponentWpm }} WPM
       </div>
       <div class="info-row">
         <img
-          src="/parrot_p.png"
+          src="/parrot_p.webp"
           alt="Rank"
           class="info-icon"
         > {{ rank }}
       </div>
       <div class="info-row">
         <img
-          src="/coins_p.png"
+          src="/coins_p.webp"
           alt="Doubloons"
           class="info-icon"
         > {{ winnings }}
@@ -80,9 +80,9 @@ export default defineComponent({
   setup(props) {
     const levelImagePath = computed(() => {
       if (props.levelNumber >= 1 && props.levelNumber <= 15) {
-        return `/avatars/Head${props.levelNumber}.png`;
+        return `/avatars/Head${props.levelNumber}.webp`;
       }
-      return "/avatar.png"; // default image if levelNumber is out of range
+      return "/avatar.webp"; // default image if levelNumber is out of range
     });
 
     const opponentWpm = computed(() => OPPONENT_WPM[props.levelNumber]);

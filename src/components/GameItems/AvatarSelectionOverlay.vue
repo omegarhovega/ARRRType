@@ -8,7 +8,7 @@
       <img
         v-for="avatarId in avatarIds"
         :key="avatarId"
-        :src="`/avatars/Head${avatarId}.png`"
+        :src="`/avatars/Head${avatarId}.webp`"
         @click="selectAvatar(avatarId)"
         alt="Avatar Image"
       />

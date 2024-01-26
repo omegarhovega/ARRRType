@@ -30,13 +30,13 @@ Online Lobby
             :class="{ 'alt-row': index % 2 !== 0 }"
           >
             <td><img
-                :src="`/avatars/Head${user.avatarId}.png`"
+                :src="`/avatars/Head${user.avatarId}.webp`"
                 alt="avatar"
                 class="avatar-img"
               /></td>
             <td>{{ user.username }}</td>
             <td><img
-                :src="`/flags/Flag${user.flagId}.png`"
+                :src="`/flags/Flag${user.flagId}.webp`"
                 alt="flag"
                 class="flag-img"
               /></td>

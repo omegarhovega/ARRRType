@@ -255,16 +255,6 @@ export function useTypingTextHandler(
         store.isCapsLockOn = event.getModifierState('CapsLock');
     }
 
-    onMounted(() => {
-        window.addEventListener('keydown', detectCapsLock);
-        window.addEventListener('keyup', detectCapsLock);
-    });
-
-    onUnmounted(() => {
-        window.removeEventListener('keydown', detectCapsLock);
-        window.removeEventListener('keyup', detectCapsLock);
-    });
-
     return {
         accuracy,
         totalOccurrences,

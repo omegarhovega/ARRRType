@@ -8,7 +8,7 @@
       >
         <div class="shortcut-key">R</div>
         <img
-          src="/random.png"
+          src="/random.webp"
           alt="Random words"
           class="mode-image"
         />
@@ -21,7 +21,7 @@
       >
         <div class="shortcut-key">M</div> <!-- Shortcut Key -->
         <img
-          src="/mistakes.png"
+          src="/mistakes.webp"
           alt="Mistakes"
           class="mode-image"
         />
@@ -34,7 +34,7 @@
       >
         <div class="shortcut-key">T</div> <!-- Shortcut Key -->
         <img
-          src="/text3.png"
+          src="/text3.webp"
           alt="Text"
           class="mode-image"
         />
@@ -49,7 +49,7 @@
       >
         <div class="shortcut-key">S</div> <!-- Shortcut Key -->
         <img
-          src="/single3.png"
+          src="/single3.webp"
           alt="Single"
           class="mode-image"
         />
@@ -62,7 +62,7 @@
       >
         <div class="shortcut-key">K</div> <!-- Shortcut Key -->
         <img
-          src="/keys_p.png"
+          src="/keys_p.webp"
           alt="Keys"
           class="mode-image"
         />
@@ -75,7 +75,7 @@
       >
         <div class="shortcut-key">C</div> <!-- Shortcut Key -->
         <img
-          src="/words_p.png"
+          src="/words_p.webp"
           alt="Single"
           class="mode-image"
         />

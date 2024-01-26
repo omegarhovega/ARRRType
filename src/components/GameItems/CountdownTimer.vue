@@ -9,7 +9,7 @@
     </template>
     <template v-else-if="countdownFinished">
       <img
-        src="/skull_p.png"
+        src="/skull_p.webp"
         alt="Skull"
         width="22"
         height="22"

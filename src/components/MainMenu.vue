@@ -14,7 +14,7 @@ MainMenu
         <div class="flex items-end">
           <div class="relative mr-2">
             <img
-              src="/pirate_s2.png"
+              src="/pirate_s2.webp"
               alt="Logo"
               class="h-12"
               @mouseover="showPirateTooltip = true"
@@ -51,7 +51,7 @@ MainMenu
                   class="menu-text"
                 >
                   <router-link to="/account"><img
-                      src="/skull_p.png"
+                      src="/skull_p.webp"
                       alt="Skull"
                       class="h-5 w-5 mr-2 inline-block"
                     />Account</router-link>
@@ -61,7 +61,7 @@ MainMenu
                   class="menu-text"
                 >
                   <router-link to="/login"><img
-                      src="/skull_p.png"
+                      src="/skull_p.webp"
                       alt="Skull"
                       class="h-5 w-5 mr-2 inline-block"
                     />Login</router-link>
@@ -92,7 +92,7 @@ MainMenu
                 @mouseout="showCoinsTooltip = false"
               >
                 <div class="relative mr-2"><img
-                    src="/coins_p.png"
+                    src="/coins_p.webp"
                     alt="Skull"
                     class="h-5 w-5 inline-block"
                   />

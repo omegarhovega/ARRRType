@@ -2,7 +2,7 @@
   <div class="not-found">
     <div>
       <img
-        src="/404_p.png"
+        src="/404_p.webp"
         alt="404"
         width="35"
         class="img"

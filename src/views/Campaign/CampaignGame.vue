@@ -263,9 +263,9 @@ export default defineComponent({
     const mugshotImagePath = computed(() => {
       const level = actualSelectedLevel.value || 0;
       if (level >= 1 && level <= 15) {
-        return `/avatars/Head${level}.png`; // Construct the image path based on the level
+        return `/avatars/Head${level}.webp`; // Construct the image path based on the level
       }
-      return "/avatar.png"; // A default image if the level is out of range
+      return "/avatar.webp"; // A default image if the level is out of range
     });
 
     // Function to generate a random taunt text
@@ -556,8 +556,6 @@ export default defineComponent({
       }
       // initially fetch last unlocked level for player
       await store.fetchLastUnlockedLevel();
-      // add event listener for keyboard inputs
-      window.addEventListener("keyup", handleKeyPress);
       // Check if the level is not locked and if unlocked, start game (prevents players navigating to later level without having ulocked it)
       if (!isLevelLocked.value) {
         // Existing logic for game initialization
@@ -579,7 +577,6 @@ export default defineComponent({
       );
       // Remove all global event listeners
       window.removeEventListener("keydown", handleKeyDown);
-      window.removeEventListener("keyup", handleKeyPress);
 
       // Ensure all game state is reset or saved
       resetGameState();
@@ -605,7 +602,6 @@ export default defineComponent({
       store.currentRound = 1;
       // Remove keydown event listeners
       removeKeyDownListener();
-      window.removeEventListener("keyup", handleKeyPress);
       // Reset loaded text
       fetchedText.value = "";
       sessionStorage.removeItem("isRefreshed");

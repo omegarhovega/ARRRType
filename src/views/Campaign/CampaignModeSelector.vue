@@ -12,7 +12,7 @@ CampaignModeSelector
       >
         <div class="shortcut-key">C</div>
         <img
-          src="/Computer.png"
+          src="/Computer.webp"
           alt="Random words"
           class="mode-image"
         />
@@ -22,13 +22,13 @@ CampaignModeSelector
           <p class="bold-text">Match win:</p>
           <div>
             <img
-              src="/coins_p.png"
+              src="/coins_p.webp"
               alt="Doubloons"
             > Doubloons
           </div>
           <div>
             <img
-              src="/parrot_p.png"
+              src="/parrot_p.webp"
               alt="Rank"
             > New rank
           </div>
@@ -40,7 +40,7 @@ CampaignModeSelector
       >
         <div class="shortcut-key">H</div>
         <img
-          src="/PlayervPlayer.png"
+          src="/PlayervPlayer.webp"
           alt="Mistakes"
           class="mode-image"
         />
@@ -50,7 +50,7 @@ CampaignModeSelector
           <p class="bold-text">Match win:</p>
           <div>
             <img
-              src="/coins_p.png"
+              src="/coins_p.webp"
               alt="Doubloons"
             > Doubloons
           </div>

@@ -74,7 +74,7 @@
       <!-- Button to Generate Training Plan -->
       <div class="mt-5">
         <button @click="generateTrainingPlan"><img
-            src="/parrot_p.png"
+            src="/parrot_p.webp"
             alt="Parrot"
             class="h-5 w-5 mr-2 inline-block"
           />Create Training Plan</button>
