@@ -29,7 +29,7 @@
         <!-- Shortcut -->
         <div class="shortcut-key">T</div>
         <img
-          src="/train.webp"
+          src="/public/train.webp"
           alt="Train"
           class="option-image"
         />
