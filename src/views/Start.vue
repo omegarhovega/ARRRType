@@ -20,7 +20,7 @@
           <div class="call-out-content">
             <span>Use keyboard shortcuts to navigate</span>
             <img
-              src="./parrot_p.webp"
+              src="/parrot_p.webp"
               alt="Parrot"
               class="parrot-image"
             >
