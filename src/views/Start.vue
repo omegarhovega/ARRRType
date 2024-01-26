@@ -29,7 +29,7 @@
         <!-- Shortcut -->
         <div class="shortcut-key">T</div>
         <img
-          src="./train.webp"
+          src="/train.webp"
           alt="Train"
           class="option-image"
         />
@@ -42,7 +42,7 @@
       >
         <div class="shortcut-key">C</div>
         <img
-          src="./campaign.webp"
+          src="/campaign.webp"
           alt="Campaign"
           class="option-image"
         />
@@ -55,7 +55,7 @@
       >
         <div class="shortcut-key">S</div>
         <img
-          src="./stats.webp"
+          src="/stats.webp"
           alt="Stats"
           class="option-image"
         />
@@ -80,7 +80,7 @@
       <template v-else>
         <div class="button-box mr-3">
           <button @click="navigate('Login')"><img
-              src="./skull_p.webp"
+              src="/skull_p.webp"
               alt="Skull"
               class="h-5 w-5 mr-2 inline-block"
             />
