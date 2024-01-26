@@ -131,6 +131,16 @@ export default defineComponent({
     const isFirstVisit = ref(true);
     const fadeOut = ref(false);
 
+    const checkFirstVisit = () => {
+      isFirstVisit.value = !localStorage.getItem("visited");
+
+      if (!isFirstVisit.value) {
+        fadeOut.value = false;
+      } else {
+        localStorage.setItem("visited", "true");
+      }
+    };
+
     const navigate = (routeName: string) => {
       router.push({ name: routeName });
     };
@@ -236,16 +246,6 @@ export default defineComponent({
         }, 10000);
       }
     });
-
-    const checkFirstVisit = () => {
-      isFirstVisit.value = !localStorage.getItem("visited");
-
-      if (!isFirstVisit.value) {
-        fadeOut.value = false;
-      } else {
-        localStorage.setItem("visited", "true");
-      }
-    };
 
     onBeforeUnmount(() => {
       window.removeEventListener("keydown", handleKeyPress);

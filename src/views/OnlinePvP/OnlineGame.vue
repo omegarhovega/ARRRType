@@ -120,6 +120,7 @@ import GameTextDisplay from "../../components/GameItems/GameTextDisplay.vue";
 import CountdownTimer from "../../components/GameItems/CountdownTimer.vue";
 import GameStats from "../../components/GameItems/GameStats.vue";
 import OverlayMessages from "../../components/GameItems/OverlayMessages.vue";
+import Chevron from "../../components/Chevron";
 
 export default defineComponent({
   props: ["gameId"],
@@ -230,12 +231,7 @@ export default defineComponent({
     });
 
     // Import general utility functions
-    const {
-      useTimeDifference,
-      saveTotalTimePlayed,
-      useChevronAnimation,
-      resetChevronPosition,
-    } = useUtilities();
+    const { useTimeDifference, saveTotalTimePlayed } = useUtilities();
 
     // formatting time for display in overlay at game end
     const timeDifference = useTimeDifference();
@@ -312,7 +308,7 @@ export default defineComponent({
     );
 
     // *NOTE* since the PvP game cannot be refreshed (player will exit at refresh), there is no separate updateCharSpans function like in the Training or Computer Campaign modes
-    useChevronAnimation(charSpans, chevronTop, chevronLeft);
+    Chevron.useChevronAnimation(charSpans, chevronTop, chevronLeft);
 
     // --------------------
     // 5. Handle Statistics
@@ -533,7 +529,6 @@ export default defineComponent({
       detectCapsLock,
       calculateConsistency,
       navigateToUserStats,
-      resetChevronPosition,
       navigateToCampaign,
       currentProgress,
       roundTripLatency,

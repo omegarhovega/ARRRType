@@ -106,11 +106,11 @@ import {
   charSpans,
 } from "../../components/SingleTrainLogic";
 import { useStore } from "../../stores/store";
-import { useUtilities } from "../../components/Utilities";
 import { useGameStateManagement } from "../../components/GameStateManagement";
 import { useCountdownLogic } from "../../components/CountdownLogic";
 import { useRouter } from "vue-router";
 import trainSubMenuSingle from "./TrainSubMenuSingle.vue";
+import Chevron from "../../components/Chevron";
 
 export default defineComponent({
   components: {
@@ -143,8 +143,7 @@ export default defineComponent({
     const chevronTop = ref(0);
     const chevronLeft = ref(0);
 
-    const { useChevronAnimation, resetChevronPosition } = useUtilities();
-    useChevronAnimation(charSpans, chevronTop, chevronLeft);
+    Chevron.useChevronAnimation(charSpans, chevronTop, chevronLeft);
 
     const typed = computed(() => store.typed);
     const typedIndices = computed(() => store.typedIndices);
@@ -176,7 +175,7 @@ export default defineComponent({
       currentWordArray,
     } = setupKeyboardEvent(
       resetGameState,
-      resetChevronPosition,
+      Chevron.resetChevronPosition,
       chevronTop,
       chevronLeft,
       countdownStart,
@@ -188,7 +187,7 @@ export default defineComponent({
     const initializeWrapper = (event: MouseEvent) => {
       initialize(
         resetGameState,
-        resetChevronPosition,
+        Chevron.resetChevronPosition,
         countdownStart,
         isFinished,
         recalculateCurrentWord,

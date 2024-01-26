@@ -105,7 +105,6 @@ import {
   onMounted,
   onUnmounted,
   defineComponent,
-  watch,
   nextTick,
   onBeforeUnmount,
 } from "vue";
@@ -128,6 +127,7 @@ import GameTextDisplay from "../../components/GameItems/GameTextDisplay.vue";
 import CountdownTimer from "../../components/GameItems/CountdownTimer.vue";
 import OverlayMessages from "../../components/GameItems/OverlayMessages.vue";
 import GameStatsComputer from "../../components/GameItems/GameStatsComputer.vue";
+import Chevron from "../../components/Chevron";
 
 export default defineComponent({
   components: {
@@ -279,13 +279,8 @@ export default defineComponent({
     });
 
     // Import general utility functions
-    const {
-      useTextManagement,
-      useChevronAnimation,
-      resetChevronPosition,
-      useTimeDifference,
-      saveTotalTimePlayed,
-    } = useUtilities();
+    const { useTextManagement, useTimeDifference, saveTotalTimePlayed } =
+      useUtilities();
 
     // formatting time for display in overlay at game end
     const timeDifference = useTimeDifference();
@@ -398,7 +393,7 @@ export default defineComponent({
     } = typingTextHandler;
 
     // watch position of current character in DOM for chevron positioning
-    useChevronAnimation(charSpans, chevronTop, chevronLeft);
+    Chevron.useChevronAnimation(charSpans, chevronTop, chevronLeft);
 
     // --------------------
     // 5. Handle Statistics
@@ -475,7 +470,7 @@ export default defineComponent({
         fetchText(store.numberOfWords);
       }
       countdownStart(); // from CountdownLogic, starts new countdown and on countdown end starts new game (see above)
-      resetChevronPosition(chevronTop, chevronLeft);
+      Chevron.resetChevronPosition(chevronTop, chevronLeft);
 
       // Update the opponent's WPM if needed
       store.setOpponentWPM(newWpm);
@@ -635,7 +630,6 @@ export default defineComponent({
       calculateConsistency,
       loadNewGame,
       navigateToUserStats,
-      resetChevronPosition,
       resetGameForRandomization,
       navigateToTrain,
       resetGameForForceMistakeCorrection,

@@ -155,6 +155,7 @@ import GameTextDisplay from "../../components/GameItems/GameTextDisplay.vue";
 import CountdownTimer from "../../components/GameItems/CountdownTimer.vue";
 import OverlayMessages from "../../components/GameItems/OverlayMessages.vue";
 import GameStatsCampaign from "../../components/GameItems/GameStatsCampaign.vue";
+import Chevron from "../../components/Chevron";
 
 export default defineComponent({
   components: {
@@ -310,13 +311,8 @@ export default defineComponent({
     };
 
     // Import general utility functions
-    const {
-      useTextManagement,
-      useChevronAnimation,
-      resetChevronPosition,
-      useTimeDifference,
-      saveTotalTimePlayed,
-    } = useUtilities();
+    const { useTextManagement, useTimeDifference, saveTotalTimePlayed } =
+      useUtilities();
 
     // variable to establish current character at current index
     const currentChar = computed(() =>
@@ -417,7 +413,7 @@ export default defineComponent({
     );
 
     // watch position of current character in DOM for chevron positioning
-    useChevronAnimation(charSpans, chevronTop, chevronLeft);
+    Chevron.useChevronAnimation(charSpans, chevronTop, chevronLeft);
 
     // --------------------
     // 5. Handle Statistics
@@ -494,7 +490,7 @@ export default defineComponent({
 
     // Clickable "next round" button in result overlay at round end, resetting key values
     const handleNextRoundClick = () => {
-      resetChevronPosition(chevronTop, chevronLeft);
+      Chevron.resetChevronPosition(chevronTop, chevronLeft);
       handleNextRound(
         resetGameStateForNewRound,
         showResultsOverlay,
@@ -531,7 +527,7 @@ export default defineComponent({
         if (levelFinished.value) {
           backToOverview();
         } else {
-          resetChevronPosition(chevronTop, chevronLeft);
+          Chevron.resetChevronPosition(chevronTop, chevronLeft);
           handleNextRound(
             resetGameStateForNewRound,
             showResultsOverlay,
