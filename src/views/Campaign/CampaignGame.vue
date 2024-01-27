@@ -115,7 +115,7 @@ CampaignGame
       :displayAccuracyWarning="displayAccuracyWarning"
       :handleNextRoundClick="handleNextRoundClick"
       :backToOverview="backToOverview"
-      :handleKeyPress="handleKeyPress"
+      :handleKeyPress="handleOverlayKeyPress"
     />
   </div>
 </template>
@@ -506,7 +506,7 @@ export default defineComponent({
     };
 
     // handling player inputs within results overlay to allow hitting enter for continuing
-    const handleKeyPress = (event: KeyboardEvent) => {
+    const handleOverlayKeyPress = (event: KeyboardEvent) => {
       // Check to ensure that shortcuts are not accidentally carried over to other components
       const currentRoute = router.currentRoute.value.name;
 
@@ -561,6 +561,7 @@ export default defineComponent({
         // Existing logic for game initialization
         window.addEventListener("keydown", detectCapsLock);
         window.addEventListener("keyup", detectCapsLock);
+        window.addEventListener("keydown", handleOverlayKeyPress);
         fetchText(store.numberOfWords); // Fetch the initial text
         countdownStart(); // Start the initial countdown
       }
@@ -605,6 +606,7 @@ export default defineComponent({
       // Reset loaded text
       fetchedText.value = "";
       sessionStorage.removeItem("isRefreshed");
+      window.removeEventListener("keydown", handleOverlayKeyPress);
     });
 
     return {
@@ -640,7 +642,7 @@ export default defineComponent({
       livesOpponent,
       currentProgress,
       typeChar,
-      handleKeyPress,
+      handleOverlayKeyPress,
       handleNextRoundClick,
       handleNextRound,
       handleGameProgress,
