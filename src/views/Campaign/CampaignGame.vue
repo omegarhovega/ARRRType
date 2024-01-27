@@ -561,10 +561,10 @@ export default defineComponent({
         // Existing logic for game initialization
         window.addEventListener("keydown", detectCapsLock);
         window.addEventListener("keyup", detectCapsLock);
-        window.addEventListener("keydown", handleOverlayKeyPress);
         fetchText(store.numberOfWords); // Fetch the initial text
         countdownStart(); // Start the initial countdown
       }
+      window.addEventListener("keydown", handleOverlayKeyPress);
     });
 
     // Fail-save to allow stopping games with abrupt unmountings
