@@ -307,6 +307,7 @@ export function useUserStatisticsHandler() {
                 const latestStat = userStats[userStats.length - 1];
                 localStorage.setItem("lastRoundWpm", JSON.stringify(latestStat.wpmPerSecond));
                 localStorage.setItem("lastRoundGrossWpm", JSON.stringify(latestStat.grossWpmPerSecond));
+                localStorage.setItem("heatmapData", JSON.stringify(aggregatedData.value));
             }
 
             console.log("Stats saved successfully to local storage for guest user");
