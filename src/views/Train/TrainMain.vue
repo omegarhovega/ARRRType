@@ -7,13 +7,6 @@ Using Composition API
 <template>
   <div id="root">
     <!-- reloads typing test with new opponent WPM when WPM dropdown is changed using reset function below, event from TrainSubMenu -->
-    <train-sub-menu
-      @opponentWpmChanged="resetGame"
-      @numberOfWordsChanged="resetGameForNumberOfWordsChanged"
-      @opponentStatusChanged="handleOpponentStatusChange"
-      @randomizationStatusChanged="resetGameForRandomization"
-      @endGameStatusChanged="resetGameForNoEndWithoutMistakeCorrection"
-    />
 
     <!-- for mobile keyboard -->
     <input
@@ -27,10 +20,12 @@ Using Composition API
       :style="containerStyle"
     >
       <!-- Player Progress Bar -->
-      <PlayerProgress
-        :progress="currentProgress"
-        :loading="loading"
-      />
+      <template v-if="progressEnabled">
+        <PlayerProgress
+          :progress="currentProgress"
+          :loading="loading"
+        />
+      </template>
       <!-- Opponent Progress -->
       <template v-if="opponentEnabled">
         <!-- Opponent Progress Bar -->
@@ -109,17 +104,16 @@ import {
   onBeforeUnmount,
 } from "vue";
 import type { Ref, ComponentPublicInstance } from "vue";
-import trainSubMenu from "./TrainSubMenu.vue";
 import { useStore } from "../../stores/store";
-import { useOpponentLogic } from "../../components/OpponentLogic";
-import { useTypingTextHandler } from "../../components/TypingTextHandler";
-import { useCountdownLogic } from "../../components/CountdownLogic";
-import { useGameStateManagement } from "../../components/GameStateManagement";
-import { useUtilities } from "../../components/Utilities";
+import { useOpponentLogic } from "../../components/GameLogic/OpponentLogic";
+import { useTypingTextHandler } from "../../components/TextLogic/TypingTextHandler";
+import { useCountdownLogic } from "../../components/GameLogic/CountdownLogic";
+import { useGameStateManagement } from "../../components/GameLogic/GameStateManagement";
+import { useUtilities } from "../../components/OtherUtilities/Utilities";
 import {
   grossWpmPerSecond,
   useUserStatistics,
-} from "../../components/UserStatistics";
+} from "../../components/StatsHandler/UserStatisticsWrapper";
 import { useRouter } from "vue-router";
 import PlayerProgress from "../../components/GameItems/PlayerProgress.vue";
 import OpponentProgress from "../../components/GameItems/OpponentProgress.vue";
@@ -127,11 +121,10 @@ import GameTextDisplay from "../../components/GameItems/GameTextDisplay.vue";
 import CountdownTimer from "../../components/GameItems/CountdownTimer.vue";
 import OverlayMessages from "../../components/GameItems/OverlayMessages.vue";
 import GameStatsComputer from "../../components/GameItems/GameStatsComputer.vue";
-import Chevron from "../../components/Chevron";
+import Chevron from "../../components/TextLogic/Chevron";
 
 export default defineComponent({
   components: {
-    trainSubMenu,
     PlayerProgress,
     OpponentProgress,
     GameTextDisplay,
@@ -159,8 +152,8 @@ export default defineComponent({
     const noEndWithoutCorrection = computed(
       () => store.noGameEndWithoutMistakeCorrection
     );
-
     // Computed from Pinia Storage
+    const progressEnabled = computed(() => store.progressEnabled);
     const opponentWpmFromStore = computed(() => store.opponentWPM);
     const totalKeystrokes = computed(() => store.totalKeystrokes);
     const correctKeystrokes = computed(() => store.correctKeystrokes);
@@ -404,12 +397,12 @@ export default defineComponent({
       wpm,
       grossWpm,
       consistencyForStat,
+      calculateConsistency,
       resetStats,
       updateStats,
       saveStats,
       startWpmTracking,
       stopWpmTracking,
-      calculateConsistency,
       wpmPerSecond,
       saveGameStatistics,
     } = useUserStatistics();
@@ -530,10 +523,6 @@ export default defineComponent({
         hiddenInput.value.focus();
       }
       // check last user setting for virtual opponent, if none, enable opponent by default
-      const storedOpponentStatus = localStorage.getItem("opponentEnabled");
-      if (storedOpponentStatus !== null) {
-        store.setOpponentEnabled(JSON.parse(storedOpponentStatus));
-      }
       if (store.selectedMode === "keys") {
         const selectedKeys = JSON.parse(
           localStorage.getItem("selectedKeys") || "[]"
@@ -640,6 +629,7 @@ export default defineComponent({
       selectedMode,
       doStatistics,
       hiddenInput,
+      progressEnabled,
     };
   },
 });

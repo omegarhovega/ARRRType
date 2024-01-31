@@ -132,11 +132,11 @@ import {
 } from "vue";
 import type { Ref, ComponentPublicInstance } from "vue";
 import { useStore } from "../../stores/store";
-import { useOpponentLogic } from "../../components/OpponentLogic";
-import { useTypingTextHandler } from "../../components/TypingTextHandler";
-import { useCountdownLogic } from "../../components/CountdownLogic";
-import { useGameStateManagement } from "../../components/GameStateManagement";
-import { useUtilities } from "../../components/Utilities";
+import { useOpponentLogic } from "../../components/GameLogic/OpponentLogic";
+import { useTypingTextHandler } from "../../components/TextLogic/TypingTextHandler";
+import { useCountdownLogic } from "../../components/GameLogic/CountdownLogic";
+import { useGameStateManagement } from "../../components/GameLogic/GameStateManagement";
+import { useUtilities } from "../../components/OtherUtilities/Utilities";
 import {
   getResultMessageCampaign,
   maxRounds,
@@ -145,9 +145,12 @@ import {
   handleLevelWin,
   resetGameStateForNewRound,
   handleNextRound,
-} from "../../components/CampaignLogic";
-import { OPPONENT_WPM, PIRATE_TAUNTS } from "../../components/GameConstants";
-import { useUserStatistics } from "../../components/UserStatistics";
+} from "../../components/Modes/CampaignLogic";
+import {
+  OPPONENT_WPM,
+  PIRATE_TAUNTS,
+} from "../../components/GameLogic/GameConstants";
+import { useUserStatistics } from "../../components/StatsHandler/UserStatisticsWrapper";
 import { useRouter, useRoute } from "vue-router";
 import PlayerProgress from "../../components/GameItems/PlayerProgress.vue";
 import OpponentProgress from "../../components/GameItems/OpponentProgress.vue";
@@ -155,7 +158,7 @@ import GameTextDisplay from "../../components/GameItems/GameTextDisplay.vue";
 import CountdownTimer from "../../components/GameItems/CountdownTimer.vue";
 import OverlayMessages from "../../components/GameItems/OverlayMessages.vue";
 import GameStatsCampaign from "../../components/GameItems/GameStatsCampaign.vue";
-import Chevron from "../../components/Chevron";
+import Chevron from "../../components/TextLogic/Chevron";
 
 export default defineComponent({
   components: {

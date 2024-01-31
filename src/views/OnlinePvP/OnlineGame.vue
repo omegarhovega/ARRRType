@@ -99,19 +99,19 @@ import {
 } from "vue";
 import type { Ref, ComponentPublicInstance } from "vue";
 import { useStore } from "../../stores/store";
-import { useTypingTextHandler } from "../../components/TypingTextHandler";
-import { useUtilities } from "../../components/Utilities";
+import { useTypingTextHandler } from "../../components/TextLogic/TypingTextHandler";
+import { useUtilities } from "../../components/OtherUtilities/Utilities";
 import {
   grossWpmPerSecond,
   useUserStatistics,
-} from "../../components/UserStatistics";
+} from "../../components/StatsHandler/UserStatisticsWrapper";
 import {
   useMultiplayerTextManagement,
   useMultiplayerGameStateManagement,
   useMultiplayerCountdownLogic,
   handlePvPLevelWin,
-} from "../../components/Multiplayer";
-import { useMultiplayerRealtime } from "../../components/MultiplayerRealtime";
+} from "../../components/Modes/Multiplayer";
+import { useMultiplayerRealtime } from "../../components/Modes/MultiplayerRealtime";
 import { useRouter } from "vue-router";
 import { supabase } from "../../supabase";
 import PlayerProgress from "../../components/GameItems/PlayerProgress.vue";
@@ -120,7 +120,7 @@ import GameTextDisplay from "../../components/GameItems/GameTextDisplay.vue";
 import CountdownTimer from "../../components/GameItems/CountdownTimer.vue";
 import GameStats from "../../components/GameItems/GameStats.vue";
 import OverlayMessages from "../../components/GameItems/OverlayMessages.vue";
-import Chevron from "../../components/Chevron";
+import Chevron from "../../components/TextLogic/Chevron";
 
 export default defineComponent({
   props: ["gameId"],

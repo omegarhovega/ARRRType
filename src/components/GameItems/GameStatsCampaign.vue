@@ -30,18 +30,17 @@
         class="mt-5"
       >Note: Results are not saved, accuracy is 50% or lower.</p>
       <div class="training-mode-box mt-7">
-        <div class="shortcut-key text-base">1</div>
         <button
           v-if="!levelFinished"
           @click="handleNextRoundClick"
         >
-          Next round
+          <span class="underline text-yellow-500">1</span>: Next round
         </button>
         <button
           v-if="levelFinished"
           @click="backToOverview"
         >
-          Return to overview
+          <span class="underline text-yellow-500">1</span>: Return to overview
         </button>
       </div>
     </div>

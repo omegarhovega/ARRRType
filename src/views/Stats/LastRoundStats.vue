@@ -49,7 +49,7 @@ import {
   ref,
   watchEffect,
 } from "vue";
-import { useUserStatistics } from "../../components/UserStatistics";
+import { useUserStatistics } from "../../components/StatsHandler/UserStatisticsWrapper";
 import LastRoundLineChart from "./LineChartComponentLast.vue";
 import MistypedWordsTable from "./MistypedWordsTableLast.vue";
 import KeyboardHeatmap from "./KeyboardHeatmap.vue";
@@ -216,5 +216,3 @@ LastRoundLineChart {
   flex-grow: 1;
 }
 </style>
-
-  

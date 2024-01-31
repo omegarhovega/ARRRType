@@ -1,5 +1,5 @@
 import type { Ref } from 'vue';
-import { useStore } from "../stores/store";
+import { useStore } from "../../stores/store";
 
 //imports DOM element with game text, updates scrolling position using browser functionality and hides DOM scroll bar (scrolling is handled with own function)
 export function updateScrollPosition(scrollContainer: Ref<HTMLElement | null>) {

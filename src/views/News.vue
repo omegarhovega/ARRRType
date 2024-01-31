@@ -47,6 +47,17 @@ export default defineComponent({
   setup() {
     const newsItems = ref([
       {
+        headline: "Pre-release v0.97b",
+        date: "31. Jan 24",
+        body: "Rework of menu and design:",
+        bulletPoints: [
+          "Introduced new settings menu to centralise all key settings in one place and to allow users to easily track the current status.",
+          "Reworked design elements, including shortcut hints for different links and reducing image size (using webp images).",
+          "Fixed various smaller bugs, including no measurement of keyboard heatmap for guest users for last round played.",
+          "Significantly reworked code and split up components to increase ease of use.",
+        ],
+      },
+      {
         headline: "Pre-release v0.95b",
         date: "22. Jan 24",
         body: "Minor updates including:",

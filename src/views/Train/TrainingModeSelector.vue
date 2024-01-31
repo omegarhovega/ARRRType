@@ -6,39 +6,36 @@
         class="training-mode-box"
         @click="setMode('random')"
       >
-        <div class="shortcut-key">R</div>
         <img
           src="/random.webp"
           alt="Random words"
           class="mode-image"
         />
-        <p class="bold-text">Random words</p>
+        <p class="bold-text"><span class="underline text-yellow-500">R</span>andom words</p>
         <p class="option-description">Go Freestyle with games of random words</p>
       </div>
       <div
         class="training-mode-box"
         @click="setMode('words')"
       >
-        <div class="shortcut-key">M</div> <!-- Shortcut Key -->
         <img
           src="/mistakes.webp"
           alt="Mistakes"
           class="mode-image"
         />
-        <p class="bold-text">Learn from mistakes</p>
+        <p class="bold-text"><span class="underline text-yellow-500">L</span>earn from mistakes</p>
         <p class="option-description">Automated training based on what you struggle with</p>
       </div>
       <div
         class="training-mode-box"
         @click="setMode('text')"
       >
-        <div class="shortcut-key">T</div> <!-- Shortcut Key -->
         <img
           src="/text3.webp"
           alt="Text"
           class="mode-image"
         />
-        <p class="bold-text">Texts</p>
+        <p class="bold-text"><span class="underline text-yellow-500">T</span>exts</p>
         <p class="option-description">Train whole text passages for real-world speed</p>
       </div>
     </div>
@@ -47,39 +44,36 @@
         class="training-mode-box"
         @click="setMode('single')"
       >
-        <div class="shortcut-key">S</div> <!-- Shortcut Key -->
         <img
           src="/single3.webp"
           alt="Single"
           class="mode-image"
         />
-        <p class="bold-text">Single words</p>
+        <p class="bold-text"><span class="underline text-yellow-500">S</span>ingle words</p>
         <p class="option-description">Type single words that appear one after the other</p>
       </div>
       <div
         class="training-mode-box"
         @click="navigate('KeySelector')"
       >
-        <div class="shortcut-key">K</div> <!-- Shortcut Key -->
         <img
           src="/keys_p.webp"
           alt="Keys"
           class="mode-image"
         />
-        <p class="bold-text">Keys</p>
+        <p class="bold-text"><span class="underline text-yellow-500">K</span>eys</p>
         <p class="option-description">Keep missing those ARRRs? Train individual keys here.</p>
       </div>
       <div
         class="training-mode-box"
         @click="navigate('TextSelector')"
       >
-        <div class="shortcut-key">C</div> <!-- Shortcut Key -->
         <img
           src="/words_p.webp"
           alt="Single"
           class="mode-image"
         />
-        <p class="bold-text">Custom text</p>
+        <p class="bold-text"><span class="underline text-yellow-500">C</span>ustom text</p>
         <p class="option-description">Input your own pirate texts to type</p>
       </div>
     </div>
@@ -135,7 +129,7 @@ export default defineComponent({
         [key: string]: "random" | "words" | "text" | "single";
       } = {
         r: "random",
-        m: "words",
+        l: "words",
         t: "text",
         s: "single",
       };

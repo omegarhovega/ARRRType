@@ -4,7 +4,7 @@
       <span class="text-yellow-500"><b>New:</b></span> <router-link
         to="/news"
         class="footer-link"
-      ><u>Update v0.95b</u></router-link>
+      ><u>Update v0.97b - Rework of menu and design</u></router-link>
     </div>
     <div class="options-container">
       <div
@@ -18,7 +18,7 @@
           class="call-out"
         >
           <div class="call-out-content">
-            <span>Use keyboard shortcuts to navigate</span>
+            <span><b>Underlined letters</b> &#10511; keyboard shortcuts to navigate</span>
             <img
               src="/parrot_p.webp"
               alt="Parrot"
@@ -27,39 +27,36 @@
           </div>
         </div>
         <!-- Shortcut -->
-        <div class="shortcut-key">T</div>
         <img
           src="/train.webp"
           alt="Train"
           class="option-image"
         />
-        <p class="bold-text">Train</p>
+        <p class="bold-text"><span class="underline text-yellow-500">T</span>rain</p>
         <p class="option-description">Practise your ARRRs. Learn how to type like a Pirate here</p>
       </div>
       <div
         class="option-box"
         @click="navigate('CampaignMode')"
       >
-        <div class="shortcut-key">C</div>
         <img
           src="/campaign.webp"
           alt="Campaign"
           class="option-image"
         />
-        <p class="bold-text">Campaign</p>
+        <p class="bold-text"><span class="underline text-yellow-500">C</span>ampaign</p>
         <p class="option-description">Fight other human or machine Pirates and collect shiny booty</p>
       </div>
       <div
         class="option-box"
         @click="navigate('Stats')"
       >
-        <div class="shortcut-key">S</div>
         <img
           src="/stats.webp"
           alt="Stats"
           class="option-image"
         />
-        <p class="bold-text">Stats</p>
+        <p class="bold-text"><span class="underline text-yellow-500">S</span>tats</p>
         <p class="option-description">Good Pirates know their strengths. Check yours here</p>
       </div>
     </div>
@@ -67,12 +64,12 @@
       <template v-if="session">
         <div class="button-box mr-3">
           <button @click="navigate('Account')">
-            <div class="shortcut-key-small">A</div>Account
+            <span class="underline text-yellow-500">A</span>ccount
           </button>
         </div>
         <div class="button-box">
           <button @click="navigate('TrainingPlan')">
-            <div class="shortcut-key-small">P</div>Training Plan
+            Training <span class="underline text-yellow-500">P</span>lan
           </button>
         </div>
         <p class="option-description-wide">Check your Account settings or generate a Training Plan</p>
@@ -84,12 +81,12 @@
               alt="Skull"
               class="h-5 w-5 mr-2 inline-block"
             />
-            <div class="shortcut-key-small">L</div>Login
+            <span class="underline text-yellow-500">L</span>ogin
           </button>
         </div>
         <div class="button-box">
           <button @click="navigate('Register')">
-            <div class="shortcut-key-small">R</div>Register
+            <span class="underline text-yellow-500">R</span>egister
           </button>
         </div>
         <p class="comment text-yellow-500">Login or Register to not loose your Pirate progress</p>
@@ -308,7 +305,6 @@ export default defineComponent({
   margin-top: 20px;
 }
 
-.shortcut-key,
 .shortcut-key-small {
   position: absolute;
   width: 20px;
@@ -325,15 +321,6 @@ export default defineComponent({
   display: flex;
   justify-content: center;
   align-items: center;
-}
-
-.shortcut-key {
-  top: 10px;
-  left: 50%;
-  transform: translate(-50%, 0);
-}
-
-.shortcut-key-small {
   top: -10px;
   left: 50%;
   transform: translate(-50%, 0);
@@ -375,19 +362,6 @@ export default defineComponent({
   display: inline-block;
 }
 
-.online-players-overlay {
-  position: absolute;
-  top: 25px;
-  right: 8px;
-  background-color: #cfbd55e2;
-  color: black;
-  padding: 5px;
-  font-size: 9px;
-  z-index: 2;
-  border-radius: 5px;
-  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
-}
-
 @keyframes fadeIn {
   from {
     opacity: 0;
@@ -408,7 +382,7 @@ export default defineComponent({
 
 .call-out {
   position: absolute;
-  top: -50px;
+  top: -65px;
   left: 50%;
   bottom: 100%;
   transform: translateX(-50%);
@@ -417,7 +391,7 @@ export default defineComponent({
   font-size: 10px;
   box-sizing: border-box;
   display: flex;
-  padding: 10px;
+  padding: 5px;
   z-index: 2;
   align-items: center;
   justify-content: center;

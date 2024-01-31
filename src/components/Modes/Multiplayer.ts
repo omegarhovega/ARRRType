@@ -1,8 +1,8 @@
 import { ref } from "vue";
 import type { Ref } from "vue";
-import { supabase } from "../supabase";
-import { useStore } from "../stores/store";
-import { DEFAULT_COUNTDOWN_VALUE } from './GameConstants';
+import { supabase } from "../../supabase";
+import { useStore } from "../../stores/store";
+import { DEFAULT_COUNTDOWN_VALUE } from '../GameLogic/GameConstants';
 
 // multiplayer text management draws text id from games table in supabase to synchronize for all players
 export function useMultiplayerTextManagement() {

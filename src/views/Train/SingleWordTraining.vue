@@ -1,9 +1,4 @@
 <template>
-  <train-sub-menu-single
-    @numberOfWordsChanged="resetGame"
-    @randomizationStatusChanged="resetGame"
-  />
-
   <!-- for mobile keyboard -->
   <input
     ref="hiddenInput"
@@ -71,10 +66,10 @@
         <p>Your Average Accuracy: {{ averageAccuracy.toFixed(0) }}%</p>
         <p>Note: Results from Single Word Training are not saved.</p>
         <div class="training-mode-box mt-3">
-          <div class="shortcut-key text-base">1</div><button @click="initializeWrapper">Restart</button>
+          <button @click="initializeWrapper"><span class="underline text-yellow-500">1</span>: Restart</button>
         </div>
         <div class="training-mode-box mt-3">
-          <div class="shortcut-key text-base">2</div><button @click="navigateToTrain">Change Training Mode</button>
+          <button @click="navigateToTrain"><span class="underline text-yellow-500">2</span>: Change Training Mode</button>
         </div>
       </div>
     </div>
@@ -104,18 +99,14 @@ import {
   setupKeyboardEvent,
   isFinished,
   charSpans,
-} from "../../components/SingleTrainLogic";
+} from "../../components/Modes/SingleTrainLogic";
 import { useStore } from "../../stores/store";
-import { useGameStateManagement } from "../../components/GameStateManagement";
-import { useCountdownLogic } from "../../components/CountdownLogic";
+import { useGameStateManagement } from "../../components/GameLogic/GameStateManagement";
+import { useCountdownLogic } from "../../components/GameLogic/CountdownLogic";
 import { useRouter } from "vue-router";
-import trainSubMenuSingle from "./TrainSubMenuSingle.vue";
-import Chevron from "../../components/Chevron";
+import Chevron from "../../components/TextLogic/Chevron";
 
 export default defineComponent({
-  components: {
-    trainSubMenuSingle,
-  },
   setup() {
     //Router inititalisation
     const router = useRouter();

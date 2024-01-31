@@ -15,7 +15,7 @@
     </div>
     <div class="button-box mt-5">
       <button @click="close">
-        <div class="shortcut-key-small">C</div>Close
+        <span class="underline text-yellow-500">C</span>lose
       </button>
     </div>
   </div>

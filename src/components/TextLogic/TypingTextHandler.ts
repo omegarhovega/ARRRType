@@ -1,6 +1,6 @@
-import { ref, onMounted, onUnmounted, computed, watch } from 'vue';
+import { ref, computed, watch } from 'vue';
 import type { Ref } from 'vue';
-import { useStore } from "../stores/store";
+import { useStore } from "../../stores/store";
 import { updateScrollPosition } from "./ScrollingLogic";
 
 interface TypingTextHandler {

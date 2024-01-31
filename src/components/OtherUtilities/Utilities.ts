@@ -1,8 +1,8 @@
 import { ref, computed } from "vue";
-import { useStore } from "../stores/store";
-import { supabase } from "../supabase";
-import { generateTrainingWords, trainingWords } from './TrainingHandler';  // Add this import, adjust the path as needed
-import { allTimeSlowWords, loadAllTimeSlowWords } from './UserStatisticsCalculations';
+import { useStore } from "../../stores/store";
+import { supabase } from "../../supabase";
+import { generateTrainingWords, trainingWords } from '../Modes/TrainingHandler';  // Add this import, adjust the path as needed
+import { allTimeSlowWords, loadAllTimeSlowWords } from '../Stats/SlowWords';
 
 
 
@@ -281,7 +281,7 @@ export function useUtilities() {
         }
 
         if (store.userSession && store.userSession.user) {
-            return; // handled in saveStats function in UserStatisticsHandler
+            return; // handled in saveStats function
         } else {
             // Handle guest users
             let currentGamesPlayed = parseInt(localStorage.getItem("gamesPlayed") || "0");

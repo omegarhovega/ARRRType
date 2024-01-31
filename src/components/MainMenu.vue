@@ -45,6 +45,11 @@ MainMenu
         <div class="flex items-end">
           <div class="menu-buttons">
             <div class="user-buttons">
+              <span
+                class="menu-text text-yellow-500"
+                @click="emitSettingsToggle"
+              >Settings</span>
+              <span class="menu-text-nolink text-yellow-500"> | </span>
               <span v-if="showShortcuts">
                 <span
                   v-if="userSession && showAccount"
@@ -116,9 +121,13 @@ import { onMounted, onUnmounted, defineComponent, computed, ref } from "vue";
 import { useStore } from "../stores/store";
 import { supabase } from "../supabase";
 import { useRouter, useRoute } from "vue-router";
+import SettingsMenu from "./SettingsMenu.vue";
 
 export default defineComponent({
-  setup() {
+  components: {
+    SettingsMenu,
+  },
+  setup(_, context) {
     const store = useStore();
     const router = useRouter();
     const route = useRoute();
@@ -130,6 +139,16 @@ export default defineComponent({
     //handles different menu options depending on current page
     const showShortcuts = computed(() => route.name !== "Home");
     const showAccount = computed(() => route.name !== "Account");
+
+    // State to track if the settings menu is open
+    const isSettingsMenuOpen = ref(false);
+    // Method to toggle the settings menu
+    const toggleSettingsMenu = () => {
+      isSettingsMenuOpen.value = !isSettingsMenuOpen.value;
+    };
+    const emitSettingsToggle = () => {
+      context.emit("toggle-settings-menu");
+    };
 
     const fetchUserCoins = () => {
       store.fetchUserCoins();
@@ -183,6 +202,9 @@ export default defineComponent({
       signOut,
       showShortcuts,
       showAccount,
+      isSettingsMenuOpen,
+      toggleSettingsMenu,
+      emitSettingsToggle,
     };
   },
 

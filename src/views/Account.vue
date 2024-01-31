@@ -35,13 +35,13 @@ Using Composition API
         <div class="button-box mt-5">
           <!-- Trigger Button for Overlay -->
           <button @click="showAvatarOverlay = true">
-            <div class="shortcut-key-small">A</div>Change Avatar
+            Change <span class="underline text-yellow-500">A</span>vatar
           </button>
         </div>
         <div class="button-box mt-5">
           <!-- Trigger Button for Flag Overlay -->
           <button @click="showFlagOverlay = true">
-            <div class="shortcut-key-small">F</div>Change Flag
+            Change <span class="underline text-yellow-500">F</span>lag
           </button>
         </div>
       </div>
@@ -87,7 +87,7 @@ Using Composition API
           type="button"
           @click="goToUpdateUserDetails"
         >
-          <div class="shortcut-key-small">U</div>Update User Details
+          Update <span class="underline text-yellow-500">U</span>ser Details
         </button>
       </div>
     </form>

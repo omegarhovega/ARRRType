@@ -51,8 +51,7 @@ Online Lobby
         class="start-game-container"
       >
         <div class="option-box">
-          <div class="shortcut-key">S</div>
-          <button @click="startGame">Start Game</button>
+          <button @click="startGame"><span class="underline text-yellow-500">S</span>tart Game</button>
         </div>
       </div>
       <!-- message if not enough players to start a game -->
@@ -74,8 +73,8 @@ import { supabase } from "../../supabase";
 import { v4 as uuidv4 } from "uuid";
 import { useRouter } from "vue-router";
 import { useStore } from "../../stores/store";
-import { useUtilities } from "../../components/Utilities";
-import { MAX_PLAYERS, RANKS } from "../../components/GameConstants";
+import { useUtilities } from "../../components/OtherUtilities/Utilities";
+import { MAX_PLAYERS, RANKS } from "../../components/GameLogic/GameConstants";
 
 type PlayerActiveStatus = {
   [key: string]: boolean;

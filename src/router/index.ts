@@ -1,6 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router';
 import type { RouteLocationNormalized, NavigationGuardNext } from 'vue-router';
-import { LEVELS } from "../components/GameConstants";
+import { LEVELS } from "../components/GameLogic/GameConstants";
 import { useStore } from "../stores/store";
 import TrainMain from '../views/Train/TrainMain.vue';
 import TrainSingle from '../views/Train/SingleWordTraining.vue';

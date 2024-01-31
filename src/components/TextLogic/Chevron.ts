@@ -1,6 +1,6 @@
 import { computed, watch, nextTick } from "vue";
 import type { Ref, ComponentPublicInstance } from 'vue';
-import { useStore } from "../stores/store";
+import { useStore } from "../../stores/store";
 
 // Handles chevron animation behavior
 // Position of chevron is based on current character position in DOM (can be calculated given fixed line height and rendering information from browser)

@@ -14,7 +14,7 @@ import { defineComponent, computed, onMounted, onBeforeUnmount } from "vue";
 import { useStore } from "../../stores/store";
 import { useRouter } from "vue-router";
 import LevelSelector from "./CampaignLevelSelector.vue";
-import { LEVELS } from "../../components/GameConstants";
+import { LEVELS } from "../../components/GameLogic/GameConstants";
 
 export default defineComponent({
   components: {
@@ -43,7 +43,7 @@ export default defineComponent({
       }
 
       // only works if the lastunlockedlevel is part of the level list
-      if (event.key === "c" && !(lastUnlockedLevel.value > LEVELS)) {
+      if (event.key === "l" && !(lastUnlockedLevel.value > LEVELS)) {
         router.push(`/campaign/level/${lastUnlockedLevel.value}`);
       }
     };

@@ -26,10 +26,10 @@
         class="mt-5"
       >Note: Results are not saved, accuracy is 50% or lower.</p>
       <div class="training-mode-box mt-7">
-        <div class="shortcut-key text-base">1</div><button @click="navigateToCampaign">Back to Overview</button>
+        <button @click="navigateToCampaign"><span class="underline text-yellow-500">1</span>: Back to Overview</button>
       </div>
       <div class="training-mode-box mt-3">
-        <div class="shortcut-key text-base">2</div><button @click="navigateToUserStats">Go to User Stats</button>
+        <button @click="navigateToUserStats"><span class="underline text-yellow-500">2</span>: Go to User Stats</button>
       </div>
     </div>
   </div>

@@ -1,8 +1,8 @@
 import { reactive, ref, computed, nextTick } from 'vue';
 import type { ComputedRef } from 'vue';
 import type { ComponentPublicInstance } from "vue";
-import { useStore } from "../stores/store";
-import { useUtilities } from "./Utilities";
+import { useStore } from "../../stores/store";
+import { useUtilities } from "../OtherUtilities/Utilities";
 
 // Data Structures
 interface SingleWordStats {

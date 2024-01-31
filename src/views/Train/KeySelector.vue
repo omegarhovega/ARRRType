@@ -31,19 +31,19 @@
       <p>Select/deselect whole rows.</p>
       <div class="buttons-center mt-5">
         <div class="button-box">
-          <div class="shortcut-key-small">N</div><button @click="selectKeyGroup('numbers')">Numbers Row</button>
+          <button @click="selectKeyGroup('numbers')"><span class="underline text-yellow-500">N</span>umbers Row</button>
         </div>
         <div class="button-box ml-2">
-          <div class="shortcut-key-small">U</div><button @click="selectKeyGroup('upper')">Upper Row</button>
+          <button @click="selectKeyGroup('upper')"><span class="underline text-yellow-500">U</span>pper Row</button>
         </div>
         <div class="button-box ml-2">
-          <div class="shortcut-key-small">H</div><button @click="selectKeyGroup('home')">Home Row</button>
+          <button @click="selectKeyGroup('home')"><span class="underline text-yellow-500">H</span>ome Row</button>
         </div>
         <div class="button-box ml-2">
-          <div class="shortcut-key-small">L</div><button @click="selectKeyGroup('lower')">Lower Row</button>
+          <button @click="selectKeyGroup('lower')"><span class="underline text-yellow-500">L</span>ower Row</button>
         </div>
         <div class="button-box ml-2">
-          <div class="shortcut-key-small">D</div><button @click="deselectAll">Deselect All</button>
+          <button @click="deselectAll"><span class="underline text-yellow-500">D</span>eselect All</button>
         </div>
       </div>
     </div>
@@ -52,7 +52,7 @@
     <div class="buttons-center mt-10">
       <div class="button-box">
         <button @click="startGame">
-          <div class="shortcut-key-small">S</div>Start Game
+          <span class="underline text-yellow-500">S</span>tart Game
         </button>
       </div>
     </div>
@@ -198,7 +198,7 @@ export default defineComponent({
     });
 
     return {
-      keyboardRows, // Updated to 'keyboardRows'
+      keyboardRows,
       selectedKeys,
       toggleKey,
       selectKeyGroup,
@@ -237,21 +237,6 @@ export default defineComponent({
   position: relative;
 }
 
-/* Style for the accuracy display, you can remove this if not needed */
-.key .accuracy {
-  position: absolute;
-  bottom: 0px;
-  right: 2px;
-  font-size: 10px;
-  color: #ddd;
-}
-
-/* Special styling for the space key */
-.key.space {
-  width: 200px;
-  text-align: center;
-}
-
 .buttons-center {
   text-align: center;
 }
@@ -265,27 +250,6 @@ export default defineComponent({
   padding: 10px;
   margin-top: 10px;
   border-radius: 5px;
-}
-
-.shortcut-key-small {
-  top: -10px; /* Adjust as needed */
-  left: 50%;
-  transform: translate(-50%, 0);
-  position: absolute;
-  width: 20px;
-  height: 20px;
-  background: linear-gradient(to bottom, #f2f2f2, #ccc);
-  color: #000;
-  text-align: center;
-  line-height: 20px;
-  border-radius: 3px;
-  border: 1px solid white;
-  box-shadow: 0px 1px 1px rgba(0, 0, 0, 0.2), 0px 2px 2px rgba(0, 0, 0, 0.1),
-    inset 0px -1px 1px rgba(255, 255, 255, 0.9);
-  z-index: 1;
-  display: flex;
-  justify-content: center;
-  align-items: center;
 }
 
 .button-box {

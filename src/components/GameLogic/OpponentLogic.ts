@@ -1,5 +1,5 @@
 import { ref, computed } from "vue";
-import { useStore } from "../stores/store";
+import { useStore } from "../../stores/store";
 
 // handle computer opponent progress
 export function useOpponentLogic(fetchedText: any, opponentWpmLevel: any, onOpponentFinish: () => void, onOpponentStatusChange?: (status: boolean, opponentWpm: number) => void) {

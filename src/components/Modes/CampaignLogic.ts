@@ -1,8 +1,8 @@
 import { computed, ref } from "vue";
 import type { Ref } from 'vue';
-import { supabase } from "../supabase";
-import { useStore } from "../stores/store";
-import { MAX_ROUNDS, WINNINGS } from './GameConstants';
+import { supabase } from "../../supabase";
+import { useStore } from "../../stores/store";
+import { MAX_ROUNDS, WINNINGS } from '../GameLogic/GameConstants';
 
 // maximum number of games per level
 export const maxRounds = ref(MAX_ROUNDS);

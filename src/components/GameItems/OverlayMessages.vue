@@ -4,13 +4,13 @@
     v-if="isCapsLockOn"
     id="capslock-overlay"
   >
-    <div class="message">Caps Lock is on</div>
+    <div class="message text-yellow-500">Caps Lock is on</div>
   </div>
   <div
     v-if="hasMistake"
     id="mistake-overlay"
   >
-    <div class="message">Uncorrected mistake!</div>
+    <div class="message text-yellow-500">Uncorrected mistake!</div>
   </div>
   <div
     v-if="isFinished"
@@ -54,7 +54,6 @@ export default defineComponent({
   width: auto;
   padding: 10px;
   background-color: #2d4053;
-  color: rgb(205, 52, 52);
   border-radius: 5px;
   font-size: 1rem;
   font-weight: bold;
@@ -72,7 +71,6 @@ export default defineComponent({
   width: auto;
   padding: 10px;
   background-color: #2d4053;
-  color: rgb(205, 52, 52);
   border-radius: 5px;
   font-size: 1rem;
   font-weight: bold;

@@ -30,7 +30,7 @@ CampaignLevelSelector
 import { defineComponent, computed, onMounted } from "vue";
 import { useStore } from "../../stores/store";
 import LevelSquare from "./CampaignLevels.vue";
-import { LEVELS } from "../../components/GameConstants";
+import { LEVELS } from "../../components/GameLogic/GameConstants";
 
 export default defineComponent({
   components: {

@@ -1,9 +1,10 @@
 import { ref } from 'vue';
 import type { Ref } from 'vue';
-import { supabase } from '../supabase';
-import { useUserStatistics } from './UserStatistics';
-import { useStore } from "../stores/store";
-import { topMistypedWords, allTimeSlowWords } from './UserStatisticsCalculations';
+import { supabase } from '../../supabase';
+import { useUserStatistics } from '../StatsHandler/UserStatisticsWrapper';
+import { useStore } from "../../stores/store";
+import { topMistypedWords } from '../Stats/MistypedWords';
+import { allTimeSlowWords } from '../Stats/SlowWords';
 
 
 export const trainingWords: Ref<string[]> = ref([]);

@@ -10,11 +10,11 @@ CampaignLevels
       :to="`/campaign/level/${levelNumber}`"
     >
       <div v-if="isLastUnlocked">
-        <div class="shortcut-key">C</div>
         <img
           :src="levelImagePath"
           alt="Level Image"
         />
+        <p><span class="underline text-yellow-500">L</span>evel {{ levelNumber }}</p>
       </div>
       <div v-if="!isLastUnlocked">
         <img
@@ -22,8 +22,9 @@ CampaignLevels
           class="skull"
           alt="Level Image"
         />
+        <p>Level {{ levelNumber }}</p>
       </div>
-      <p>Level {{ levelNumber }}</p>
+
     </router-link>
     <div v-else>
       <img
@@ -60,7 +61,11 @@ CampaignLevels
 
 <script lang="ts">
 import { defineComponent, computed } from "vue";
-import { OPPONENT_WPM, RANKS, WINNINGS } from "../../components/GameConstants";
+import {
+  OPPONENT_WPM,
+  RANKS,
+  WINNINGS,
+} from "../../components/GameLogic/GameConstants";
 
 export default defineComponent({
   props: {
@@ -110,7 +115,6 @@ export default defineComponent({
   margin: 20px;
   cursor: pointer;
   position: relative;
-  border-bottom: 2px solid #2d4053;
 }
 
 .info-box {

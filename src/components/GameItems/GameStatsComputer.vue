@@ -30,16 +30,16 @@
         class="mt-5"
       >Note: Results from {{ selectedMode }} training are not saved.</p>
       <div class="training-mode-box mt-7">
-        <div class="shortcut-key text-base">1</div><button @click="loadNewGame">Load New Game</button>
+        <button @click="loadNewGame"><span class="underline text-yellow-500">1</span>: Load New Game</button>
       </div>
       <div class="training-mode-box mt-3">
-        <div class="shortcut-key text-base">2</div><button @click="navigateToTrain">Change Training Mode</button>
+        <button @click="navigateToTrain"><span class="underline text-yellow-500">2</span>: Change Training Mode</button>
       </div>
       <div
         v-if="doStatistics"
         class="training-mode-box mt-3"
       >
-        <div class="shortcut-key text-base">3</div><button @click="navigateToUserStats">Go to User Stats</button>
+        <button @click="navigateToUserStats"><span class="underline text-yellow-500">3</span>: Go to User Stats</button>
       </div>
     </div>
   </div>

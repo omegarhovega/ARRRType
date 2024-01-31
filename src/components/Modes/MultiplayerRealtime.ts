@@ -1,6 +1,6 @@
 import { reactive, ref } from "vue";
 import type { Ref, ComputedRef } from "vue";
-import { supabase } from "../supabase";
+import { supabase } from "../../supabase";
 
 interface PayloadType {
     playerId: string;

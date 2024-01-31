@@ -31,7 +31,7 @@ import {
 import UserStatsLineChart from "./LineChartComponent.vue";
 import KeyboardHeatmap from "./KeyboardHeatmap.vue";
 import MistypedWordsTable from "./MistypedWordsTable.vue";
-import { useUserStatistics } from "../../components/UserStatistics";
+import { useUserStatistics } from "../../components/StatsHandler/UserStatisticsWrapper";
 import { useStore } from "../../stores/store";
 
 export default defineComponent({
@@ -122,4 +122,3 @@ export default defineComponent({
   margin-right: auto;
 }
 </style>
-  

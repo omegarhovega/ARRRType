@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia';
 import { supabase } from '@/supabase';
-import { RANKS, OPPONENT_WPM } from "../components/GameConstants";
+import { RANKS, OPPONENT_WPM } from "../components/GameLogic/GameConstants";
 
 export type UserStat = {
   id: number,
@@ -18,6 +18,7 @@ export type UserStat = {
 
 interface State {
   currentIndex: number;
+  progressEnabled: boolean;
   opponentWPM: number;
   opponentEnabled: boolean;
   userSession: any;
@@ -94,8 +95,9 @@ export const useStore = defineStore({
     const userSession = storedState.userSession || null;
     return {
       currentIndex: 0,
+      progressEnabled: storedState.progressEnabled ?? true,
       opponentWPM: storedState.opponentWPM || 40,
-      opponentEnabled: true,
+      opponentEnabled: storedState.opponentEnabled ?? true,
       userSession: userSession,
       lastUnlockedLevel: loadGuestProgress(),
       userCoins: loadGuestCoins(),
@@ -128,7 +130,7 @@ export const useStore = defineStore({
       selectedLevel: null,
       levels: Array.from({ length: 15 }, (_, index) => index + 1),
       forceMistakeCorrection: false,
-      noGameEndWithoutMistakeCorrection: true,
+      noGameEndWithoutMistakeCorrection: storedState.noGameEndWithoutMistakeCorrection ?? true,
       playerID: '',
       playerName: '',
       uniqueCorrectIndices: [],
@@ -272,6 +274,11 @@ export const useStore = defineStore({
       }
 
       this.setLastUnlockedLevel(data.last_unlocked_level || 1);
+    },
+
+    setProgressEnabled(enabled: boolean) {
+      this.progressEnabled = enabled;
+      localStorage.setItem('store', JSON.stringify(this.$state));
     },
 
     setNoEndGameWithoutCorrectionEnabled(enabled: boolean) {

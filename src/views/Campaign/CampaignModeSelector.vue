@@ -10,13 +10,12 @@ CampaignModeSelector
         class="training-mode-box"
         @click="navigate('Campaign')"
       >
-        <div class="shortcut-key">C</div>
         <img
           src="/Computer.webp"
           alt="Random words"
           class="mode-image"
         />
-        <p class="bold-text">Computer Pirates</p>
+        <p class="bold-text"><span class="underline text-yellow-500">C</span>omputer Pirates</p>
         <p class="option-description">Campaign against computer generated Pirates and level up your rank</p>
         <div class="winnings-description">
           <p class="bold-text">Match win:</p>
@@ -38,13 +37,12 @@ CampaignModeSelector
         class="training-mode-box"
         @click="navigate('OnlineLobby')"
       >
-        <div class="shortcut-key">H</div>
         <img
           src="/PlayervPlayer.webp"
           alt="Mistakes"
           class="mode-image"
         />
-        <p class="bold-text">Human Pirates</p>
+        <p class="bold-text"><span class="underline text-yellow-500">H</span>uman Pirates</p>
         <p class="option-description">Fight other human Pirates with some good old hand to hand combat</p>
         <div class="winnings-description">
           <p class="bold-text">Match win:</p>
@@ -174,26 +172,6 @@ export default defineComponent({
   }
 }
 
-.shortcut-key {
-  position: absolute;
-  top: 0px;
-  left: 50%;
-  transform: translate(-50%, 0);
-  width: 20px;
-  height: 20px;
-  background: linear-gradient(to bottom, #f2f2f2, #ccc);
-  color: #000;
-  text-align: center;
-  line-height: 20px;
-  border-radius: 3px;
-  border: 1px solid white;
-  box-shadow: 0px 1px 1px rgba(0, 0, 0, 0.2), 0px 2px 2px rgba(0, 0, 0, 0.1),
-    inset 0px -1px 1px rgba(255, 255, 255, 0.9);
-  z-index: 1;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
 .bold-text {
   margin-top: 5px;
   font-weight: bold;
