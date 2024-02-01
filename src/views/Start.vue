@@ -225,7 +225,7 @@ export default defineComponent({
 
     const formattedTotalTimePlayed = computed(() => {
       const totalSeconds = Math.floor(totalTimePlayed.value / 1000);
-      const hours = Math.floor((totalSeconds % 86400) / 3600);
+      const hours = Math.floor(totalSeconds / 3600);
       const minutes = Math.floor((totalSeconds % 3600) / 60);
 
       return `${hours}h ${minutes}m`;
