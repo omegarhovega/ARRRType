@@ -531,6 +531,10 @@ export default defineComponent({
       } else {
         await fetchText(store.numberOfWords);
       }
+      // log if Capslock is active
+      window.addEventListener("keydown", detectCapsLock);
+      window.addEventListener("keyup", detectCapsLock);
+
       // Update charSpans after the game text is reset
       updateCharSpans();
       countdownStart(); // countdown should only begin when text is fetched; start game logic triggered when countdown is finished

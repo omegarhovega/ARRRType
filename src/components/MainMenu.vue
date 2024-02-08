@@ -23,7 +23,7 @@ MainMenu
             <div
               class="tooltip"
               v-if="showPirateTooltip"
-            >Arrr!</div>
+            >ARRR!</div>
           </div>
 
           <!-- Flex container to align items vertically -->

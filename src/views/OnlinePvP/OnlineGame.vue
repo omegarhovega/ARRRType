@@ -461,6 +461,9 @@ export default defineComponent({
       chars.value = fetchedText.value.split("");
 
       window.addEventListener("keydown", handleOverlayKeyPress);
+      // log if Capslock is active
+      window.addEventListener("keydown", detectCapsLock);
+      window.addEventListener("keyup", detectCapsLock);
     });
 
     // Fail-save to allow stopping games with abrupt unmountings
