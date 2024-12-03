@@ -57,7 +57,7 @@ a. Create a new Supabase project:
 - Sign up/Login and create a new project
 - Note down your project URL and anon key
 
-b. Set up the required tables in Supabase:
+b. Set up the required tables in Supabase by pasting the below code into the Supabase SQL console and running it:
 
 ```sql
 -- Create profiles table
@@ -124,7 +124,7 @@ CREATE TABLE total_games (
 );
 ```
 
-c. Set up the required functions in Supabase:
+c. Set up the required functions in Supabase by pasting the below code into the Supabase SQL console and running it:
 
 ```sql
 -- Create update_heartbeat function
