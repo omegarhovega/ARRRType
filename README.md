@@ -253,8 +253,6 @@ Common issues and solutions:
 4. Push to the branch
 5. Create a Pull Request
 
-   [Previous README sections remain the same until License section]
-
 ## License 📄
 
 This project is licensed under the GNU General Public License v3.0 (GPL-3.0).
