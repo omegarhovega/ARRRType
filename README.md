@@ -223,12 +223,6 @@ npm run build
 npm run test:unit
 ```
 
-### Optional: Setting up Auth Providers
-
-1. Go to Authentication > Providers in your Supabase dashboard
-2. Enable and configure desired providers (Email, Google, GitHub, etc.)
-3. Update the auth configuration in your application if needed
-
 ## Troubleshooting 🔍
 
 Common issues and solutions:
