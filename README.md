@@ -167,6 +167,7 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 ```
+Please note that the security settings for the Supabase tables in production need to be set to your requirements.
 
 4. **Database Population**
 
@@ -187,14 +188,12 @@ You can populate the database with sample texts and words using the provided CSV
    - The importer should correctly match to the 'text' column automatically
    - Click "Import Data"
 
-You can of course add to/change/replace the content to your liking. 
-
-Please note that the security settings for the Supabase tables in production need to be set to your requirements.
-
 #### Location of CSV Files
 - The CSV files are located in the `/table data` directory of the project
 - `words_rows.csv`: Contains sample words for typing exercises
 - `texts_rows.csv`: Contains sample texts for typing challenges
+
+You can of course add to/change/replace the content to your liking. 
 
 Note: If you encounter any encoding issues during import, ensure your CSV files are UTF-8 encoded.
 
