@@ -32,7 +32,7 @@ A live version is currently at https://arrrtype.com.
 
 ### Prerequisites
 
-- Node.js (v14.17.0 or higher)
+- Node.js (v14.17.0 or higher, download at https://nodejs.org/)
 - npm (Node Package Manager)
 - Git
 - A Supabase account
