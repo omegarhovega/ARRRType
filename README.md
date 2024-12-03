@@ -177,14 +177,14 @@ You can populate the database with sample texts and words using the provided CSV
    - Go to Table Editor > words
    - Click on "Insert" dropdown and select "Import data from CSV"
    - Upload the `words_rows.csv` file
-   - The columns be correctly matched to the '3_letters' column
+   - The importer should correctly match to the '3_letters' column automatically
    - Click "Import Data"
 
 2. **Import texts_rows.csv**:
    - Navigate to Table Editor > texts
    - Click on "Insert" dropdown and select "Import data from CSV"
    - Upload the `texts_rows.csv` file
-   - The columns be correctly matched to the 'text' column
+   - The importer should correctly match to the 'text' column automatically
    - Click "Import Data"
 
 #### Location of CSV Files
