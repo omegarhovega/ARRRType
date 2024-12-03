@@ -196,7 +196,7 @@ Note: If you encounter any encoding issues during import, ensure your CSV files 
 
 5. **Environment Setup**
 
-Create a `.env` file in the root directory:
+Rename the `env.example` file in the root directory to `.env`:
 ```env
 VITE_APP_SUPABASE_URL=your_supabase_project_url
 VITE_APP_SUPABASE_ANON_KEY=your_supabase_anon_key
