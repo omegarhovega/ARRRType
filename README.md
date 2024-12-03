@@ -207,6 +207,7 @@ Replace "your_supabase_project_url" and "your_supabase_anon_key" with your Supab
 ```bash
 npm run dev
 ```
+Paste the local url shown into your browser to run the application. 
 
 7. **Building for Production**
 ```bash
