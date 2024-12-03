@@ -71,8 +71,8 @@ CREATE TABLE profiles (
   last_round_gross_wpm INTEGER[],
   wpm_buckets INTEGER[],
   accuracy_buckets INTEGER[],
-  '100_slow_words' JSONB,
-  'last_slow_words' JSONB
+  "100_slow_words" JSONB,
+  "last_slow_words" JSONB
 );
 
 -- Create user_stats table
@@ -100,7 +100,7 @@ CREATE TABLE texts (
 -- Create words table
 CREATE TABLE words (
   id SERIAL PRIMARY KEY,
-  '3_letters' TEXT NOT NULL
+  "3_letters" TEXT NOT NULL
 );
 
 -- Create games table
@@ -132,10 +132,10 @@ CREATE OR REPLACE FUNCTION update_heartbeat(game_id UUID, user_id UUID)
 RETURNS VOID AS $$
 DECLARE
   current_heartbeat JSONB;
-  current_timestamp TIMESTAMPTZ;
+  curr_timestamp TIMESTAMPTZ;
 BEGIN
   -- Get current timestamp
-  current_timestamp := NOW();
+  curr_timestamp := NOW();
   
   -- Get current heartbeat data
   SELECT heartbeat INTO current_heartbeat FROM games WHERE id = game_id;
@@ -156,7 +156,7 @@ BEGIN
   current_heartbeat := current_heartbeat || jsonb_build_array(
     jsonb_build_object(
       'user_id', user_id,
-      'timestamp', current_timestamp
+      'timestamp', curr_timestamp
     )
   );
   
@@ -175,18 +175,16 @@ You can populate the database with sample texts and words using the provided CSV
 1. **Import words_rows.csv**:
    - Navigate to your Supabase project dashboard
    - Go to Table Editor > words
-   - Click on "Import Data"
-   - Select "CSV"
+   - Click on "Insert" dropdown and select "Import data from CSV"
    - Upload the `words_rows.csv` file
-   - Map the CSV column to the '3_letters' column
+   - The columns be correctly matched to the '3_letters' column
    - Click "Import Data"
 
 2. **Import texts_rows.csv**:
    - Navigate to Table Editor > texts
-   - Click on "Import Data"
-   - Select "CSV"
+   - Click on "Insert" dropdown and select "Import data from CSV"
    - Upload the `texts_rows.csv` file
-   - Map the CSV column to the 'text' column
+   - The columns be correctly matched to the 'text' column
    - Click "Import Data"
 
 #### Location of CSV Files
