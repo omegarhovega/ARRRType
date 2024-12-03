@@ -41,7 +41,7 @@ A live version is currently at https://arrrtype.com.
 
 1. **Clone the Repository**
 ```bash
-git clone https://github.com/yourusername/ARRRType.git
+git clone https://github.com/omegarhovega/ARRRType.git
 cd ARRRType
 ```
 
