@@ -34,7 +34,7 @@ A live version is currently at https://arrrtype.com.
 
 - Node.js (v14.17.0 or higher, download at https://nodejs.org/)
 - npm (Node Package Manager)
-- Git (see [[installation instructions]](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git))
+- Git (see [installation instructions](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git))
 - A Supabase account (see below)
 
 ### Local Development Setup
