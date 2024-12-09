@@ -89,7 +89,7 @@
             <span class="underline text-yellow-500">R</span>egister
           </button>
         </div>
-        <p class="comment text-yellow-500">Login or Register to not loose your Pirate progress</p>
+        <p class="comment text-yellow-500">Login or Register to not lose your Pirate progress</p>
       </template>
     </div>
     <div class="stats-box text-slate-400">
