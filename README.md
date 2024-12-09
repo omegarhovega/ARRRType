@@ -169,7 +169,7 @@ $$ LANGUAGE plpgsql;
 ```
 Please note that the security settings for the Supabase tables in production need to be set to your requirements.
 
-d. (Optional) If you want to install Supabase locally for testing, without linking to an online Supabase account, you need to install the Supabase CLI and Docker. Follow the instructions for Supabase local deployment: https://supabase.com/docs/guides/local-development. Note that this will require additional modifications to include the local server address when you run the application.
+d. (Optional and not tested) If you want to run the application locally, without linking to an online Supabase account, you need to install the Supabase CLI and Docker. Follow these [instructions](https://supabase.com/docs/guides/) for Supabase local deployment. Note that this will require additional modifications to include the local server address when you run the application.
 
 4. **Database Population**
 
