@@ -32,7 +32,7 @@
       <router-link
         to="/news"
         class="footer-link"
-      >v0.97b</router-link>
+      >v1.0.0</router-link>
     </div>
   </footer>
 </template>
